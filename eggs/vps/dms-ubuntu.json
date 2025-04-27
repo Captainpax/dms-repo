@@ -1,0 +1,65 @@
+{
+  "_comment": "DMS Ubuntu VPS Egg",
+  "meta": {
+    "version": "1.1",
+    "update_url": null
+  },
+  "name": "DMS Ubuntu VPS",
+  "author": "AntimatterZoneLLC",
+  "description": "Customizable Ubuntu 25.04 VPS container with SSH, firewall, and admin user setup.",
+  "docker_images": {
+    "captainpax/dms-vps": "captainpax/dms-vps:latest"
+  },
+  "startup": "/usr/sbin/sshd -D",
+  "config": {
+    "files": "{}",
+    "startup": "{\r\n    \"done\": \"Server listening on\"\r\n}",
+    "logs": "{}",
+    "stop": "exit"
+  },
+  "scripts": {
+    "installation": {
+      "script": "#!/bin/bash\napt update\napt install -y openssh-server sudo nano ufw tzdata\nmkdir -p /var/run/sshd\nchmod +x /tmp/install.sh\n/tmp/install.sh",
+      "container": "captainpax/dms-vps:latest",
+      "entrypoint": "bash"
+    }
+  },
+  "variables": [
+    {
+      "name": "Admin Username",
+      "description": "Default administrative username.",
+      "env_variable": "ADMIN_USER",
+      "default_value": "admin",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string|alpha_dash|between:3,20"
+    },
+    {
+      "name": "Admin Password",
+      "description": "Secure password for the admin user.",
+      "env_variable": "ADMIN_PASS",
+      "default_value": "SecurePass123!",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string|min:8|max:64"
+    },
+    {
+      "name": "SSH Port",
+      "description": "Custom SSH port between 1024-65535.",
+      "env_variable": "SSH_PORT",
+      "default_value": "2222",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|integer|between:1024,65535"
+    },
+    {
+      "name": "Timezone",
+      "description": "Container timezone (e.g., Etc/UTC or America/New_York).",
+      "env_variable": "TIMEZONE",
+      "default_value": "Etc/UTC",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string|max:40"
+    }
+  ]
+}
