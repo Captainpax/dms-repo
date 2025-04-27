@@ -4,11 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2195dd89-6ddb-4f5e-b3f4-411132f7256e" name="Changes" comment="Add IntelliJ IDEA project files to version control&#10;&#10;Include essential project configuration files for IntelliJ IDEA, such as module, VCS, and project settings. Added `.gitignore` to exclude user-specific and environment-dependent files.">
-      <change beforePath="$PROJECT_DIR$/.idea/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/modules.xml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/vcs.xml" beforeDir="false" />
+    <list default="true" id="2195dd89-6ddb-4f5e-b3f4-411132f7256e" name="Changes" comment="Add Docker deployment setup and clean up project files&#10;&#10;Removed redundant IntelliJ IDEA project files and updated `.gitignore` for better compatibility. Added Dockerfiles, deployment scripts, and container configurations for VPS and GTAV game server environments. Included setup for Docker build, push, and cleanup scripts for streamlined deployment.">
+      <change afterPath="$PROJECT_DIR$/.idea/dictionaries/project.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/install.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dockers/vps/ubuntu/install.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/deploy.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dockers/base-img/ubuntu/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/base-img/ubuntu/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dockers/vps/ubuntu/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/vps/ubuntu/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dockers/vps/ubuntu/vps/install.sh" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/base-img/ubuntu/entrypoint.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eggs/vps/dms-ubuntu.json" beforeDir="false" afterPath="$PROJECT_DIR$/eggs/vps/dms-ubuntu.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -25,40 +32,48 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="GitHubPullRequestSearchHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPEN",
-    "assignee": "Captainpax"
+  <component name="GitHubPullRequestSearchHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPEN&quot;,
+    &quot;assignee&quot;: &quot;Captainpax&quot;
   }
-}]]></component>
-  <component name="GithubPullRequestsUISettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "url": "https://github.com/Captainpax/dms-repo",
-    "accountId": "3b306291-e2cb-4092-8f67-c6979296838a"
+}</component>
+  <component name="GithubPullRequestsUISettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;url&quot;: &quot;https://github.com/Captainpax/dms-repo&quot;,
+    &quot;accountId&quot;: &quot;3b306291-e2cb-4092-8f67-c6979296838a&quot;
   }
-}]]></component>
-  <component name="KubernetesApiPersistence"><![CDATA[{}]]></component>
-  <component name="KubernetesApiProvider"><![CDATA[{
-  "isMigrated": true
-}]]></component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 2
-}]]></component>
+}</component>
+  <component name="KubernetesApiPersistence">{}</component>
+  <component name="KubernetesApiProvider">{
+  &quot;isMigrated&quot;: true
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 2
+}</component>
   <component name="ProjectId" id="2wK5lzi23kYQTkYJApdDnkVTvc1" />
+  <component name="ProjectLevelVcsManager">
+    <ConfirmationsSetting value="2" id="Add" />
+  </component>
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "Docker.ubuntu/Dockerfile (1).executor": "Run",
     "Docker.ubuntu/Dockerfile.executor": "Run",
     "Docker.vps.executor": "Run",
     "ModuleVcsDetector.initialDetectionPerformed": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
     "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
     "SHELLCHECK.PATH": "C:\\Users\\trist\\AppData\\Roaming\\JetBrains\\IntelliJIdea2025.1\\plugins\\Shell Script\\shellcheck.exe",
+    "Shell Script.deploy.sh.executor": "Run",
+    "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "B:/darkmatter-repo/dms-repo/dockers/games/gtav/fivem",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -68,7 +83,12 @@
   }
 }]]></component>
   <component name="RecentsManager">
+    <key name="CopyFile.RECENT_KEYS">
+      <recent name="B:\darkmatter-repo\dms-repo\dockers\games\gtav\fivem" />
+    </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="B:\darkmatter-repo\dms-repo\dockers\base-img\ubuntu\" />
+      <recent name="B:\darkmatter-repo\dms-repo\dockers\vps\ubuntu" />
       <recent name="B:\darkmatter-repo\dms-repo" />
     </key>
   </component>
@@ -91,8 +111,8 @@
       <option name="SCRIPT_OPTIONS" value="" />
       <option name="INDEPENDENT_SCRIPT_WORKING_DIRECTORY" value="true" />
       <option name="SCRIPT_WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="INDEPENDENT_INTERPRETER_PATH" value="true" />
-      <option name="INTERPRETER_PATH" value="/bin/bash" />
+      <option name="INDEPENDENT_INTERPRETER_PATH" value="false" />
+      <option name="INTERPRETER_PATH" value="C:/Windows/System32/cmd.exe" />
       <option name="INTERPRETER_OPTIONS" value="" />
       <option name="EXECUTE_IN_TERMINAL" value="true" />
       <option name="EXECUTE_SCRIPT_FILE" value="true" />
@@ -100,7 +120,9 @@
       <method v="2" />
     </configuration>
     <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
-      <deployment type="dockerfile" />
+      <deployment type="dockerfile">
+        <settings />
+      </deployment>
       <method v="2" />
     </configuration>
     <configuration name="base" type="docker-deploy" factoryName="dockerfile" temporary="true" server-name="Docker">
@@ -152,6 +174,8 @@
       <option name="presentableId" value="Default" />
       <updated>1745777584065</updated>
       <workItem from="1745777585324" duration="3687000" />
+      <workItem from="1745781365805" duration="75000" />
+      <workItem from="1745785574542" duration="4671000" />
     </task>
     <task id="LOCAL-00001" summary="Add IntelliJ IDEA project files to version control&#10;&#10;Include essential project configuration files for IntelliJ IDEA, such as module, VCS, and project settings. Added `.gitignore` to exclude user-specific and environment-dependent files.">
       <option name="closed" value="true" />
@@ -161,7 +185,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745777675771</updated>
     </task>
-    <option name="localTasksCounter" value="2" />
+    <task id="LOCAL-00002" summary="Add Docker deployment setup and clean up project files&#10;&#10;Removed redundant IntelliJ IDEA project files and updated `.gitignore` for better compatibility. Added Dockerfiles, deployment scripts, and container configurations for VPS and GTAV game server environments. Included setup for Docker build, push, and cleanup scripts for streamlined deployment.">
+      <option name="closed" value="true" />
+      <created>1745781436568</created>
+      <option name="number" value="00002" />
+      <option name="presentableId" value="LOCAL-00002" />
+      <option name="project" value="LOCAL" />
+      <updated>1745781436568</updated>
+    </task>
+    <option name="localTasksCounter" value="3" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -170,6 +202,7 @@
   <component name="VcsManagerConfiguration">
     <MESSAGE value="inti" />
     <MESSAGE value="Add IntelliJ IDEA project files to version control&#10;&#10;Include essential project configuration files for IntelliJ IDEA, such as module, VCS, and project settings. Added `.gitignore` to exclude user-specific and environment-dependent files." />
-    <option name="LAST_COMMIT_MESSAGE" value="Add IntelliJ IDEA project files to version control&#10;&#10;Include essential project configuration files for IntelliJ IDEA, such as module, VCS, and project settings. Added `.gitignore` to exclude user-specific and environment-dependent files." />
+    <MESSAGE value="Add Docker deployment setup and clean up project files&#10;&#10;Removed redundant IntelliJ IDEA project files and updated `.gitignore` for better compatibility. Added Dockerfiles, deployment scripts, and container configurations for VPS and GTAV game server environments. Included setup for Docker build, push, and cleanup scripts for streamlined deployment." />
+    <option name="LAST_COMMIT_MESSAGE" value="Add Docker deployment setup and clean up project files&#10;&#10;Removed redundant IntelliJ IDEA project files and updated `.gitignore` for better compatibility. Added Dockerfiles, deployment scripts, and container configurations for VPS and GTAV game server environments. Included setup for Docker build, push, and cleanup scripts for streamlined deployment." />
   </component>
 </project>

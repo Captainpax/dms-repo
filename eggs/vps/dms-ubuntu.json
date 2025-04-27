@@ -1,27 +1,30 @@
 {
-  "_comment": "DMS Ubuntu VPS Egg",
   "meta": {
-    "version": "1.1",
+    "version": "PTDL_v2",
     "update_url": null
   },
   "name": "DMS Ubuntu VPS",
   "author": "AntimatterZoneLLC",
   "description": "Customizable Ubuntu 25.04 VPS container with SSH, firewall, and admin user setup.",
+  "features": [],
   "docker_images": {
-    "captainpax/dms-vps": "captainpax/dms-vps:latest"
+    "captainpax/dms-vps:latest": "captainpax/dms-vps:latest"
   },
+  "file_denylist": [],
   "startup": "/usr/sbin/sshd -D",
   "config": {
-    "files": "{}",
-    "startup": "{\r\n    \"done\": \"Server listening on\"\r\n}",
-    "logs": "{}",
+    "files": {},
+    "startup": {
+      "done": "Server listening on"
+    },
+    "logs": {},
     "stop": "exit"
   },
   "scripts": {
     "installation": {
-      "script": "#!/bin/bash\napt update\napt install -y openssh-server sudo nano ufw tzdata\nmkdir -p /var/run/sshd\nchmod +x /tmp/install.sh\n/tmp/install.sh",
       "container": "captainpax/dms-vps:latest",
-      "entrypoint": "bash"
+      "entrypoint": "bash",
+      "script": "#!/bin/bash\napt update\napt install -y openssh-server sudo nano ufw tzdata\nbash /tmp/install.sh"
     }
   },
   "variables": [
@@ -32,7 +35,8 @@
       "default_value": "admin",
       "user_viewable": true,
       "user_editable": true,
-      "rules": "required|string|alpha_dash|between:3,20"
+      "rules": "required|string|alpha_dash|between:3,20",
+      "field_type": "text"
     },
     {
       "name": "Admin Password",
@@ -41,7 +45,8 @@
       "default_value": "SecurePass123!",
       "user_viewable": true,
       "user_editable": true,
-      "rules": "required|string|min:8|max:64"
+      "rules": "required|string|min:8|max:64",
+      "field_type": "text"
     },
     {
       "name": "SSH Port",
@@ -50,7 +55,8 @@
       "default_value": "2222",
       "user_viewable": true,
       "user_editable": true,
-      "rules": "required|integer|between:1024,65535"
+      "rules": "required|integer|between:1024,65535",
+      "field_type": "text"
     },
     {
       "name": "Timezone",
@@ -59,7 +65,8 @@
       "default_value": "Etc/UTC",
       "user_viewable": true,
       "user_editable": true,
-      "rules": "required|string|max:40"
+      "rules": "required|string|max:40",
+      "field_type": "text"
     }
   ]
 }

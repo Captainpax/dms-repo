@@ -1,30 +1,30 @@
-FROM captainpax/dms-base:latest
-LABEL authors="AntimatterZoneLLC"
-LABEL description="VPS optimized Ubuntu container by AntimatterZoneLLC"
+# DMS VPS Image for Pterodactyl
+FROM captainpax/dms-base
+
+LABEL maintainer="AntimatterZone LLC <support@antimatterzone.net>"
+LABEL description="DMS VPS Image with SSH, Firewall, and Admin User Setup (Pterodactyl Ready)"
+
+# Switch back to root temporarily
+USER root
 
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install only VPS-specific essential tools
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
+# Install necessary server packages
+RUN apt update && \
+    apt install -y --no-install-recommends \
         openssh-server \
         sudo \
         nano \
-        ufw && \
-    apt-get clean && \
+        ufw \
+        tzdata \
+        curl \
+        bash && \
+    apt clean && \
     rm -rf /var/lib/apt/lists/*
 
-# Basic SSH setup (secured further by install script)
-RUN mkdir -p /var/run/sshd && \
-    sed -i 's/#PermitRootLogin prohibit-password/PermitRootLogin no/' /etc/ssh/sshd_config && \
-    sed -i 's/#PasswordAuthentication yes/PasswordAuthentication yes/' /etc/ssh/sshd_config
+# Setup SSH directory
+RUN mkdir -p /var/run/sshd
 
-# Expose default SSH port (customizable via install.sh later)
-EXPOSE 22
-
-# Copy and execute VPS-specific setup script
-COPY vps/install.sh /tmp/install.sh
-RUN chmod +x /tmp/install.sh && /tmp/install.sh
-
-# Set the container entry point
-CMD ["/usr/sbin/sshd", "-D"]
+# Switch back to container user for normal Pterodactyl startup
+USER container
+WORKDIR /home/container
