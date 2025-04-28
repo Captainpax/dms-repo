@@ -10,7 +10,7 @@ FIVEM_VERSION="${FIVEM_VERSION:-recommended}"
 FIVEM_DL_URL="${DOWNLOAD_URL:-}"
 
 # Create required directories
-mkdir -p /home/container/alpine/opt/cfx-server /home/container/resources /home/container/logs
+mkdir -p /home/container/alpine/opt/cfx-server
 
 # Install required packages
 echo "[*] Installing required system packages..."
@@ -22,8 +22,8 @@ apt install -y --no-install-recommends \
 
 # Fetch artifact information
 echo "[*] Fetching FiveM artifact metadata..."
-RELEASE_PAGE=$(curl -sSL https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/)
-CHANGELOGS_PAGE=$(curl -sSL https://changelogs-live.fivem.net/api/changelog/versions/linux/server)
+RELEASE_PAGE=$(curl -sfSL https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/)
+CHANGELOGS_PAGE=$(curl -sfSL https://changelogs-live.fivem.net/api/changelog/versions/linux/server)
 
 # Determine correct artifact download link
 if [[ "$FIVEM_VERSION" == "recommended" ]] || [[ -z "$FIVEM_VERSION" ]]; then
@@ -49,17 +49,17 @@ fi
 # Download and extract FiveM server
 echo "[*] Downloading FiveM server artifact..."
 cd /home/container/alpine/opt/cfx-server
-curl -sSL "$DOWNLOAD_LINK" -o "fivem.tar.xz"
+curl -sfSL "$DOWNLOAD_LINK" -o "fivem.tar.xz"
 tar -xf "fivem.tar.xz"
 rm -f "fivem.tar.xz"
 
 # Return to container root
 cd /home/container
 
-# Download default server.cfg if not already present
+# Download default server.cfg if missing
 if [[ ! -f server.cfg ]]; then
     echo "[*] No server.cfg found, downloading default configuration..."
-    curl -sSL https://raw.githubusercontent.com/citizenfx/cfx-server-data/master/server.cfg -o server.cfg
+    curl -sfSL https://raw.githubusercontent.com/citizenfx/cfx-server-data/master/server.cfg -o server.cfg
 fi
 
 echo "[✔] FiveM installation complete!"

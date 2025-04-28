@@ -15,5 +15,10 @@ MODIFIED_STARTUP=$(echo "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g')
 echo "[*] Starting container with command:"
 echo ":/home/container$ ${MODIFIED_STARTUP}"
 
-# Run the final command
+# If txAdmin is enabled, print the txAdmin panel URL
+if [[ "${TXADMIN_ENABLE:-0}" == "1" ]]; then
+    echo "[+] txAdmin panel should be available at: http://\$(hostname -I | awk '{print \$1}'):${TXADMIN_PORT}"
+fi
+
+# Run the final startup command
 exec /bin/bash -c "${MODIFIED_STARTUP}"

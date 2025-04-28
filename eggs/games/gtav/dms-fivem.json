@@ -22,7 +22,7 @@
   },
   "scripts": {
     "installation": {
-      "script": "#!/bin/bash\necho \"[*] Image handles installation at build time. No install needed here.\"",
+      "script": "#!/bin/bash\necho \"[*] Installation handled inside Docker image. No install needed here.\"",
       "container": "ghcr.io/pterodactyl/installers:debian",
       "entrypoint": "bash"
     }
@@ -40,7 +40,7 @@
     },
     {
       "name": "Steam Web API Key",
-      "description": "Steam Web API key for Steam authentication services.",
+      "description": "Steam Web API key used for player authentication.",
       "env_variable": "STEAM_WEBAPIKEY",
       "default_value": "",
       "user_viewable": true,
@@ -50,7 +50,7 @@
     },
     {
       "name": "OneSync State",
-      "description": "Enable OneSync (on/off/legacy). Allows >32 players when on.",
+      "description": "Enable OneSync (on, off, or legacy). Allows >32 players when on.",
       "env_variable": "ONESYNC_STATE",
       "default_value": "on",
       "user_viewable": true,
@@ -60,7 +60,7 @@
     },
     {
       "name": "Game Build",
-      "description": "Force the server to use a specific GTA V game build. Leave blank to use default.",
+      "description": "Force the server to use a specific GTA V game build. Leave blank for default.",
       "env_variable": "GAME_BUILD",
       "default_value": "",
       "user_viewable": true,
@@ -70,7 +70,7 @@
     },
     {
       "name": "Project Name",
-      "description": "Sets the displayed server project name in the client.",
+      "description": "Displayed server project name shown to players.",
       "env_variable": "PROJECT_NAME",
       "default_value": "Darkmatter Server",
       "user_viewable": true,
@@ -80,7 +80,7 @@
     },
     {
       "name": "Project Description",
-      "description": "Sets the displayed project description in the client server list.",
+      "description": "Displayed project description in server list.",
       "env_variable": "PROJECT_DESCRIPTION",
       "default_value": "Welcome to Darkmatter!",
       "user_viewable": true,
@@ -100,7 +100,7 @@
     },
     {
       "name": "txAdmin Port",
-      "description": "Port for txAdmin panel (defaults to 40120).",
+      "description": "Port for the txAdmin web panel (default 40120).",
       "env_variable": "TXADMIN_PORT",
       "default_value": "40120",
       "user_viewable": true,
@@ -110,7 +110,7 @@
     },
     {
       "name": "FiveM Game Port",
-      "description": "The primary FiveM server port (both TCP and UDP). Defaults to 30120.",
+      "description": "Primary FiveM server port (TCP and UDP). Default 30120.",
       "env_variable": "FIVEM_PORT",
       "default_value": "30120",
       "user_viewable": true,
