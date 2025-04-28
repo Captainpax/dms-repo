@@ -7,7 +7,7 @@
   "exported_at": null,
   "name": "DMS FiveM Server",
   "author": "captainpax@antimatterzone.net",
-  "description": "Standalone FiveM FXServer setup (auto-installs latest artifacts) with full variable-driven startup. Built by Darkmatter Servers (AntimatterZone).",
+  "description": "Standalone FiveM FXServer setup (auto-installs latest artifacts during server startup). Built by Darkmatter Servers (AntimatterZone).",
   "features": [],
   "docker_images": {
     "Darkmatter FiveM Build (Recommended)": "captainpax/dms-fivem:latest"
@@ -22,7 +22,7 @@
   },
   "scripts": {
     "installation": {
-      "script": "#!/bin/bash\necho \"[*] Installation handled inside Docker image. No install needed here.\"",
+      "script": "#!/bin/bash\necho \"[*] Installation handled automatically at server startup. No manual install needed.\"",
       "container": "ghcr.io/pterodactyl/installers:debian",
       "entrypoint": "bash"
     }
