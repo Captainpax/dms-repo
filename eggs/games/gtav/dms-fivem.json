@@ -13,7 +13,7 @@
     "Darkmatter FiveM Build (Recommended)": "captainpax/dms-fivem:latest"
   },
   "file_denylist": [],
-  "startup": "./opt/cfx-server/FXServer +exec server.cfg +set sv_licenseKey {{FIVEM_LICENSE}} +set steam_webApiKey {{STEAM_WEBAPIKEY}} +set onesync {{ONESYNC_STATE}} +set sv_enforceGameBuild {{GAME_BUILD}} +sets sv_projectName \"{{PROJECT_NAME}}\" +sets sv_projectDesc \"{{PROJECT_DESCRIPTION}}\" +set txAdminPort {{TXADMIN_PORT}} +set txAdminEnabled {{TXADMIN_ENABLE}} +set sv_endpoint_add_tcp \"0.0.0.0:{{FIVEM_PORT}}\" +set sv_endpoint_add_udp \"0.0.0.0:{{FIVEM_PORT}}\"",
+  "startup": "./FXServer +exec server.cfg +set sv_licenseKey {{FIVEM_LICENSE}} +set steam_webApiKey {{STEAM_WEBAPIKEY}} +set onesync {{ONESYNC_STATE}} +set sv_enforceGameBuild {{GAME_BUILD}} +sets sv_projectName \"{{PROJECT_NAME}}\" +sets sv_projectDesc \"{{PROJECT_DESCRIPTION}}\" +set txAdminPort {{TXADMIN_PORT}} +set txAdminEnabled {{TXADMIN_ENABLE}} +set sv_endpoint_add_tcp \"0.0.0.0:{{FIVEM_PORT}}\" +set sv_endpoint_add_udp \"0.0.0.0:{{FIVEM_PORT}}\"",
   "config": {
     "files": "{}",
     "startup": "{\"done\": \"Server list query started\"}",

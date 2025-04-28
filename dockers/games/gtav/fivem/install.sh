@@ -111,6 +111,9 @@ done
 # Return to container root
 cd /home/container
 
+# Make FXServer executable
+chmod +x /home/container/opt/cfx-server/FXServer
+
 echo ""
 echo "=========================================="
 echo "   [✔] DMS FiveM Installation Completed   "
