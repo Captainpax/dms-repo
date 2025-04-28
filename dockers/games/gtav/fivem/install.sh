@@ -1,5 +1,5 @@
 #!/bin/bash
-# FiveM Install Script for Pterodactyl Panel - by Antimatter Zone LLC
+# DMS FiveM Install Script for Pterodactyl Panel - by Darkmatter Servers (Antimatter Zone LLC)
 
 set -euo pipefail
 
@@ -56,10 +56,7 @@ rm -f "fivem.tar.xz"
 # Return to container root
 cd /home/container
 
-# Download default server.cfg if missing
-if [[ ! -f server.cfg ]]; then
-    echo "[*] No server.cfg found, downloading default configuration..."
-    curl -sfSL https://raw.githubusercontent.com/citizenfx/cfx-server-data/master/server.cfg -o server.cfg
-fi
+# Note: Default server.cfg is now bundled inside the Docker image.
+# No longer downloading a server.cfg at runtime.
 
 echo "[✔] FiveM installation complete!"

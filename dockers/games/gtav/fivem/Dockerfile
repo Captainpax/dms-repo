@@ -28,6 +28,7 @@ WORKDIR /home/container
 # Copy scripts into the image
 COPY ./install.sh /install.sh
 COPY ./entrypoint.sh /entrypoint.sh
+COPY ./server.cfg /home/container/server.cfg
 
 # Make scripts executable
 RUN chmod +x /install.sh /entrypoint.sh
