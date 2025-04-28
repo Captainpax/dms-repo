@@ -1,15 +1,19 @@
 #!/bin/bash
-set -e
+set -euo pipefail
 
-cd /home/container || exit 1
+cd /home/container || {
+    echo "[-] Failed to change directory to /home/container"
+    exit 1
+}
 
-# If STARTUP is empty, set a default safe command
+# Set a default safe startup command if STARTUP is empty
 STARTUP="${STARTUP:-bash}"
 
-# Replace {{VAR}} with ${VAR} in startup string
-MODIFIED_STARTUP=$(echo "$STARTUP" | sed -e 's/{{/${/g' -e 's/}}/}/g')
+# Replace all {{VAR}} with ${VAR} to allow environment variable expansion
+MODIFIED_STARTUP=$(echo "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g')
 
-echo ":/home/container$ $MODIFIED_STARTUP"
+echo "[*] Starting container with command:"
+echo ":/home/container$ ${MODIFIED_STARTUP}"
 
-# Execute the startup command
-eval "$MODIFIED_STARTUP"
+# Run the final command
+exec /bin/bash -c "${MODIFIED_STARTUP}"

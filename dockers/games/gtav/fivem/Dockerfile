@@ -22,19 +22,22 @@ RUN apt update && apt install -y --no-install-recommends \
     && apt clean \
     && rm -rf /var/lib/apt/lists/*
 
-# Set working directory (Pterodactyl always mounts data here)
+# Set working directory
 WORKDIR /home/container
 
-# Copy in your scripts
+# Copy scripts into the image
 COPY ./install.sh /install.sh
 COPY ./entrypoint.sh /entrypoint.sh
 
 # Make scripts executable
 RUN chmod +x /install.sh /entrypoint.sh
 
+# RUN install.sh during the build!
+RUN /install.sh
+
 # Expose FiveM server ports
 EXPOSE 30120/tcp 30120/udp
 EXPOSE 40120/tcp 40120/udp
 
-# Set the default entrypoint
+# Default entrypoint
 ENTRYPOINT ["/entrypoint.sh"]

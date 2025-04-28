@@ -1,31 +1,122 @@
 {
-  "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY DARKMATTER SERVERS - TEST MINIMAL FIVEM",
+  "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY DARKMATTER SERVERS - ANTIMATTERZONE.NET",
   "meta": {
     "version": "PTDL_v2",
     "update_url": null
   },
   "exported_at": null,
-  "name": "DMS FiveM Test Server",
-  "author": "AntimatterZoneLLC",
-  "description": "Minimal FiveM Game Server Egg for Testing Purposes (Darkmatter Stack)",
-  "features": null,
+  "name": "DMS FiveM Server",
+  "author": "captainpax@antimatterzone.net",
+  "description": "Standalone FiveM FXServer setup (auto-installs latest artifacts) with full variable-driven startup. Built by Darkmatter Servers (AntimatterZone).",
+  "features": [],
   "docker_images": {
-    "captainpax/dms-fivem:latest": "captainpax/dms-fivem:latest"
+    "Darkmatter FiveM Build (Recommended)": "captainpax/dms-fivem:latest"
   },
   "file_denylist": [],
-  "startup": "./alpine/opt/cfx-server/FXServer +exec server.cfg",
+  "startup": "./alpine/opt/cfx-server/FXServer +exec server.cfg +set sv_licenseKey {{FIVEM_LICENSE}} +set steam_webApiKey {{STEAM_WEBAPIKEY}} +set onesync {{ONESYNC_STATE}} +set sv_enforceGameBuild {{GAME_BUILD}} +sets sv_projectName \"{{PROJECT_NAME}}\" +sets sv_projectDesc \"{{PROJECT_DESCRIPTION}}\" +set txAdminPort {{TXADMIN_PORT}} +set txAdminEnabled {{TXADMIN_ENABLE}} +set sv_endpoint_add_tcp \"0.0.0.0:{{FIVEM_PORT}}\" +set sv_endpoint_add_udp \"0.0.0.0:{{FIVEM_PORT}}\"",
   "config": {
-    "files": {},
+    "files": "{}",
     "startup": "{\"done\": \"Server list query started\"}",
-    "logs": {},
+    "logs": "{}",
     "stop": "^C"
   },
   "scripts": {
     "installation": {
-      "container": "ghcr.io/parkervcp/installers:debian",
-      "entrypoint": "bash",
-      "script": "echo Installing...\necho Done."
+      "script": "#!/bin/bash\necho \"[*] Image handles installation at build time. No install needed here.\"",
+      "container": "ghcr.io/pterodactyl/installers:debian",
+      "entrypoint": "bash"
     }
   },
-  "variables": []
+  "variables": [
+    {
+      "name": "FiveM License Key",
+      "description": "Your official FiveM server license key from https://keymaster.fivem.net/",
+      "env_variable": "FIVEM_LICENSE",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string|min:10|max:60",
+      "field_type": "text"
+    },
+    {
+      "name": "Steam Web API Key",
+      "description": "Steam Web API key for Steam authentication services.",
+      "env_variable": "STEAM_WEBAPIKEY",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string|min:10|max:60",
+      "field_type": "text"
+    },
+    {
+      "name": "OneSync State",
+      "description": "Enable OneSync (on/off/legacy). Allows >32 players when on.",
+      "env_variable": "ONESYNC_STATE",
+      "default_value": "on",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string|in:on,off,legacy",
+      "field_type": "text"
+    },
+    {
+      "name": "Game Build",
+      "description": "Force the server to use a specific GTA V game build. Leave blank to use default.",
+      "env_variable": "GAME_BUILD",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|numeric",
+      "field_type": "text"
+    },
+    {
+      "name": "Project Name",
+      "description": "Sets the displayed server project name in the client.",
+      "env_variable": "PROJECT_NAME",
+      "default_value": "Darkmatter Server",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string|max:60",
+      "field_type": "text"
+    },
+    {
+      "name": "Project Description",
+      "description": "Sets the displayed project description in the client server list.",
+      "env_variable": "PROJECT_DESCRIPTION",
+      "default_value": "Welcome to Darkmatter!",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string|max:100",
+      "field_type": "text"
+    },
+    {
+      "name": "Enable txAdmin",
+      "description": "Enable the txAdmin web panel (1 to enable, 0 to disable).",
+      "env_variable": "TXADMIN_ENABLE",
+      "default_value": "1",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|boolean",
+      "field_type": "text"
+    },
+    {
+      "name": "txAdmin Port",
+      "description": "Port for txAdmin panel (defaults to 40120).",
+      "env_variable": "TXADMIN_PORT",
+      "default_value": "40120",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|numeric|min:1024|max:65535",
+      "field_type": "text"
+    },
+    {
+      "name": "FiveM Game Port",
+      "description": "The primary FiveM server port (both TCP and UDP). Defaults to 30120.",
+      "env_variable": "FIVEM_PORT",
+      "default_value": "30120",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|numeric|min:1024|max:65535",
+      "field_type": "text"
+    }
+  ]
 }

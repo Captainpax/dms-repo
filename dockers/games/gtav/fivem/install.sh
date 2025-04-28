@@ -1,32 +1,31 @@
 #!/bin/bash
 # FiveM Install Script for Pterodactyl Panel - by Antimatter Zone LLC
 
-set -e
+set -euo pipefail
 
 echo "[*] Starting FiveM installation..."
 
-# Set variables
-FIVEM_VERSION=${FIVEM_VERSION:-recommended}
-FIVEM_DL_URL=${DOWNLOAD_URL:-""}
+# Set variables with sane defaults
+FIVEM_VERSION="${FIVEM_VERSION:-recommended}"
+FIVEM_DL_URL="${DOWNLOAD_URL:-}"
 
-# Create important directories
-mkdir -p /home/container/alpine/opt/cfx-server
-mkdir -p /home/container/resources
-mkdir -p /home/container/logs
+# Create required directories
+mkdir -p /home/container/alpine/opt/cfx-server /home/container/resources /home/container/logs
 
-# Install deps
-echo "[*] Installing required packages..."
+# Install required packages
+echo "[*] Installing required system packages..."
 apt update
-apt install -y --no-install-recommends curl git unzip xz-utils file jq ca-certificates
-apt clean
-rm -rf /var/lib/apt/lists/*
+apt install -y --no-install-recommends \
+    curl git unzip xz-utils file jq ca-certificates \
+    && apt clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Fetch download link
-echo "[*] Fetching FiveM artifact info..."
+# Fetch artifact information
+echo "[*] Fetching FiveM artifact metadata..."
 RELEASE_PAGE=$(curl -sSL https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/)
 CHANGELOGS_PAGE=$(curl -sSL https://changelogs-live.fivem.net/api/changelog/versions/linux/server)
 
-# Pick correct artifact
+# Determine correct artifact download link
 if [[ "$FIVEM_VERSION" == "recommended" ]] || [[ -z "$FIVEM_VERSION" ]]; then
     DOWNLOAD_LINK=$(echo "$CHANGELOGS_PAGE" | jq -r '.recommended_download')
 elif [[ "$FIVEM_VERSION" == "latest" ]]; then
@@ -34,7 +33,7 @@ elif [[ "$FIVEM_VERSION" == "latest" ]]; then
 else
     VERSION_LINK=$(echo "$RELEASE_PAGE" | grep -Eo '"[^"]*\.tar\.xz"' | grep -o '[^"]*' | grep "$FIVEM_VERSION" || true)
     if [[ -z "$VERSION_LINK" ]]; then
-        echo "[!] Invalid specified version: '$FIVEM_VERSION'. Falling back to recommended version."
+        echo "[!] Invalid specified version: '${FIVEM_VERSION}'. Falling back to recommended version."
         DOWNLOAD_LINK=$(echo "$CHANGELOGS_PAGE" | jq -r '.recommended_download')
     else
         DOWNLOAD_LINK="https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/${VERSION_LINK}"
@@ -43,23 +42,23 @@ fi
 
 # Allow full manual override
 if [[ -n "$FIVEM_DL_URL" ]]; then
-    echo "[*] Overriding download link via DOWNLOAD_URL env var."
+    echo "[*] Manual override: using provided DOWNLOAD_URL."
     DOWNLOAD_LINK="$FIVEM_DL_URL"
 fi
 
-# Download & extract FiveM server
+# Download and extract FiveM server
 echo "[*] Downloading FiveM server artifact..."
 cd /home/container/alpine/opt/cfx-server
 curl -sSL "$DOWNLOAD_LINK" -o "fivem.tar.xz"
-tar -xf fivem.tar.xz
-rm -f fivem.tar.xz
+tar -xf "fivem.tar.xz"
+rm -f "fivem.tar.xz"
 
-# Back to container root
+# Return to container root
 cd /home/container
 
-# Download default server.cfg if missing
+# Download default server.cfg if not already present
 if [[ ! -f server.cfg ]]; then
-    echo "[*] Downloading default server.cfg..."
+    echo "[*] No server.cfg found, downloading default configuration..."
     curl -sSL https://raw.githubusercontent.com/citizenfx/cfx-server-data/master/server.cfg -o server.cfg
 fi
 

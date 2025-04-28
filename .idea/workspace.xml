@@ -4,19 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2195dd89-6ddb-4f5e-b3f4-411132f7256e" name="Changes" comment="Refactor deployment and container setup for consistency&#10;&#10;Unified Dockerfile structure across base, VPS, and FiveM images. Refactored scripts to streamline build, push, and cleanup processes. Added improved environment configuration, user management, and default setup scripts for consistent deployment in Pterodactyl-compatible containers.">
-      <change afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/entrypoint.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dockers/vps/ubuntu/entrypoint.sh" afterDir="false" />
+    <list default="true" id="2195dd89-6ddb-4f5e-b3f4-411132f7256e" name="Changes" comment="Remove deprecated VPS scripts and Dockerfiles, refactor FiveM setup.&#10;&#10;Deleted obsolete files related to VPS containers and simplified the project by focusing solely on FiveM deployment. Updated Dockerfiles and install scripts for FiveM to align with a standardized, minimal structure, improving maintainability and compatibility with the Pterodactyl platform. Streamlined the deployment script to reflect these changes.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/deploy.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dockers/base-img/ubuntu/Dockerfile" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/dockers/base-img/ubuntu/entrypoint.sh" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/entrypoint.sh" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/entrypoint.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/install.sh" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/install.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dockers/vps/ubuntu/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/vps/ubuntu/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dockers/vps/ubuntu/install.sh" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/vps/ubuntu/install.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/eggs/games/gtav/dms-fivem.json" beforeDir="false" afterPath="$PROJECT_DIR$/eggs/games/gtav/dms-fivem.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eggs/vps/dms-ubuntu.json" beforeDir="false" afterPath="$PROJECT_DIR$/eggs/vps/dms-ubuntu.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -180,7 +173,7 @@
       <workItem from="1745777585324" duration="3687000" />
       <workItem from="1745781365805" duration="75000" />
       <workItem from="1745785574542" duration="10191000" />
-      <workItem from="1745805723723" duration="1535000" />
+      <workItem from="1745805723723" duration="3744000" />
     </task>
     <task id="LOCAL-00001" summary="Add IntelliJ IDEA project files to version control&#10;&#10;Include essential project configuration files for IntelliJ IDEA, such as module, VCS, and project settings. Added `.gitignore` to exclude user-specific and environment-dependent files.">
       <option name="closed" value="true" />
@@ -206,7 +199,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745790664758</updated>
     </task>
-    <option name="localTasksCounter" value="4" />
+    <task id="LOCAL-00004" summary="Remove deprecated VPS scripts and Dockerfiles, refactor FiveM setup.&#10;&#10;Deleted obsolete files related to VPS containers and simplified the project by focusing solely on FiveM deployment. Updated Dockerfiles and install scripts for FiveM to align with a standardized, minimal structure, improving maintainability and compatibility with the Pterodactyl platform. Streamlined the deployment script to reflect these changes.">
+      <option name="closed" value="true" />
+      <created>1745807538943</created>
+      <option name="number" value="00004" />
+      <option name="presentableId" value="LOCAL-00004" />
+      <option name="project" value="LOCAL" />
+      <updated>1745807538943</updated>
+    </task>
+    <option name="localTasksCounter" value="5" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -217,6 +218,7 @@
     <MESSAGE value="Add IntelliJ IDEA project files to version control&#10;&#10;Include essential project configuration files for IntelliJ IDEA, such as module, VCS, and project settings. Added `.gitignore` to exclude user-specific and environment-dependent files." />
     <MESSAGE value="Add Docker deployment setup and clean up project files&#10;&#10;Removed redundant IntelliJ IDEA project files and updated `.gitignore` for better compatibility. Added Dockerfiles, deployment scripts, and container configurations for VPS and GTAV game server environments. Included setup for Docker build, push, and cleanup scripts for streamlined deployment." />
     <MESSAGE value="Refactor deployment and container setup for consistency&#10;&#10;Unified Dockerfile structure across base, VPS, and FiveM images. Refactored scripts to streamline build, push, and cleanup processes. Added improved environment configuration, user management, and default setup scripts for consistent deployment in Pterodactyl-compatible containers." />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor deployment and container setup for consistency&#10;&#10;Unified Dockerfile structure across base, VPS, and FiveM images. Refactored scripts to streamline build, push, and cleanup processes. Added improved environment configuration, user management, and default setup scripts for consistent deployment in Pterodactyl-compatible containers." />
+    <MESSAGE value="Remove deprecated VPS scripts and Dockerfiles, refactor FiveM setup.&#10;&#10;Deleted obsolete files related to VPS containers and simplified the project by focusing solely on FiveM deployment. Updated Dockerfiles and install scripts for FiveM to align with a standardized, minimal structure, improving maintainability and compatibility with the Pterodactyl platform. Streamlined the deployment script to reflect these changes." />
+    <option name="LAST_COMMIT_MESSAGE" value="Remove deprecated VPS scripts and Dockerfiles, refactor FiveM setup.&#10;&#10;Deleted obsolete files related to VPS containers and simplified the project by focusing solely on FiveM deployment. Updated Dockerfiles and install scripts for FiveM to align with a standardized, minimal structure, improving maintainability and compatibility with the Pterodactyl platform. Streamlined the deployment script to reflect these changes." />
   </component>
 </project>
