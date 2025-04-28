@@ -1,32 +1,40 @@
-# DMS FiveM Server Image for Pterodactyl
-FROM captainpax/dms-base
+# Use Pterodactyl's Debian yolk as the base image
+FROM ghcr.io/parkervcp/yolks:debian
 
-LABEL maintainer="AntimatterZone LLC <support@antimatterzone.net>"
-LABEL description="DMS FiveM Server Image (Ubuntu 25.04, Pterodactyl Ready)"
+# Maintainer (optional)
+LABEL maintainer="Antimatter Zone LLC"
+LABEL org.opencontainers.image.source="https://github.com/Captainpax/dms-repo"
 
-# Switch back to root temporarily
-USER root
-
+# Environment
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Install FiveM dependencies
-RUN apt update && \
-    apt install -y --no-install-recommends \
-        git \
-        xz-utils \
-        file \
-        unzip \
-        curl \
-        libatomic1 \
-        libstdc++6 \
-        libcurl4 \
-        libgomp1 && \
-    apt clean && \
-    rm -rf /var/lib/apt/lists/*
+# Install runtime dependencies for FiveM
+RUN apt update && apt install -y --no-install-recommends \
+    curl \
+    wget \
+    git \
+    unzip \
+    xz-utils \
+    ca-certificates \
+    libstdc++6 \
+    libgcc-s1 \
+    libc6 \
+    && apt clean \
+    && rm -rf /var/lib/apt/lists/*
 
-# Prepare folders
-RUN mkdir -p /home/container/alpine/opt/cfx-server /home/container/resources /home/container/logs
-
-# Switch back to container user
-USER container
+# Set working directory (Pterodactyl always mounts data here)
 WORKDIR /home/container
+
+# Copy in your scripts
+COPY ./install.sh /install.sh
+COPY ./entrypoint.sh /entrypoint.sh
+
+# Make scripts executable
+RUN chmod +x /install.sh /entrypoint.sh
+
+# Expose FiveM server ports
+EXPOSE 30120/tcp 30120/udp
+EXPOSE 40120/tcp 40120/udp
+
+# Set the default entrypoint
+ENTRYPOINT ["/entrypoint.sh"]

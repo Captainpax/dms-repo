@@ -4,17 +4,18 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2195dd89-6ddb-4f5e-b3f4-411132f7256e" name="Changes" comment="Add Docker deployment setup and clean up project files&#10;&#10;Removed redundant IntelliJ IDEA project files and updated `.gitignore` for better compatibility. Added Dockerfiles, deployment scripts, and container configurations for VPS and GTAV game server environments. Included setup for Docker build, push, and cleanup scripts for streamlined deployment.">
-      <change afterPath="$PROJECT_DIR$/.idea/dictionaries/project.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/.idea/vcs.xml" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/install.sh" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/dockers/vps/ubuntu/install.sh" afterDir="false" />
+    <list default="true" id="2195dd89-6ddb-4f5e-b3f4-411132f7256e" name="Changes" comment="Refactor deployment and container setup for consistency&#10;&#10;Unified Dockerfile structure across base, VPS, and FiveM images. Refactored scripts to streamline build, push, and cleanup processes. Added improved environment configuration, user management, and default setup scripts for consistent deployment in Pterodactyl-compatible containers.">
+      <change afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/entrypoint.sh" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dockers/vps/ubuntu/entrypoint.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/deploy.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dockers/base-img/ubuntu/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/base-img/ubuntu/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dockers/base-img/ubuntu/Dockerfile" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dockers/base-img/ubuntu/entrypoint.sh" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/install.sh" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/install.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dockers/vps/ubuntu/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/vps/ubuntu/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dockers/vps/ubuntu/vps/install.sh" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/base-img/ubuntu/entrypoint.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dockers/vps/ubuntu/install.sh" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/vps/ubuntu/install.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eggs/games/gtav/dms-fivem.json" beforeDir="false" afterPath="$PROJECT_DIR$/eggs/games/gtav/dms-fivem.json" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/eggs/vps/dms-ubuntu.json" beforeDir="false" afterPath="$PROJECT_DIR$/eggs/vps/dms-ubuntu.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -62,6 +63,7 @@
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
     "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Docker.base.executor": "Run",
     "Docker.ubuntu/Dockerfile (1).executor": "Run",
     "Docker.ubuntu/Dockerfile.executor": "Run",
     "Docker.vps.executor": "Run",
@@ -73,7 +75,7 @@
     "Shell Script.deploy.sh.executor": "Run",
     "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "B:/darkmatter-repo/dms-repo/dockers/games/gtav/fivem",
+    "last_opened_file_path": "B:/darkmatter-repo/dms-repo/dockers/vps/ubuntu",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -84,15 +86,17 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
+      <recent name="B:\darkmatter-repo\dms-repo\dockers\vps\ubuntu" />
       <recent name="B:\darkmatter-repo\dms-repo\dockers\games\gtav\fivem" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
+      <recent name="B:\darkmatter-repo\dms-repo\dockers\" />
       <recent name="B:\darkmatter-repo\dms-repo\dockers\base-img\ubuntu\" />
       <recent name="B:\darkmatter-repo\dms-repo\dockers\vps\ubuntu" />
       <recent name="B:\darkmatter-repo\dms-repo" />
     </key>
   </component>
-  <component name="RunManager" selected="Shell Script.deploy.sh">
+  <component name="RunManager" selected="Docker.vps">
     <configuration default="true" type="JetRunConfigurationType">
       <module name="dms-repo" />
       <method v="2">
@@ -152,9 +156,9 @@
     </list>
     <recent_temporary>
       <list>
-        <item itemvalue="Shell Script.deploy.sh" />
         <item itemvalue="Docker.vps" />
         <item itemvalue="Docker.base" />
+        <item itemvalue="Shell Script.deploy.sh" />
       </list>
     </recent_temporary>
   </component>
@@ -175,7 +179,8 @@
       <updated>1745777584065</updated>
       <workItem from="1745777585324" duration="3687000" />
       <workItem from="1745781365805" duration="75000" />
-      <workItem from="1745785574542" duration="4671000" />
+      <workItem from="1745785574542" duration="10191000" />
+      <workItem from="1745805723723" duration="1535000" />
     </task>
     <task id="LOCAL-00001" summary="Add IntelliJ IDEA project files to version control&#10;&#10;Include essential project configuration files for IntelliJ IDEA, such as module, VCS, and project settings. Added `.gitignore` to exclude user-specific and environment-dependent files.">
       <option name="closed" value="true" />
@@ -193,7 +198,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745781436568</updated>
     </task>
-    <option name="localTasksCounter" value="3" />
+    <task id="LOCAL-00003" summary="Refactor deployment and container setup for consistency&#10;&#10;Unified Dockerfile structure across base, VPS, and FiveM images. Refactored scripts to streamline build, push, and cleanup processes. Added improved environment configuration, user management, and default setup scripts for consistent deployment in Pterodactyl-compatible containers.">
+      <option name="closed" value="true" />
+      <created>1745790664757</created>
+      <option name="number" value="00003" />
+      <option name="presentableId" value="LOCAL-00003" />
+      <option name="project" value="LOCAL" />
+      <updated>1745790664758</updated>
+    </task>
+    <option name="localTasksCounter" value="4" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -203,6 +216,7 @@
     <MESSAGE value="inti" />
     <MESSAGE value="Add IntelliJ IDEA project files to version control&#10;&#10;Include essential project configuration files for IntelliJ IDEA, such as module, VCS, and project settings. Added `.gitignore` to exclude user-specific and environment-dependent files." />
     <MESSAGE value="Add Docker deployment setup and clean up project files&#10;&#10;Removed redundant IntelliJ IDEA project files and updated `.gitignore` for better compatibility. Added Dockerfiles, deployment scripts, and container configurations for VPS and GTAV game server environments. Included setup for Docker build, push, and cleanup scripts for streamlined deployment." />
-    <option name="LAST_COMMIT_MESSAGE" value="Add Docker deployment setup and clean up project files&#10;&#10;Removed redundant IntelliJ IDEA project files and updated `.gitignore` for better compatibility. Added Dockerfiles, deployment scripts, and container configurations for VPS and GTAV game server environments. Included setup for Docker build, push, and cleanup scripts for streamlined deployment." />
+    <MESSAGE value="Refactor deployment and container setup for consistency&#10;&#10;Unified Dockerfile structure across base, VPS, and FiveM images. Refactored scripts to streamline build, push, and cleanup processes. Added improved environment configuration, user management, and default setup scripts for consistent deployment in Pterodactyl-compatible containers." />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor deployment and container setup for consistency&#10;&#10;Unified Dockerfile structure across base, VPS, and FiveM images. Refactored scripts to streamline build, push, and cleanup processes. Added improved environment configuration, user management, and default setup scripts for consistent deployment in Pterodactyl-compatible containers." />
   </component>
 </project>

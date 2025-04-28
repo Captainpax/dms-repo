@@ -11,6 +11,7 @@ GREEN="\033[1;32m"; YELLOW="\033[1;33m"; RED="\033[1;31m"; BLUE="\033[1;34m"; CY
 TAG="latest"
 NAMESPACE="captainpax"
 NO_CACHE=true
+SKIP_PUSH=false
 
 # Docker build function
 build_and_push() {
@@ -20,9 +21,18 @@ build_and_push() {
   local cache_opt="$4"
 
   echo -e "\n${CYAN}🔨 Building: ${BOLD}${image}${RESET}\n"
+  if [ ! -f "${context}/${dockerfile}" ]; then
+    echo -e "${RED}❌ ERROR: Dockerfile not found at ${context}/${dockerfile}${RESET}"
+    exit 1
+  fi
+
   pushd "$context" > /dev/null || exit 1
   docker build ${cache_opt} -t "${image}" -f "${dockerfile}" .
-  docker push "${image}"
+  if [[ "$SKIP_PUSH" == false ]]; then
+    docker push "${image}"
+  else
+    echo -e "${YELLOW}⚠️ Skipping docker push (SKIP_PUSH is true)${RESET}"
+  fi
   popd > /dev/null || exit 1
 }
 
@@ -39,34 +49,54 @@ docker_clean() {
   fi
 }
 
-# List of build targets
+# Build targets (only FiveM now!)
 declare -A DOCKER_TARGETS=(
-  ["1"]="dockers/base-img/ubuntu Dockerfile dms-base"
-  ["2"]="dockers/vps/ubuntu Dockerfile dms-vps"
-  ["3"]="dockers/games/gtav/fivem Dockerfile dms-fivem"
+  ["1"]="dockers/games/gtav/fivem Dockerfile dms-fivem"
 )
 
-# Main Menu
+# Main menu
 while true; do
   clear
   echo -e "${BOLD}${CYAN}=========================================${RESET}"
   echo -e "${BOLD}${CYAN}🚀 Darkmatter Servers Docker Deployment Tool${RESET}"
   echo -e "${BOLD}${CYAN}=========================================${RESET}\n"
   echo -e "${BOLD}Menu Options:${RESET}"
-  echo -e "  ${BOLD}1)${RESET} 🏗️  Build & Push Single Image"
-  echo -e "  ${BOLD}2)${RESET} 🏗️  Build & Push All Images (Base -> VPS -> FiveM)"
-  echo -e "  ${BOLD}3)${RESET} 🧹 Docker System Cleanup"
+  echo -e "  ${BOLD}1)${RESET} 🏗️  Build & Push FiveM Image"
+  echo -e "  ${BOLD}2)${RESET} 🧹 Docker System Cleanup"
+  echo -e "  ${BOLD}3)${RESET} 🚀 Start a Docker Container"
   echo -e "  ${BOLD}4)${RESET} ❌ Exit"
   echo ""
-  echo -n "Enter choice [1-4, blank = Build All]: "
+  echo -n "Enter choice [1-4, or -1 for instant build]: "
   read -r OPTION
 
+  [[ -z "$OPTION" ]] && OPTION=1  # Default: build
 
-  [[ -z "$OPTION" ]] && OPTION=2  # Default to build all if blank
+  if [[ "$OPTION" == "-1" ]]; then
+    echo -e "\n${BOLD}${CYAN}🏗️  Instant Building and Pushing Image...${RESET}\n"
+    TAG="latest"
+    CACHE_OPT="--no-cache"
+    NAMESPACE="captainpax"
+
+    echo -e "${YELLOW}Do you want to push image after build? (y/N):${RESET}"
+    read -r push_choice
+    if [[ "$push_choice" =~ ^[Yy]$ ]]; then
+      SKIP_PUSH=false
+    else
+      SKIP_PUSH=true
+    fi
+
+    IFS=' ' read -r CONTEXT DOCKERFILE IMAGE_SUFFIX <<< "${DOCKER_TARGETS[1]}"
+    IMAGE="${NAMESPACE}/${IMAGE_SUFFIX}:${TAG}"
+    build_and_push "$CONTEXT" "$IMAGE" "$DOCKERFILE" "$CACHE_OPT"
+    echo -e "${GREEN}✅ Successfully built ${IMAGE}${RESET}\n"
+
+    read -rp "Press Enter to return to the main menu..."
+    continue
+  fi
 
   case $OPTION in
     1)
-      echo -e "\n${BOLD}${CYAN}🏗️  Building a single image...${RESET}\n"
+      echo -e "\n${BOLD}${CYAN}🏗️  Building FiveM Image...${RESET}\n"
 
       read -rp "Docker tag [latest]: " input_tag
       [[ -n "$input_tag" ]] && TAG="$input_tag"
@@ -77,45 +107,33 @@ while true; do
       read -rp "Docker namespace [captainpax]: " input_ns
       [[ -n "$input_ns" ]] && NAMESPACE="$input_ns"
 
-      echo -e "\n${CYAN}Available Targets:${RESET}"
-      echo "  1) dms-base (Ubuntu Base Image)"
-      echo "  2) dms-vps (VPS SSH + UFW Utilities)"
-      echo "  3) dms-fivem (FiveM Game Server)"
-      echo ""
-      read -rp "Select target number: " TARGET_SELECTION
-
-      IFS=' ' read -r CONTEXT DOCKERFILE IMAGE_SUFFIX <<< "${DOCKER_TARGETS[$TARGET_SELECTION]}"
-      if [[ -z "$CONTEXT" ]]; then
-        echo -e "${RED}❌ Invalid target selection. Please try again.${RESET}"
-        read -rp "Press Enter to continue..."
-        continue
+      echo -e "${YELLOW}Do you want to push after build? (y/N):${RESET}"
+      read -r push_choice
+      if [[ "$push_choice" =~ ^[Yy]$ ]]; then
+        SKIP_PUSH=false
+      else
+        SKIP_PUSH=true
       fi
 
+      IFS=' ' read -r CONTEXT DOCKERFILE IMAGE_SUFFIX <<< "${DOCKER_TARGETS[1]}"
       IMAGE="${NAMESPACE}/${IMAGE_SUFFIX}:${TAG}"
       build_and_push "$CONTEXT" "$IMAGE" "$DOCKERFILE" "$CACHE_OPT"
-      echo -e "\n${GREEN}✅ Successfully built and pushed ${image}${RESET}\n"
+      echo -e "\n${GREEN}✅ Successfully built ${IMAGE}${RESET}\n"
       ;;
     2)
-      echo -e "\n${BOLD}${CYAN}🏗️  Building and pushing ALL images (Base -> VPS -> FiveM)...${RESET}\n"
-
-      read -rp "Docker tag [latest]: " input_tag
-      [[ -n "$input_tag" ]] && TAG="$input_tag"
-
-      read -rp "Use --no-cache? (Y/n): " input_nc
-      [[ "$input_nc" =~ ^[Nn]$ ]] && CACHE_OPT="" || CACHE_OPT="--no-cache"
-
-      read -rp "Docker namespace [captainpax]: " input_ns
-      [[ -n "$input_ns" ]] && NAMESPACE="$input_ns"
-
-      for i in 1 2 3; do
-        IFS=' ' read -r CONTEXT DOCKERFILE IMAGE_SUFFIX <<< "${DOCKER_TARGETS[$i]}"
-        IMAGE="${NAMESPACE}/${IMAGE_SUFFIX}:${TAG}"
-        build_and_push "$CONTEXT" "$IMAGE" "$DOCKERFILE" "$CACHE_OPT"
-        echo -e "${GREEN}✅ Successfully built and pushed ${IMAGE}${RESET}\n"
-      done
+      docker_clean
       ;;
     3)
-      docker_clean
+      echo -e "\n${CYAN}Available Docker Images:${RESET}"
+      docker images --format "table {{.Repository}}\t{{.Tag}}\t{{.ID}}"
+      echo ""
+      read -rp "Enter image name to start (example: captainpax/dms-fivem:latest): " IMAGE_NAME
+      if [[ -z "$IMAGE_NAME" ]]; then
+        echo -e "${RED}❌ No image specified. Returning to menu.${RESET}"
+      else
+        echo -e "${BLUE}🚀 Starting container from image ${BOLD}${IMAGE_NAME}${RESET}..."
+        docker run -it --rm "$IMAGE_NAME"
+      fi
       ;;
     4)
       echo -e "\n${BLUE}👋 Exiting. Have a great day!${RESET}\n"

@@ -1,72 +1,31 @@
 {
+  "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY DARKMATTER SERVERS - TEST MINIMAL FIVEM",
   "meta": {
     "version": "PTDL_v2",
     "update_url": null
   },
-  "name": "DMS FiveM Server",
+  "exported_at": null,
+  "name": "DMS FiveM Test Server",
   "author": "AntimatterZoneLLC",
-  "description": "FiveM Game Server using Darkmatter Servers stack (Ubuntu 25.04 base).",
-  "features": [],
+  "description": "Minimal FiveM Game Server Egg for Testing Purposes (Darkmatter Stack)",
+  "features": null,
   "docker_images": {
     "captainpax/dms-fivem:latest": "captainpax/dms-fivem:latest"
   },
   "file_denylist": [],
-  "startup": "./alpine/opt/cfx-server/FXServer +exec server.cfg +set sv_licenseKey {{FIVEM_LICENSE}} +set steam_webApiKey {{STEAM_WEBAPIKEY}} +set onesync on",
+  "startup": "./alpine/opt/cfx-server/FXServer +exec server.cfg",
   "config": {
     "files": {},
-    "startup": {
-      "done": "Server list query started"
-    },
+    "startup": "{\"done\": \"Server list query started\"}",
     "logs": {},
     "stop": "^C"
   },
   "scripts": {
     "installation": {
-      "container": "captainpax/dms-fivem:latest",
+      "container": "ghcr.io/parkervcp/installers:debian",
       "entrypoint": "bash",
-      "script": "#!/bin/bash\napt update\napt install -y curl git unzip xz-utils file jq\nbash /tmp/install.sh"
+      "script": "echo Installing...\necho Done."
     }
   },
-  "variables": [
-    {
-      "name": "FiveM License Key",
-      "description": "Your FiveM server license key from keymaster.fivem.net",
-      "env_variable": "FIVEM_LICENSE",
-      "default_value": "",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "required|string|min:5",
-      "field_type": "text"
-    },
-    {
-      "name": "Steam Web API Key",
-      "description": "Your Steam API Key from https://steamcommunity.com/dev/apikey",
-      "env_variable": "STEAM_WEBAPIKEY",
-      "default_value": "",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "required|string|min:5",
-      "field_type": "text"
-    },
-    {
-      "name": "Artifact Version",
-      "description": "FiveM artifact version to install (recommended, latest, or specific build number)",
-      "env_variable": "FIVEM_VERSION",
-      "default_value": "recommended",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "required|string",
-      "field_type": "text"
-    },
-    {
-      "name": "Custom Download URL",
-      "description": "Override download URL for FiveM artifacts if needed (optional)",
-      "env_variable": "DOWNLOAD_URL",
-      "default_value": "",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "nullable|string",
-      "field_type": "text"
-    }
-  ]
+  "variables": []
 }
