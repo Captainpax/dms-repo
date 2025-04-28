@@ -1,4 +1,6 @@
 #!/bin/bash
+# DMS FiveM Entrypoint Script - by Darkmatter Servers (Antimatter Zone LLC)
+
 set -euo pipefail
 
 cd /home/container || {
@@ -6,35 +8,36 @@ cd /home/container || {
     exit 1
 }
 
+# Auto-run installation if FXServer not found
+if [[ ! -f "/home/container/opt/cfx-server/FXServer" ]]; then
+    echo "[!] FXServer binary not found. Running installation script..."
+    bash /install.sh
+fi
+
 # Set a default safe startup command if STARTUP is empty
 STARTUP="${STARTUP:-bash}"
 
 # Replace all {{VAR}} with ${VAR} to allow environment variable expansion
 MODIFIED_STARTUP=$(echo "${STARTUP}" | sed -e 's/{{/${/g' -e 's/}}/}/g')
 
-echo "[*] Starting container with command:"
+echo "[*] Preparing to start container with command:"
 echo ":/home/container$ ${MODIFIED_STARTUP}"
 
-# If txAdmin is enabled, print the txAdmin panel URL with best practices
+# If txAdmin is enabled, print txAdmin panel URL
 if [[ "${TXADMIN_ENABLE:-0}" == "1" ]]; then
-    # Try to detect external IP (safe fallback)
-    PUBLIC_IP=$(curl -s --max-time 5 https://api.ipify.org || echo "0.0.0.0")
+    # Detect external IP safely
+    PUBLIC_IP=$(curl -s --max-time 5 https://api.ipify.org || echo "")
 
-    # Warn if no valid IP
-    if [[ "$PUBLIC_IP" == "0.0.0.0" ]]; then
-        echo "[!] Warning: Could not detect external IP. Your txAdmin panel might not be reachable externally."
+    # Fallback to internal Docker IP if no public IP detected
+    if [[ -z "$PUBLIC_IP" ]]; then
+        echo "[!] Warning: Could not detect external public IP address."
+        PUBLIC_IP="127.0.0.1"
     fi
 
-    # Assume HTTP, unless you configure HTTPS manually later
     PROTOCOL="http"
-
-    # Check for common proxy env vars (stub for future use)
-    if [[ -n "${CF_CONNECTING_IP:-}" ]]; then
-        echo "[*] Cloudflare detected. You might need extra proxy config for txAdmin HTTPS."
-    fi
 
     echo "[+] txAdmin panel should be available at: ${PROTOCOL}://${PUBLIC_IP}:${TXADMIN_PORT}"
 fi
 
-# Run the final command
+# Finally run the startup command
 exec /bin/bash -c "${MODIFIED_STARTUP}"

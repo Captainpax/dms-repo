@@ -4,7 +4,14 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2195dd89-6ddb-4f5e-b3f4-411132f7256e" name="Changes" comment="Refactor FiveM setup and enhance installation scripts.&#10;&#10;Improved FiveM installation by refining scripts with safer curl usage and eliminating redundant operations. Enhanced txAdmin integration by adding external IP detection and better logging for accessibility. Updated associated configurations for clarity and improved compatibility with Pterodactyl." />
+    <list default="true" id="2195dd89-6ddb-4f5e-b3f4-411132f7256e" name="Changes" comment="Bundle server.cfg and improve FiveM setup integration&#10;&#10;Bundled a default `server.cfg` within the Docker image, removing the need for runtime downloads. Enhanced installation scripts and Dockerfile for better maintainability, including improved directory handling and health checks. Adjusted txAdmin setup for clarity and ensured alignment with Pterodactyl panel compatibility.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/deploy.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/entrypoint.sh" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/entrypoint.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/install.sh" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/install.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eggs/games/gtav/dms-fivem.json" beforeDir="false" afterPath="$PROJECT_DIR$/eggs/games/gtav/dms-fivem.json" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -62,7 +69,7 @@
     "Shell Script.deploy.sh.executor": "Run",
     "git-widget-placeholder": "master",
     "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "B:/darkmatter-repo/dms-repo/dockers/vps/ubuntu",
+    "last_opened_file_path": "B:/darkmatter-repo/dms-repo/dockers/games/gtav/fivem",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -73,8 +80,8 @@
 }]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
-      <recent name="B:\darkmatter-repo\dms-repo\dockers\vps\ubuntu" />
       <recent name="B:\darkmatter-repo\dms-repo\dockers\games\gtav\fivem" />
+      <recent name="B:\darkmatter-repo\dms-repo\dockers\vps\ubuntu" />
     </key>
     <key name="MoveFile.RECENT_KEYS">
       <recent name="B:\darkmatter-repo\dms-repo\dockers\" />
@@ -167,7 +174,7 @@
       <workItem from="1745777585324" duration="3687000" />
       <workItem from="1745781365805" duration="75000" />
       <workItem from="1745785574542" duration="10191000" />
-      <workItem from="1745805723723" duration="5410000" />
+      <workItem from="1745805723723" duration="8020000" />
     </task>
     <task id="LOCAL-00001" summary="Add IntelliJ IDEA project files to version control&#10;&#10;Include essential project configuration files for IntelliJ IDEA, such as module, VCS, and project settings. Added `.gitignore` to exclude user-specific and environment-dependent files.">
       <option name="closed" value="true" />
@@ -225,7 +232,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745811054184</updated>
     </task>
-    <option name="localTasksCounter" value="8" />
+    <task id="LOCAL-00008" summary="Add server.cfg and update FiveM setup for better integration&#10;&#10;Bundled a default server.cfg within the Docker image, removing the need to download it during runtime. Updated installation scripts and Dockerfile to handle server.cfg appropriately, enhancing maintainability. Improved overall clarity and alignment with Pterodactyl panel compatibility best practices.">
+      <option name="closed" value="true" />
+      <created>1745811552922</created>
+      <option name="number" value="00008" />
+      <option name="presentableId" value="LOCAL-00008" />
+      <option name="project" value="LOCAL" />
+      <updated>1745811552922</updated>
+    </task>
+    <option name="localTasksCounter" value="9" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -240,6 +255,8 @@
     <MESSAGE value="Refactor FiveM setup and remove deprecated VPS scripts.&#10;&#10;Simplified project by focusing solely on FiveM deployment. Updated Dockerfiles, install scripts, and entrypoint for improved maintainability and compatibility with Pterodactyl. Removed outdated VPS-related files and standardized configuration for streamlined deployment." />
     <MESSAGE value="Refactor FiveM setup and improve installation scripts.&#10;&#10;Streamlined FiveM installation by refining scripts to include safer curl options, removing redundant directory creation, and improving txAdmin integration. Updated configuration descriptions for clarity and adjusted Docker-related scripts for better maintainability and compatibility with Pterodactyl. Removed deprecated references to outdated VPS scripts." />
     <MESSAGE value="Refactor FiveM setup and enhance installation scripts.&#10;&#10;Improved FiveM installation by refining scripts with safer curl usage and eliminating redundant operations. Enhanced txAdmin integration by adding external IP detection and better logging for accessibility. Updated associated configurations for clarity and improved compatibility with Pterodactyl." />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor FiveM setup and enhance installation scripts.&#10;&#10;Improved FiveM installation by refining scripts with safer curl usage and eliminating redundant operations. Enhanced txAdmin integration by adding external IP detection and better logging for accessibility. Updated associated configurations for clarity and improved compatibility with Pterodactyl." />
+    <MESSAGE value="Add server.cfg and update FiveM setup for better integration&#10;&#10;Bundled a default server.cfg within the Docker image, removing the need to download it during runtime. Updated installation scripts and Dockerfile to handle server.cfg appropriately, enhancing maintainability. Improved overall clarity and alignment with Pterodactyl panel compatibility best practices." />
+    <MESSAGE value="Bundle server.cfg and improve FiveM setup integration&#10;&#10;Bundled a default `server.cfg` within the Docker image, removing the need for runtime downloads. Enhanced installation scripts and Dockerfile for better maintainability, including improved directory handling and health checks. Adjusted txAdmin setup for clarity and ensured alignment with Pterodactyl panel compatibility." />
+    <option name="LAST_COMMIT_MESSAGE" value="Bundle server.cfg and improve FiveM setup integration&#10;&#10;Bundled a default `server.cfg` within the Docker image, removing the need for runtime downloads. Enhanced installation scripts and Dockerfile for better maintainability, including improved directory handling and health checks. Adjusted txAdmin setup for clarity and ensured alignment with Pterodactyl panel compatibility." />
   </component>
 </project>
