@@ -4,7 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2195dd89-6ddb-4f5e-b3f4-411132f7256e" name="Changes" comment="Ensure mandatory environment variables for FiveM server&#10;&#10;Updated the entrypoint script to enforce that critical environment variables (FIVEM_LICENSE, STEAM_WEBAPIKEY, ONESYNC_STATE) are set before starting the server. This improves reliability by preventing server startup with undefined or incorrect configuration." />
+    <list default="true" id="2195dd89-6ddb-4f5e-b3f4-411132f7256e" name="Changes" comment="Refactor FiveM install script for clarity and efficiency&#10;&#10;Streamlined functions and removed redundant comments in the FiveM installation script to improve readability and maintainability. Adjusted artifact download URL and refined logic for determining download links. Minor updates were also made to IntelliJ project task configurations.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/Dockerfile" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -183,7 +186,7 @@
       <workItem from="1745781365805" duration="75000" />
       <workItem from="1745785574542" duration="10191000" />
       <workItem from="1745805723723" duration="8938000" />
-      <workItem from="1745879344358" duration="18551000" />
+      <workItem from="1745879344358" duration="20113000" />
     </task>
     <task id="LOCAL-00001" summary="Add IntelliJ IDEA project files to version control&#10;&#10;Include essential project configuration files for IntelliJ IDEA, such as module, VCS, and project settings. Added `.gitignore` to exclude user-specific and environment-dependent files.">
       <option name="closed" value="true" />
@@ -401,14 +404,21 @@
       <option name="project" value="LOCAL" />
       <updated>1745898818427</updated>
     </task>
-    <option name="localTasksCounter" value="28" />
+    <task id="LOCAL-00028" summary="Refactor FiveM install script for clarity and efficiency&#10;&#10;Streamlined functions and removed redundant comments in the FiveM installation script to improve readability and maintainability. Adjusted artifact download URL and refined logic for determining download links. Minor updates were also made to IntelliJ project task configurations.">
+      <option name="closed" value="true" />
+      <created>1745899196122</created>
+      <option name="number" value="00028" />
+      <option name="presentableId" value="LOCAL-00028" />
+      <option name="project" value="LOCAL" />
+      <updated>1745899196122</updated>
+    </task>
+    <option name="localTasksCounter" value="29" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Remove deprecated VPS scripts and Dockerfiles, refactor FiveM setup.&#10;&#10;Deleted obsolete files related to VPS containers and simplified the project by focusing solely on FiveM deployment. Updated Dockerfiles and install scripts for FiveM to align with a standardized, minimal structure, improving maintainability and compatibility with the Pterodactyl platform. Streamlined the deployment script to reflect these changes." />
     <MESSAGE value="Refactor FiveM setup and remove deprecated VPS scripts.&#10;&#10;Simplified project by focusing solely on FiveM deployment. Updated Dockerfiles, install scripts, and entrypoint for improved maintainability and compatibility with Pterodactyl. Removed outdated VPS-related files and standardized configuration for streamlined deployment." />
     <MESSAGE value="Refactor FiveM setup and improve installation scripts.&#10;&#10;Streamlined FiveM installation by refining scripts to include safer curl options, removing redundant directory creation, and improving txAdmin integration. Updated configuration descriptions for clarity and adjusted Docker-related scripts for better maintainability and compatibility with Pterodactyl. Removed deprecated references to outdated VPS scripts." />
     <MESSAGE value="Refactor FiveM setup and enhance installation scripts.&#10;&#10;Improved FiveM installation by refining scripts with safer curl usage and eliminating redundant operations. Enhanced txAdmin integration by adding external IP detection and better logging for accessibility. Updated associated configurations for clarity and improved compatibility with Pterodactyl." />
@@ -433,6 +443,7 @@
     <MESSAGE value="Refactor FiveM startup and deployment scripts&#10;&#10;Simplified and optimized the FiveM entrypoint script for better modularity and readability. Replaced array-based startup commands with a more streamlined string-based approach and improved dynamic parameter handling. Added runtime health checks for essential files and directories, ensuring a more robust and reliable setup." />
     <MESSAGE value="Fix FiveM artifact URL in install script.&#10;&#10;Updated the artifact URLs in `install.sh` to replace `build_proot_linux` with `build_linux`, ensuring the correct links are used for fetching builds. This change improves compatibility and prevents potential download errors during installation." />
     <MESSAGE value="Ensure mandatory environment variables for FiveM server&#10;&#10;Updated the entrypoint script to enforce that critical environment variables (FIVEM_LICENSE, STEAM_WEBAPIKEY, ONESYNC_STATE) are set before starting the server. This improves reliability by preventing server startup with undefined or incorrect configuration." />
-    <option name="LAST_COMMIT_MESSAGE" value="Ensure mandatory environment variables for FiveM server&#10;&#10;Updated the entrypoint script to enforce that critical environment variables (FIVEM_LICENSE, STEAM_WEBAPIKEY, ONESYNC_STATE) are set before starting the server. This improves reliability by preventing server startup with undefined or incorrect configuration." />
+    <MESSAGE value="Refactor FiveM install script for clarity and efficiency&#10;&#10;Streamlined functions and removed redundant comments in the FiveM installation script to improve readability and maintainability. Adjusted artifact download URL and refined logic for determining download links. Minor updates were also made to IntelliJ project task configurations." />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor FiveM install script for clarity and efficiency&#10;&#10;Streamlined functions and removed redundant comments in the FiveM installation script to improve readability and maintainability. Adjusted artifact download URL and refined logic for determining download links. Minor updates were also made to IntelliJ project task configurations." />
   </component>
 </project>
