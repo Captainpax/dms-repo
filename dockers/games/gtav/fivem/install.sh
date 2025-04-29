@@ -3,36 +3,50 @@
 
 set -euo pipefail
 
-# Set starting folder
-ORIGINAL_DIR="$(pwd)"
-
 echo ""
 echo "=========================================="
 echo "    [*] Starting DMS FiveM Installation    "
 echo "=========================================="
 echo ""
 
-# Set sane defaults
+# Set safe defaults
 FIVEM_VERSION="${FIVEM_VERSION:-recommended}"
 FIVEM_DL_URL="${DOWNLOAD_URL:-}"
 RETRY_MAX=3
 RETRY_DELAY=5
 
-# Prepare server directories
+# Make sure required tools exist
+if ! command -v curl &> /dev/null; then
+    echo "[!] curl is not installed. Cannot continue."
+    exit 1
+fi
+
+if ! command -v jq &> /dev/null; then
+    echo "[*] jq not found, installing..."
+    apt-get update && apt-get install -y jq || {
+        echo "[!] Failed to install jq. Aborting."
+        exit 1
+    }
+fi
+
+# Prepare folder structure
 echo "[*] Preparing server directory structure..."
-mkdir -p /home/container/opt/cfx-server
-mkdir -p /home/container/resources
-mkdir -p /home/container/logs
-mkdir -p /home/container/cache
+mkdir -p /home/container/opt/cfx-server /home/container/resources /home/container/logs /home/container/cache
 echo "[+] Directories ensured."
 
-# Fetch metadata
+# Fetch artifact metadata
 echo "[*] Fetching FiveM artifact metadata..."
-RELEASE_PAGE=$(curl -sfSL https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/)
-CHANGELOGS_PAGE=$(curl -sfSL https://changelogs-live.fivem.net/api/changelog/versions/linux/server)
+RELEASE_PAGE=$(curl -fsSL https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/ || true)
+CHANGELOGS_PAGE=$(curl -fsSL https://changelogs-live.fivem.net/api/changelog/versions/linux/server || true)
+
+if [[ -z "$CHANGELOGS_PAGE" ]]; then
+    echo "[!] Failed to fetch changelog metadata from FiveM. Check network."
+    exit 1
+fi
+
 echo "[+] Metadata fetched."
 
-# Determine download link
+# Determine which artifact to download
 echo "[*] Determining download link..."
 if [[ "$FIVEM_VERSION" == "recommended" ]] || [[ -z "$FIVEM_VERSION" ]]; then
     DOWNLOAD_LINK=$(echo "$CHANGELOGS_PAGE" | jq -r '.recommended_download')
@@ -57,43 +71,49 @@ if [[ -n "$FIVEM_DL_URL" ]]; then
     DOWNLOAD_LINK="$FIVEM_DL_URL"
 fi
 
+if [[ -z "$DOWNLOAD_LINK" ]] || [[ "$DOWNLOAD_LINK" == "null" ]]; then
+    echo "[!] Failed to determine download link. Aborting."
+    exit 1
+fi
+
+# Show download link
 echo "[*] Final Download URL:"
 echo "    $DOWNLOAD_LINK"
 
-# Begin installation
-cd /home/container/opt/cfx-server || { echo "[-] Failed to change directory to installation folder."; exit 1; }
+# Download & Extract FXServer
+cd /home/container/opt/cfx-server || exit 1
 
-# Download and extract with retries
 for ((attempt=1; attempt<=RETRY_MAX; attempt++)); do
     echo "[*] Attempt ${attempt} to download and extract artifact..."
 
-    # Clean directory first
     rm -rf /home/container/opt/cfx-server/*
+    curl -fsSL "$DOWNLOAD_LINK" -o fivem.tar.xz || {
+        echo "[!] Download failed. Retrying in ${RETRY_DELAY}s..."
+        sleep $RETRY_DELAY
+        continue
+    }
+    tar -xf fivem.tar.xz
+    rm -f fivem.tar.xz
 
-    curl -sfSL "$DOWNLOAD_LINK" -o "fivem.tar.xz" && \
-    tar -xf "fivem.tar.xz" && \
-    rm -f "fivem.tar.xz"
+    echo "[*] Files after extraction:"
+    find . -type f || true
 
-    echo "[*] Listing files after extraction:"
-    find . -type f
-
-    # Nested fx.tar.xz check
+    # Handle nested fx.tar.xz if present
     if [[ -f fx.tar.xz ]]; then
-        echo "[!] Nested fx.tar.xz found, extracting..."
+        echo "[!] Nested fx.tar.xz found. Extracting..."
         tar -xf fx.tar.xz
         rm -f fx.tar.xz
         echo "[+] Nested extraction complete."
     fi
 
-    # Alpine nested folder fix
+    # Flatten if alpine layout detected
     if [[ -d "./alpine/opt/cfx-server" ]]; then
-        echo "[!] Detected nested Alpine structure. Flattening..."
+        echo "[!] Detected nested alpine folder. Flattening structure..."
         cp -a ./alpine/opt/cfx-server/. ./
         rm -rf ./alpine
         echo "[+] Structure flattened."
     fi
 
-    # Validate if FXServer exists
     if [[ -f "./FXServer" ]]; then
         echo "[✔] FXServer binary found. Installation succeeded."
         break
@@ -102,20 +122,18 @@ for ((attempt=1; attempt<=RETRY_MAX; attempt++)); do
         sleep $RETRY_DELAY
     fi
 
-    # Out of retries
     if [[ $attempt -eq $RETRY_MAX ]]; then
         echo ""
         echo "=================================================="
         echo "[-] ERROR: FXServer binary NOT found after ${RETRY_MAX} attempts."
         echo "[-] Installation failed."
         echo "=================================================="
-        cd "$ORIGINAL_DIR" || true
         exit 1
     fi
 done
 
-# Return to container root and fix permissions
-cd /home/container || { echo "[-] Failed to return to container root."; exit 1; }
+# Post Install
+cd /home/container
 chmod +x /home/container/opt/cfx-server/FXServer
 
 echo ""
