@@ -4,12 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2195dd89-6ddb-4f5e-b3f4-411132f7256e" name="Changes" comment="Enhance FiveM installation and startup scripts.&#10;&#10;Refactored Dockerfile, install.sh, and entrypoint.sh to improve reliability, modularity, and compatibility. Added dynamic artifact fetching, enhanced folder structure setup, and clarified runtime configurations. Updated txAdmin handling, improved error handling, and implemented automatic version checks and updates.">
+    <list default="true" id="2195dd89-6ddb-4f5e-b3f4-411132f7256e" name="Changes" comment="Refactor FiveM setup and deployment scripts&#10;&#10;Updated Dockerfile, install, and entrypoint scripts for improved modularity, error handling, and dynamic artifact fetching. Enhanced folder structure setup, added version checks, clarified configuration options, and ensured compatibility with ESX Legacy and txAdmin. These updates streamline installation and improve reliability and maintainability.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/Dockerfile" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/entrypoint.sh" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/entrypoint.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/install.sh" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/install.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eggs/games/gtav/dms-fivem.json" beforeDir="false" afterPath="$PROJECT_DIR$/eggs/games/gtav/dms-fivem.json" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -189,7 +186,7 @@
       <workItem from="1745781365805" duration="75000" />
       <workItem from="1745785574542" duration="10191000" />
       <workItem from="1745805723723" duration="8938000" />
-      <workItem from="1745879344358" duration="16014000" />
+      <workItem from="1745879344358" duration="16829000" />
     </task>
     <task id="LOCAL-00001" summary="Add IntelliJ IDEA project files to version control&#10;&#10;Include essential project configuration files for IntelliJ IDEA, such as module, VCS, and project settings. Added `.gitignore` to exclude user-specific and environment-dependent files.">
       <option name="closed" value="true" />
@@ -359,14 +356,21 @@
       <option name="project" value="LOCAL" />
       <updated>1745894025222</updated>
     </task>
-    <option name="localTasksCounter" value="22" />
+    <task id="LOCAL-00022" summary="Refactor FiveM setup and deployment scripts&#10;&#10;Updated Dockerfile, install, and entrypoint scripts for improved modularity, error handling, and dynamic artifact fetching. Enhanced folder structure setup, added version checks, clarified configuration options, and ensured compatibility with ESX Legacy and txAdmin. These updates streamline installation and improve reliability and maintainability.">
+      <option name="closed" value="true" />
+      <created>1745896316344</created>
+      <option name="number" value="00022" />
+      <option name="presentableId" value="LOCAL-00022" />
+      <option name="project" value="LOCAL" />
+      <updated>1745896316344</updated>
+    </task>
+    <option name="localTasksCounter" value="23" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="inti" />
     <MESSAGE value="Add IntelliJ IDEA project files to version control&#10;&#10;Include essential project configuration files for IntelliJ IDEA, such as module, VCS, and project settings. Added `.gitignore` to exclude user-specific and environment-dependent files." />
     <MESSAGE value="Add Docker deployment setup and clean up project files&#10;&#10;Removed redundant IntelliJ IDEA project files and updated `.gitignore` for better compatibility. Added Dockerfiles, deployment scripts, and container configurations for VPS and GTAV game server environments. Included setup for Docker build, push, and cleanup scripts for streamlined deployment." />
     <MESSAGE value="Refactor deployment and container setup for consistency&#10;&#10;Unified Dockerfile structure across base, VPS, and FiveM images. Refactored scripts to streamline build, push, and cleanup processes. Added improved environment configuration, user management, and default setup scripts for consistent deployment in Pterodactyl-compatible containers." />
@@ -391,6 +395,7 @@
     <MESSAGE value="Refactor FiveM installation and deployment scripts.&#10;&#10;Streamlined installation process with improved error handling and dependency checks. Updated scripts to dynamically fetch missing files and clarified download/extraction processes. These changes enhance reliability, maintainability, and ease of setup." />
     <MESSAGE value="Refactor FiveM installation and deployment scripts.&#10;&#10;Improved error handling, added dependency checks, and ensured all required files are dynamically fetched. Enhanced folder setup and clarified script processes to improve reliability, maintainability, and ease of installation. Updated container image for better compatibility." />
     <MESSAGE value="Enhance FiveM installation and startup scripts.&#10;&#10;Refactored Dockerfile, install.sh, and entrypoint.sh to improve reliability, modularity, and compatibility. Added dynamic artifact fetching, enhanced folder structure setup, and clarified runtime configurations. Updated txAdmin handling, improved error handling, and implemented automatic version checks and updates." />
-    <option name="LAST_COMMIT_MESSAGE" value="Enhance FiveM installation and startup scripts.&#10;&#10;Refactored Dockerfile, install.sh, and entrypoint.sh to improve reliability, modularity, and compatibility. Added dynamic artifact fetching, enhanced folder structure setup, and clarified runtime configurations. Updated txAdmin handling, improved error handling, and implemented automatic version checks and updates." />
+    <MESSAGE value="Refactor FiveM setup and deployment scripts&#10;&#10;Updated Dockerfile, install, and entrypoint scripts for improved modularity, error handling, and dynamic artifact fetching. Enhanced folder structure setup, added version checks, clarified configuration options, and ensured compatibility with ESX Legacy and txAdmin. These updates streamline installation and improve reliability and maintainability." />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor FiveM setup and deployment scripts&#10;&#10;Updated Dockerfile, install, and entrypoint scripts for improved modularity, error handling, and dynamic artifact fetching. Enhanced folder structure setup, added version checks, clarified configuration options, and ensured compatibility with ESX Legacy and txAdmin. These updates streamline installation and improve reliability and maintainability." />
   </component>
 </project>

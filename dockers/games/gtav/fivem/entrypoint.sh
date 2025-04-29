@@ -35,24 +35,27 @@ if [[ -f "/home/container/.fivem_build" ]]; then
 fi
 
 # -----------------------------
-# Create startup command manually
+# Build the startup command carefully
 # -----------------------------
 
-STARTUP_CMD=( "./opt/cfx-server/FXServer" "+exec" "server.cfg" )
+STARTUP_CMD="./opt/cfx-server/FXServer +exec server.cfg"
+STARTUP_CMD+=" +set sv_licenseKey \"${FIVEM_LICENSE:-changeme}\""
+STARTUP_CMD+=" +set steam_webApiKey \"${STEAM_WEBAPIKEY:-changeme}\""
+STARTUP_CMD+=" +set onesync \"${ONESYNC_STATE:-on}\""
 
-# Add dynamic runtime args
-[[ -n "${FIVEM_LICENSE:-}" ]] && STARTUP_CMD+=( "+set" "sv_licenseKey" "${FIVEM_LICENSE}" )
-[[ -n "${STEAM_WEBAPIKEY:-}" ]] && STARTUP_CMD+=( "+set" "steam_webApiKey" "${STEAM_WEBAPIKEY}" )
-[[ -n "${ONESYNC_STATE:-}" ]] && STARTUP_CMD+=( "+set" "onesync" "${ONESYNC_STATE}" )
-[[ -n "${GAME_BUILD:-}" ]] && STARTUP_CMD+=( "+set" "sv_enforceGameBuild" "${GAME_BUILD}" )
-[[ -n "${PROJECT_NAME:-}" ]] && STARTUP_CMD+=( "+sets" "sv_projectName" "${PROJECT_NAME}" )
-[[ -n "${PROJECT_DESCRIPTION:-}" ]] && STARTUP_CMD+=( "+sets" "sv_projectDesc" "${PROJECT_DESCRIPTION}" )
-[[ -n "${TXADMIN_PORT:-}" ]] && STARTUP_CMD+=( "+set" "txAdminPort" "${TXADMIN_PORT}" )
-[[ -n "${TXADMIN_ENABLE:-}" ]] && STARTUP_CMD+=( "+set" "txAdminEnabled" "${TXADMIN_ENABLE}" )
-[[ -n "${FIVEM_PORT:-}" ]] && STARTUP_CMD+=( "+set" "sv_endpoint_add_tcp" "0.0.0.0:${FIVEM_PORT}" "+set" "sv_endpoint_add_udp" "0.0.0.0:${FIVEM_PORT}" )
+if [[ -n "${GAME_BUILD:-}" ]]; then
+    STARTUP_CMD+=" +set sv_enforceGameBuild ${GAME_BUILD}"
+fi
+
+STARTUP_CMD+=" +sets sv_projectName \"${PROJECT_NAME:-Darkmatter Server}\""
+STARTUP_CMD+=" +sets sv_projectDesc \"${PROJECT_DESCRIPTION:-Welcome to Darkmatter!}\""
+STARTUP_CMD+=" +set txAdminPort ${TXADMIN_PORT:-40120}"
+STARTUP_CMD+=" +set txAdminEnabled ${TXADMIN_ENABLE:-1}"
+STARTUP_CMD+=" +set sv_endpoint_add_tcp \"0.0.0.0:${FIVEM_PORT:-30120}\""
+STARTUP_CMD+=" +set sv_endpoint_add_udp \"0.0.0.0:${FIVEM_PORT:-30120}\""
 
 echo -e "${BLUE}[*] Preparing to start container with command:${RESET}"
-printf "${BOLD}:/home/container$ %q ${STARTUP_CMD[@]}${RESET}\n"
+echo -e "${BOLD}:/home/container$ ${STARTUP_CMD}${RESET}"
 
 # If txAdmin is enabled, show txAdmin URL
 if [[ "${TXADMIN_ENABLE:-0}" == "1" ]]; then
@@ -63,9 +66,14 @@ else
     echo -e "${YELLOW}[*] txAdmin is disabled.${RESET}"
 fi
 
-# Mini runtime health check (optional but safe)
-[[ ! -f "./server.cfg" ]] && echo -e "${RED}[!] server.cfg not found! Startup may fail.${RESET}"
-[[ ! -d "./resources" ]] && echo -e "${YELLOW}[!] Warning: No /resources folder detected.${RESET}"
+# Mini runtime health checks
+if [[ ! -f "./server.cfg" ]]; then
+    echo -e "${RED}[!] server.cfg not found! Startup may fail.${RESET}"
+fi
 
-# Final Launch
-exec "${STARTUP_CMD[@]}"
+if [[ ! -d "./resources" ]]; then
+    echo -e "${YELLOW}[!] Warning: No /resources folder detected.${RESET}"
+fi
+
+# Finally launch it properly
+exec /bin/bash -c "${STARTUP_CMD}"
