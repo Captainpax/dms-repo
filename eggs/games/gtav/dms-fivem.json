@@ -22,7 +22,7 @@
   },
   "scripts": {
     "installation": {
-      "script": "#!/bin/bash\n\nset -euo pipefail\n\n# Fetch Darkmatter deployment files if missing\nif [ ! -f \"/home/container/install.sh\" ] || [ ! -f \"/home/container/entrypoint.sh\" ]; then\n    echo \"[*] Downloading Darkmatter repo files...\"\n    curl -sSL https://github.com/Captainpax/dms-repo/archive/refs/heads/master.zip -o /tmp/dms-repo.zip\n    unzip -o /tmp/dms-repo.zip 'dms-repo-master/dockers/games/gtav/fivem/*' -d /tmp\n    cp -r /tmp/dms-repo-master/dockers/games/gtav/fivem/* /home/container/\n    rm -rf /tmp/*\n    chmod +x /home/container/install.sh /home/container/entrypoint.sh\n    echo \"[+] Darkmatter repo files pulled successfully.\"\nfi\n\n# Now run local install.sh to set up FXServer\nbash /home/container/install.sh",
+      "script": "#!/bin/bash\n\nset -euo pipefail\n\ncd /home/container || exit 1\n\n# Download fresh Darkmatter scripts\n\necho \"[*] Downloading Darkmatter server files...\"\ncurl -fsSL https://cloud.antimatterzone.net/s/9DzxCAFpSNMok6E/download/entrypoint.sh -o entrypoint.sh\ncurl -fsSL https://cloud.antimatterzone.net/s/FpWTPSHS5C2YBpM/download/install.sh -o install.sh\ncurl -fsSL https://cloud.antimatterzone.net/s/5ikTrqTCSdSoPjq/download/server.cfg -o server.cfg\n\nchmod +x entrypoint.sh install.sh\n\necho \"[+] Files downloaded and permissions set.\"\n\n# Run the install to bootstrap FXServer\nbash /home/container/install.sh",
       "container": "ghcr.io/pterodactyl/installers:debian",
       "entrypoint": "bash"
     }
