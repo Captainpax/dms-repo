@@ -35,13 +35,13 @@ if [[ -f "/home/container/.fivem_build" ]]; then
 fi
 
 # -----------------------------
-# Build the startup command carefully
+# Build the startup command carefully with strict safety
 # -----------------------------
 
 STARTUP_CMD="./opt/cfx-server/FXServer +exec server.cfg"
-STARTUP_CMD+=" +set sv_licenseKey \"${FIVEM_LICENSE:-changeme}\""
-STARTUP_CMD+=" +set steam_webApiKey \"${STEAM_WEBAPIKEY:-changeme}\""
-STARTUP_CMD+=" +set onesync \"${ONESYNC_STATE:-on}\""
+STARTUP_CMD+=" +set sv_licenseKey \"${FIVEM_LICENSE:?FIVEM_LICENSE environment variable not set}\""
+STARTUP_CMD+=" +set steam_webApiKey \"${STEAM_WEBAPIKEY:?STEAM_WEBAPIKEY environment variable not set}\""
+STARTUP_CMD+=" +set onesync \"${ONESYNC_STATE:?ONESYNC_STATE environment variable not set}\""
 
 if [[ -n "${GAME_BUILD:-}" ]]; then
     STARTUP_CMD+=" +set sv_enforceGameBuild ${GAME_BUILD}"
