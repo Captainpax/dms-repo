@@ -3,6 +3,9 @@
 
 set -euo pipefail
 
+# Set starting folder
+ORIGINAL_DIR="$(pwd)"
+
 echo ""
 echo "=========================================="
 echo "    [*] Starting DMS FiveM Installation    "
@@ -15,7 +18,7 @@ FIVEM_DL_URL="${DOWNLOAD_URL:-}"
 RETRY_MAX=3
 RETRY_DELAY=5
 
-# Create necessary directories
+# Prepare server directories
 echo "[*] Preparing server directory structure..."
 mkdir -p /home/container/opt/cfx-server
 mkdir -p /home/container/resources
@@ -23,7 +26,7 @@ mkdir -p /home/container/logs
 mkdir -p /home/container/cache
 echo "[+] Directories ensured."
 
-# Fetch artifact info
+# Fetch metadata
 echo "[*] Fetching FiveM artifact metadata..."
 RELEASE_PAGE=$(curl -sfSL https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/)
 CHANGELOGS_PAGE=$(curl -sfSL https://changelogs-live.fivem.net/api/changelog/versions/linux/server)
@@ -54,23 +57,27 @@ if [[ -n "$FIVEM_DL_URL" ]]; then
     DOWNLOAD_LINK="$FIVEM_DL_URL"
 fi
 
-# Final download link info
-echo "[*] Download URL:"
+echo "[*] Final Download URL:"
 echo "    $DOWNLOAD_LINK"
 
+# Begin installation
+cd /home/container/opt/cfx-server || { echo "[-] Failed to change directory to installation folder."; exit 1; }
+
 # Download and extract with retries
-cd /home/container/opt/cfx-server
 for ((attempt=1; attempt<=RETRY_MAX; attempt++)); do
     echo "[*] Attempt ${attempt} to download and extract artifact..."
 
+    # Clean directory first
     rm -rf /home/container/opt/cfx-server/*
+
     curl -sfSL "$DOWNLOAD_LINK" -o "fivem.tar.xz" && \
     tar -xf "fivem.tar.xz" && \
     rm -f "fivem.tar.xz"
 
-    echo "[*] Listing files after primary extraction:"
+    echo "[*] Listing files after extraction:"
     find . -type f
 
+    # Nested fx.tar.xz check
     if [[ -f fx.tar.xz ]]; then
         echo "[!] Nested fx.tar.xz found, extracting..."
         tar -xf fx.tar.xz
@@ -78,12 +85,9 @@ for ((attempt=1; attempt<=RETRY_MAX; attempt++)); do
         echo "[+] Nested extraction complete."
     fi
 
-    echo "[*] Final files after nested extraction (if any):"
-    find . -type f
-
-    # Detect Alpine nested structure and fix
+    # Alpine nested folder fix
     if [[ -d "./alpine/opt/cfx-server" ]]; then
-        echo "[!] Detected nested alpine folder. Flattening directory structure..."
+        echo "[!] Detected nested Alpine structure. Flattening..."
         cp -a ./alpine/opt/cfx-server/. ./
         rm -rf ./alpine
         echo "[+] Structure flattened."
@@ -98,20 +102,20 @@ for ((attempt=1; attempt<=RETRY_MAX; attempt++)); do
         sleep $RETRY_DELAY
     fi
 
+    # Out of retries
     if [[ $attempt -eq $RETRY_MAX ]]; then
         echo ""
         echo "=================================================="
         echo "[-] ERROR: FXServer binary NOT found after ${RETRY_MAX} attempts."
         echo "[-] Installation failed."
         echo "=================================================="
+        cd "$ORIGINAL_DIR" || true
         exit 1
     fi
 done
 
-# Return to container root
-cd /home/container
-
-# Make FXServer executable
+# Return to container root and fix permissions
+cd /home/container || { echo "[-] Failed to return to container root."; exit 1; }
 chmod +x /home/container/opt/cfx-server/FXServer
 
 echo ""

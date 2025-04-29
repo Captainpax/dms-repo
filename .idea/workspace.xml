@@ -4,10 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2195dd89-6ddb-4f5e-b3f4-411132f7256e" name="Changes" comment="Make FXServer executable and refine FiveM installation.&#10;&#10;Updated the installation script to ensure FXServer is executable, enhancing usability. Simplified the startup command for clarity and streamlined the FiveM setup process for better integration and maintainability. These changes improve compatibility with the Pterodactyl panel while bolstering error handling and directory setup.">
+    <list default="true" id="2195dd89-6ddb-4f5e-b3f4-411132f7256e" name="Changes" comment="Refactor FiveM setup and improve deployment scripts.&#10;&#10;Removed unused NO_CACHE variable and adjusted deploy.sh menu for clarity. Updated Dockerfile to streamline file copying, simplify paths, and ensure FXServer executability. Enhanced maintainability, error handling, and compatibility with the Pterodactyl panel.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/deploy.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/install.sh" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/install.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -40,6 +40,9 @@
   <component name="KubernetesApiProvider">{
   &quot;isMigrated&quot;: true
 }</component>
+  <component name="ProblemsViewState">
+    <option name="selectedTabId" value="CurrentFile" />
+  </component>
   <component name="ProjectColorInfo">{
   &quot;associatedIndex&quot;: 2
 }</component>
@@ -51,30 +54,32 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;Docker.base.executor&quot;: &quot;Run&quot;,
-    &quot;Docker.ubuntu/Dockerfile (1).executor&quot;: &quot;Run&quot;,
-    &quot;Docker.ubuntu/Dockerfile.executor&quot;: &quot;Run&quot;,
-    &quot;Docker.vps.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;SHELLCHECK.PATH&quot;: &quot;C:\\Users\\trist\\AppData\\Roaming\\JetBrains\\IntelliJIdea2025.1\\plugins\\Shell Script\\shellcheck.exe&quot;,
-    &quot;Shell Script.deploy.sh.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;B:/darkmatter-repo/dms-repo/dockers/games/gtav/fivem&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Docker.base.executor": "Run",
+    "Docker.fivem/Dockerfile.executor": "Run",
+    "Docker.ubuntu/Dockerfile (1).executor": "Run",
+    "Docker.ubuntu/Dockerfile.executor": "Run",
+    "Docker.vps.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "SHELLCHECK.PATH": "C:\\Users\\trist\\AppData\\Roaming\\JetBrains\\IntelliJIdea2025.1\\plugins\\Shell Script\\shellcheck.exe",
+    "Shell Script.deploy.sh.executor": "Run",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "last_opened_file_path": "B:/darkmatter-repo/dms-repo/dockers/games/gtav/fivem",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_package_manager_path": "npm",
+    "settings.editor.selected.configurable": "advanced.settings",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="B:\darkmatter-repo\dms-repo\dockers\games\gtav\fivem" />
@@ -87,7 +92,7 @@
       <recent name="B:\darkmatter-repo\dms-repo" />
     </key>
   </component>
-  <component name="RunManager" selected="Docker.vps">
+  <component name="RunManager" selected="Docker.fivem/Dockerfile">
     <configuration default="true" type="JetRunConfigurationType">
       <module name="dms-repo" />
       <method v="2">
@@ -130,6 +135,15 @@
       </deployment>
       <method v="2" />
     </configuration>
+    <configuration name="fivem/Dockerfile" type="docker-deploy" factoryName="dockerfile" temporary="true" server-name="Docker">
+      <deployment type="dockerfile">
+        <settings>
+          <option name="buildOnly" value="true" />
+          <option name="sourceFilePath" value="dockers/games/gtav/fivem/Dockerfile" />
+        </settings>
+      </deployment>
+      <method v="2" />
+    </configuration>
     <configuration name="vps" type="docker-deploy" factoryName="dockerfile" temporary="true" server-name="Docker">
       <deployment type="dockerfile">
         <settings>
@@ -141,12 +155,14 @@
       <method v="2" />
     </configuration>
     <list>
+      <item itemvalue="Docker.fivem/Dockerfile" />
       <item itemvalue="Docker.vps" />
       <item itemvalue="Docker.base" />
       <item itemvalue="Shell Script.deploy.sh" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="Docker.fivem/Dockerfile" />
         <item itemvalue="Docker.vps" />
         <item itemvalue="Docker.base" />
         <item itemvalue="Shell Script.deploy.sh" />
@@ -172,7 +188,7 @@
       <workItem from="1745781365805" duration="75000" />
       <workItem from="1745785574542" duration="10191000" />
       <workItem from="1745805723723" duration="8938000" />
-      <workItem from="1745879344358" duration="5904000" />
+      <workItem from="1745879344358" duration="7339000" />
     </task>
     <task id="LOCAL-00001" summary="Add IntelliJ IDEA project files to version control&#10;&#10;Include essential project configuration files for IntelliJ IDEA, such as module, VCS, and project settings. Added `.gitignore` to exclude user-specific and environment-dependent files.">
       <option name="closed" value="true" />
@@ -270,7 +286,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745883531652</updated>
     </task>
-    <option name="localTasksCounter" value="13" />
+    <task id="LOCAL-00013" summary="Refactor FiveM setup and improve deployment scripts.&#10;&#10;Removed unused NO_CACHE variable and adjusted deploy.sh menu for clarity. Updated Dockerfile to streamline file copying, simplify paths, and ensure FXServer executability. Enhanced maintainability, error handling, and compatibility with the Pterodactyl panel.">
+      <option name="closed" value="true" />
+      <created>1745885787132</created>
+      <option name="number" value="00013" />
+      <option name="presentableId" value="LOCAL-00013" />
+      <option name="project" value="LOCAL" />
+      <updated>1745885787132</updated>
+    </task>
+    <option name="localTasksCounter" value="14" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -291,6 +315,9 @@
     <MESSAGE value="Refactor FiveM setup and enhance integration.&#10;&#10;Bundled `server.cfg` directly into the Docker image to eliminate runtime downloads and improve maintainability. Updated installation script for better error handling, FXServer validation, and directory structure. Improved Dockerfile health checks and ensured compatibility with the Pterodactyl panel." />
     <MESSAGE value="Refactor FiveM setup and enhance installation process.&#10;&#10;Improved installation script with retries, better error handling, and enhanced directory setup. Bundled `server.cfg` directly into the Docker image to eliminate runtime downloads and increase maintainability. Updated integration to ensure compatibility with the Pterodactyl panel and added robust FXServer validation." />
     <MESSAGE value="Make FXServer executable and refine FiveM installation.&#10;&#10;Updated the installation script to ensure FXServer is executable, enhancing usability. Simplified the startup command for clarity and streamlined the FiveM setup process for better integration and maintainability. These changes improve compatibility with the Pterodactyl panel while bolstering error handling and directory setup." />
-    <option name="LAST_COMMIT_MESSAGE" value="Make FXServer executable and refine FiveM installation.&#10;&#10;Updated the installation script to ensure FXServer is executable, enhancing usability. Simplified the startup command for clarity and streamlined the FiveM setup process for better integration and maintainability. These changes improve compatibility with the Pterodactyl panel while bolstering error handling and directory setup." />
+    <MESSAGE value="Refactor FiveM setup and improve usability.&#10;&#10;Updated deployment scripts to enhance clarity and flexibility, including changing menu options and exit behavior. Refined Dockerfile to adjust file paths and make scripts executable in the container. These changes streamline the setup process, improve scalability, and ensure better compatibility with external systems." />
+    <MESSAGE value="```  &#10;Update deploy script and Dockerfile for better usability  &#10;&#10;Revised the deploy script to adjust option numbering and improve exit handling. Refined the Dockerfile by reorganizing script paths, ensuring executability, and enhancing clarity for FiveM setup. These changes enhance maintainability, integration, and user experience.  &#10;```" />
+    <MESSAGE value="Refactor FiveM setup and improve deployment scripts.&#10;&#10;Removed unused NO_CACHE variable and adjusted deploy.sh menu for clarity. Updated Dockerfile to streamline file copying, simplify paths, and ensure FXServer executability. Enhanced maintainability, error handling, and compatibility with the Pterodactyl panel." />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor FiveM setup and improve deployment scripts.&#10;&#10;Removed unused NO_CACHE variable and adjusted deploy.sh menu for clarity. Updated Dockerfile to streamline file copying, simplify paths, and ensure FXServer executability. Enhanced maintainability, error handling, and compatibility with the Pterodactyl panel." />
   </component>
 </project>

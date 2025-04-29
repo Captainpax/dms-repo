@@ -17,7 +17,6 @@ build_and_push() {
   local context="$1"
   local image="$2"
   local dockerfile="$3"
-  local cache_opt="$4"
 
   echo -e "\n${CYAN}🔨 Building: ${BOLD}${image}${RESET}\n"
   if [ ! -f "${context}/${dockerfile}" ]; then
@@ -26,7 +25,7 @@ build_and_push() {
   fi
 
   pushd "$context" > /dev/null || exit 1
-  docker build ${cache_opt} -t "${image}" -f "${dockerfile}" .
+  docker build --no-cache -t "${image}" -f "${dockerfile}" .
   if [[ "$SKIP_PUSH" == false ]]; then
     docker push "${image}"
   else
@@ -48,7 +47,7 @@ docker_clean() {
   fi
 }
 
-# Build targets (expandable later if needed)
+# Build targets (expandable for more games later)
 declare -A DOCKER_TARGETS=(
   ["1"]="dockers/games/gtav/fivem Dockerfile dms-fivem"
 )
@@ -65,33 +64,8 @@ while true; do
   echo -e "  ${BOLD}3)${RESET} 🚀 Start a Docker Container"
   echo -e "  ${BOLD}0)${RESET} ❌ Exit"
   echo ""
-  echo -n "Enter choice [0-3, or -1 for instant build]: "
+  echo -n "Enter choice [0-3]: "
   read -r OPTION
-
-  [[ -z "$OPTION" ]] && OPTION=1  # Default: build
-
-  if [[ "$OPTION" == "-1" ]]; then
-    echo -e "\n${BOLD}${CYAN}🏗️  Instant Building and Pushing Image...${RESET}\n"
-    TAG="latest"
-    CACHE_OPT="--no-cache"
-    NAMESPACE="captainpax"
-
-    echo -e "${YELLOW}Do you want to push image after build? (y/N):${RESET}"
-    read -r push_choice
-    if [[ "$push_choice" =~ ^[Yy]$ ]]; then
-      SKIP_PUSH=false
-    else
-      SKIP_PUSH=true
-    fi
-
-    IFS=' ' read -r CONTEXT DOCKERFILE IMAGE_SUFFIX <<< "${DOCKER_TARGETS[1]}"
-    IMAGE="${NAMESPACE}/${IMAGE_SUFFIX}:${TAG}"
-    build_and_push "$CONTEXT" "$IMAGE" "$DOCKERFILE" "$CACHE_OPT"
-    echo -e "${GREEN}✅ Successfully built ${IMAGE}${RESET}\n"
-
-    read -rp "Press Enter to return to the main menu..."
-    continue
-  fi
 
   case $OPTION in
     1)
@@ -99,9 +73,6 @@ while true; do
 
       read -rp "Docker tag [latest]: " input_tag
       [[ -n "$input_tag" ]] && TAG="$input_tag"
-
-      read -rp "Use --no-cache? (Y/n): " input_nc
-      [[ "$input_nc" =~ ^[Nn]$ ]] && CACHE_OPT="" || CACHE_OPT="--no-cache"
 
       read -rp "Docker namespace [captainpax]: " input_ns
       [[ -n "$input_ns" ]] && NAMESPACE="$input_ns"
@@ -116,7 +87,7 @@ while true; do
 
       IFS=' ' read -r CONTEXT DOCKERFILE IMAGE_SUFFIX <<< "${DOCKER_TARGETS[1]}"
       IMAGE="${NAMESPACE}/${IMAGE_SUFFIX}:${TAG}"
-      build_and_push "$CONTEXT" "$IMAGE" "$DOCKERFILE" "$CACHE_OPT"
+      build_and_push "$CONTEXT" "$IMAGE" "$DOCKERFILE"
       echo -e "\n${GREEN}✅ Successfully built ${IMAGE}${RESET}\n"
       ;;
     2)
