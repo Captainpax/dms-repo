@@ -41,7 +41,7 @@ download_and_install_fivem() {
         BUILD_NUM="manual"
         echo "[!] Manual override download URL detected."
     else
-        RELEASE_PAGE=$(curl -fsSL https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/)
+        RELEASE_PAGE=$(curl -fsSL https://runtime.fivem.net/artifacts/fivem/build_linux/master/)
         CHANGELOGS_PAGE=$(curl -fsSL https://changelogs-live.fivem.net/api/changelog/versions/linux/server)
 
         if [[ "$FIVEM_VERSION" == "recommended" ]] || [[ -z "$FIVEM_VERSION" ]]; then
@@ -55,7 +55,7 @@ download_and_install_fivem() {
         else
             VERSION_LINK=$(echo "$RELEASE_PAGE" | grep -Eo '"[^"]*\.tar\.xz"' | grep -o '[^"]*' | grep "$FIVEM_VERSION" || true)
             if [[ -n "$VERSION_LINK" ]]; then
-                DOWNLOAD_LINK="https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/${VERSION_LINK}"
+                DOWNLOAD_LINK="https://runtime.fivem.net/artifacts/fivem/build_linux/master/${VERSION_LINK}"
                 BUILD_NUM="$FIVEM_VERSION"
                 echo "[+] Selected custom build: ${FIVEM_VERSION}"
             else
