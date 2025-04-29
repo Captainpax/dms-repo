@@ -13,7 +13,7 @@ cd /home/container || {
 }
 
 # Auto-run installation if FXServer binary missing
-if [[ ! -f "/home/container/opt/cfx-server/FXServer" ]]; then
+if [[ ! -f "./opt/cfx-server/FXServer" ]]; then
     echo -e "${YELLOW}[!] FXServer binary not found. Running installation script...${RESET}"
     bash "./install.sh" || {
         echo -e "${RED}[!] Initial install failed! Retrying once...${RESET}"
@@ -29,19 +29,20 @@ else
 fi
 
 # Show installed FiveM build if known
-if [[ -f "/home/container/.fivem_build" ]]; then
-    BUILD_VERSION=$(cat /home/container/.fivem_build)
+if [[ -f "./.fivem_build" ]]; then
+    BUILD_VERSION=$(cat ./.fivem_build)
     echo -e "${CYAN}[*] Installed FiveM Build: ${BOLD}${BUILD_VERSION}${RESET}"
 fi
 
-# -----------------------------
+# ----------------------------------
 # Build the startup command carefully with strict safety
-# -----------------------------
+# ----------------------------------
 
 STARTUP_CMD="./opt/cfx-server/FXServer +exec server.cfg"
-STARTUP_CMD+=" +set sv_licenseKey \"${FIVEM_LICENSE:?FIVEM_LICENSE environment variable not set}\""
-STARTUP_CMD+=" +set steam_webApiKey \"${STEAM_WEBAPIKEY:?STEAM_WEBAPIKEY environment variable not set}\""
-STARTUP_CMD+=" +set onesync \"${ONESYNC_STATE:?ONESYNC_STATE environment variable not set}\""
+
+STARTUP_CMD+=" +set sv_licenseKey \"${FIVEM_LICENSE:?Environment variable FIVEM_LICENSE is required}\""
+STARTUP_CMD+=" +set steam_webApiKey \"${STEAM_WEBAPIKEY:-changeme}\""
+STARTUP_CMD+=" +set onesync \"${ONESYNC_STATE:-on}\""
 
 if [[ -n "${GAME_BUILD:-}" ]]; then
     STARTUP_CMD+=" +set sv_enforceGameBuild ${GAME_BUILD}"
@@ -54,26 +55,21 @@ STARTUP_CMD+=" +set txAdminEnabled ${TXADMIN_ENABLE:-1}"
 STARTUP_CMD+=" +set sv_endpoint_add_tcp \"0.0.0.0:${FIVEM_PORT:-30120}\""
 STARTUP_CMD+=" +set sv_endpoint_add_udp \"0.0.0.0:${FIVEM_PORT:-30120}\""
 
+# Display built startup command
 echo -e "${BLUE}[*] Preparing to start container with command:${RESET}"
 echo -e "${BOLD}:/home/container$ ${STARTUP_CMD}${RESET}"
 
-# If txAdmin is enabled, show txAdmin URL
+# Show txAdmin link if enabled
 if [[ "${TXADMIN_ENABLE:-0}" == "1" ]]; then
     PUBLIC_IP=$(curl -s --max-time 5 https://api.ipify.org || echo "127.0.0.1")
-    PROTOCOL="http"
-    echo -e "${GREEN}[+] txAdmin should be available at: ${PROTOCOL}://${PUBLIC_IP}:${TXADMIN_PORT}${RESET}"
+    echo -e "${GREEN}[+] txAdmin panel should be available at: http://${PUBLIC_IP}:${TXADMIN_PORT}${RESET}"
 else
     echo -e "${YELLOW}[*] txAdmin is disabled.${RESET}"
 fi
 
-# Mini runtime health checks
-if [[ ! -f "./server.cfg" ]]; then
-    echo -e "${RED}[!] server.cfg not found! Startup may fail.${RESET}"
-fi
+# Runtime health checks
+[[ ! -f "./server.cfg" ]] && echo -e "${RED}[!] Warning: server.cfg not found! Startup may fail.${RESET}"
+[[ ! -d "./resources" ]] && echo -e "${YELLOW}[!] Warning: No /resources/ directory detected.${RESET}"
 
-if [[ ! -d "./resources" ]]; then
-    echo -e "${YELLOW}[!] Warning: No /resources folder detected.${RESET}"
-fi
-
-# Finally launch it properly
+# Final Launch
 exec /bin/bash -c "${STARTUP_CMD}"

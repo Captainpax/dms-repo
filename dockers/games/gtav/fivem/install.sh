@@ -23,7 +23,7 @@ fetch_recommended_build() {
     curl -s https://changelogs-live.fivem.net/api/changelog/versions/linux/server | jq -r '.recommended'
 }
 
-# Function to fetch recommended download link
+# Function to fetch recommended download URL
 fetch_recommended_download() {
     curl -s https://changelogs-live.fivem.net/api/changelog/versions/linux/server | jq -r '.recommended_download'
 }
@@ -31,17 +31,18 @@ fetch_recommended_download() {
 # Function to download and install FiveM
 download_and_install_fivem() {
     echo "[*] Preparing installation directories..."
-    mkdir -p "$INSTALL_DIR" /home/container/resources /home/container/logs /home/container/cache
-    cd "$INSTALL_DIR" || exit 1
+    mkdir -p "${INSTALL_DIR}" /home/container/resources /home/container/logs /home/container/cache
+    cd "${INSTALL_DIR}" || exit 1
 
     echo "[*] Determining artifact download URL..."
 
     if [[ -n "$FIVEM_DL_URL" ]]; then
+        # Manual override (Nextcloud or custom link)
         DOWNLOAD_LINK="$FIVEM_DL_URL"
         BUILD_NUM="manual"
         echo "[!] Manual override download URL detected."
     else
-        RELEASE_PAGE=$(curl -fsSL https://runtime.fivem.net/artifacts/fivem/build_linux/master/)
+        # Automatic fetch
         CHANGELOGS_PAGE=$(curl -fsSL https://changelogs-live.fivem.net/api/changelog/versions/linux/server)
 
         if [[ "$FIVEM_VERSION" == "recommended" ]] || [[ -z "$FIVEM_VERSION" ]]; then
@@ -53,13 +54,14 @@ download_and_install_fivem() {
             BUILD_NUM="latest"
             echo "[+] Selected latest build."
         else
-            VERSION_LINK=$(echo "$RELEASE_PAGE" | grep -Eo '"[^"]*\.tar\.xz"' | grep -o '[^"]*' | grep "$FIVEM_VERSION" || true)
+            RELEASE_PAGE=$(curl -fsSL https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/)
+            VERSION_LINK=$(echo "$RELEASE_PAGE" | grep -oE '"[^"]*\.tar\.xz"' | grep -o '[^"]*' | grep "$FIVEM_VERSION" || true)
             if [[ -n "$VERSION_LINK" ]]; then
-                DOWNLOAD_LINK="https://runtime.fivem.net/artifacts/fivem/build_linux/master/${VERSION_LINK}"
+                DOWNLOAD_LINK="https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/${VERSION_LINK}"
                 BUILD_NUM="$FIVEM_VERSION"
-                echo "[+] Selected custom build: ${FIVEM_VERSION}"
+                echo "[+] Selected custom build: ${BUILD_NUM}"
             else
-                echo "[!] Invalid version '${FIVEM_VERSION}', falling back to recommended."
+                echo "[!] Invalid build '${FIVEM_VERSION}' given, falling back to recommended."
                 DOWNLOAD_LINK=$(fetch_recommended_download)
                 BUILD_NUM=$(fetch_recommended_build)
             fi
@@ -67,18 +69,18 @@ download_and_install_fivem() {
     fi
 
     if [[ -z "$DOWNLOAD_LINK" ]] || [[ "$DOWNLOAD_LINK" == "null" ]]; then
-        echo "[!] Failed to determine download URL. Aborting installation."
+        echo "[!] Could not determine valid download link. Aborting install."
         exit 1
     fi
 
     echo "[*] Downloading artifact from:"
-    echo "    $DOWNLOAD_LINK"
+    echo "    ${DOWNLOAD_LINK}"
 
     # Download and extract with retries
     for (( attempt=1; attempt<=RETRY_MAX; attempt++ )); do
         echo "[*] Attempt ${attempt} to download and extract FiveM server..."
 
-        rm -rf "$INSTALL_DIR"/*
+        rm -rf "${INSTALL_DIR:?}"/*
         curl -fsSL "$DOWNLOAD_LINK" -o fivem.tar.xz || {
             echo "[!] Download failed. Retrying in ${RETRY_DELAY}s..."
             sleep $RETRY_DELAY
@@ -87,25 +89,25 @@ download_and_install_fivem() {
         tar -xf fivem.tar.xz
         rm -f fivem.tar.xz
 
-        echo "[*] Checking extracted files..."
+        echo "[*] Files extracted:"
         find . -type f || true
 
         if [[ -f fx.tar.xz ]]; then
-            echo "[!] Nested fx.tar.xz detected, extracting..."
+            echo "[!] Nested fx.tar.xz found inside, extracting..."
             tar -xf fx.tar.xz
             rm -f fx.tar.xz
-            echo "[+] Nested extraction completed."
+            echo "[+] Nested extraction complete."
         fi
 
         if [[ -d "./alpine/opt/cfx-server" ]]; then
-            echo "[!] Nested alpine structure detected, flattening..."
+            echo "[!] Alpine nested structure detected. Flattening..."
             cp -a ./alpine/opt/cfx-server/. ./ || true
             rm -rf ./alpine
-            echo "[+] Flattened alpine folder."
+            echo "[+] Flatten complete."
         fi
 
         if [[ -f "./FXServer" ]]; then
-            echo "[+] FXServer binary found. Installation successful."
+            echo "[✔] FXServer binary successfully installed."
             echo "${BUILD_NUM}" > "${BUILD_FILE}"
             chmod +x "./FXServer"
             break
@@ -115,9 +117,10 @@ download_and_install_fivem() {
         fi
 
         if [[ $attempt -eq $RETRY_MAX ]]; then
+            echo ""
             echo "=================================================="
-            echo "[-] ERROR: FXServer binary NOT found after ${RETRY_MAX} attempts."
-            echo "[-] Installation failed. Check your build settings or network."
+            echo "[-] ERROR: FXServer not found after ${RETRY_MAX} attempts."
+            echo "[-] Installation failed. Aborting."
             echo "=================================================="
             exit 1
         fi
@@ -130,20 +133,20 @@ download_and_install_fivem() {
 if [[ -f "$FXSERVER_BIN" ]]; then
     echo "[✔] FXServer binary exists. Checking version..."
 
-    CURRENT_BUILD=$(cat "${BUILD_FILE}" 2>/dev/null || echo "unknown")
+    CURRENT_BUILD=$(cat "$BUILD_FILE" 2>/dev/null || echo "unknown")
     LATEST_BUILD=$(fetch_recommended_build)
 
-    echo "[*] Current build: ${CURRENT_BUILD}"
+    echo "[*] Current installed build: ${CURRENT_BUILD}"
     echo "[*] Latest recommended build: ${LATEST_BUILD}"
 
     if [[ "$CURRENT_BUILD" != "$LATEST_BUILD" ]]; then
-        echo "[!] Build mismatch detected. Upgrading FiveM server..."
+        echo "[!] Version mismatch detected. Installing latest build..."
         download_and_install_fivem
     else
-        echo "[+] FiveM server is already up-to-date. Skipping install."
+        echo "[+] FXServer is already up-to-date."
     fi
 else
-    echo "[!] FXServer not detected. Fresh install starting."
+    echo "[!] FXServer binary missing. Fresh install starting..."
     download_and_install_fivem
 fi
 
