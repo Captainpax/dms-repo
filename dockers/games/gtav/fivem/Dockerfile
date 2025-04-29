@@ -11,35 +11,23 @@ ENV DEBIAN_FRONTEND=noninteractive
 # Install runtime dependencies for FiveM
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    curl wget unzip xz-utils file jq ca-certificates \
+    curl wget git unzip xz-utils file jq ca-certificates \
     libstdc++6 libgcc-s1 libc6 \
     && rm -rf /var/lib/apt/lists/*
 
 # Set working directory
 WORKDIR /home/container
 
-# Download and extract Darkmatter repo
-RUN echo "[*] Downloading Darkmatter repo (master branch)..." && \
-    curl -sSL -o master.zip https://github.com/Captainpax/dms-repo/archive/refs/heads/master.zip && \
-    unzip master.zip && \
-    rm master.zip && \
-    echo "[*] Checking if required files exist..." && \
-    if [ ! -f dms-repo-master/dockers/games/gtav/fivem/entrypoint.sh ] || \
-       [ ! -f dms-repo-master/dockers/games/gtav/fivem/install.sh ] || \
-       [ ! -f dms-repo-master/dockers/games/gtav/fivem/server.cfg ]; then \
-        echo "[!] ERROR: Required files not found in archive! Aborting build."; \
-        exit 1; \
-    fi && \
-    echo "[+] Required files found. Continuing..." && \
-    echo "[*] Copying GTAV files into container..." && \
-    cp -a dms-repo-master/dockers/games/gtav/fivem/. /home/container/ && \
-    echo "[*] Cleaning up leftover folders..." && \
-    rm -rf dms-repo-master
+# Download only the gtav/fivem folder from GitHub and move it into /home/container
+RUN curl -sSL https://github.com/Captainpax/dms-repo/archive/refs/heads/master.zip -o /tmp/dms-repo.zip && \
+    unzip /tmp/dms-repo.zip 'dms-repo-master/dockers/games/gtav/fivem/*' -d /tmp && \
+    cp -r /tmp/dms-repo-master/dockers/games/gtav/fivem/* /home/container/ && \
+    rm -rf /tmp/*
 
 # Make scripts executable
-RUN chmod +x /home/container/entrypoint.sh /home/container/install.sh
+RUN chmod +x /home/container/install.sh /home/container/entrypoint.sh
 
-# Expose default FiveM ports
+# Expose default FiveM server ports
 EXPOSE 30120/tcp 30120/udp
 EXPOSE 40120/tcp 40120/udp
 
