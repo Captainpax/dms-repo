@@ -18,17 +18,14 @@ INSTALL_DIR="/home/container/opt/cfx-server"
 FXSERVER_BIN="$INSTALL_DIR/FXServer"
 BUILD_FILE="/home/container/.fivem_build"
 
-# Function to fetch recommended build number
 fetch_recommended_build() {
     curl -s https://changelogs-live.fivem.net/api/changelog/versions/linux/server | jq -r '.recommended'
 }
 
-# Function to fetch recommended download URL
 fetch_recommended_download() {
     curl -s https://changelogs-live.fivem.net/api/changelog/versions/linux/server | jq -r '.recommended_download'
 }
 
-# Function to download and install FiveM
 download_and_install_fivem() {
     echo "[*] Preparing installation directories..."
     mkdir -p "${INSTALL_DIR}" /home/container/resources /home/container/logs /home/container/cache
@@ -37,12 +34,10 @@ download_and_install_fivem() {
     echo "[*] Determining artifact download URL..."
 
     if [[ -n "$FIVEM_DL_URL" ]]; then
-        # Manual override (Nextcloud or custom link)
         DOWNLOAD_LINK="$FIVEM_DL_URL"
         BUILD_NUM="manual"
         echo "[!] Manual override download URL detected."
     else
-        # Automatic fetch
         CHANGELOGS_PAGE=$(curl -fsSL https://changelogs-live.fivem.net/api/changelog/versions/linux/server)
 
         if [[ "$FIVEM_VERSION" == "recommended" ]] || [[ -z "$FIVEM_VERSION" ]]; then
@@ -54,10 +49,10 @@ download_and_install_fivem() {
             BUILD_NUM="latest"
             echo "[+] Selected latest build."
         else
-            RELEASE_PAGE=$(curl -fsSL https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/)
+            RELEASE_PAGE=$(curl -fsSL https://runtime.fivem.net/artifacts/fivem/build_linux/master/)
             VERSION_LINK=$(echo "$RELEASE_PAGE" | grep -oE '"[^"]*\.tar\.xz"' | grep -o '[^"]*' | grep "$FIVEM_VERSION" || true)
             if [[ -n "$VERSION_LINK" ]]; then
-                DOWNLOAD_LINK="https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/${VERSION_LINK}"
+                DOWNLOAD_LINK="https://runtime.fivem.net/artifacts/fivem/build_linux/master/${VERSION_LINK}"
                 BUILD_NUM="$FIVEM_VERSION"
                 echo "[+] Selected custom build: ${BUILD_NUM}"
             else
@@ -76,7 +71,6 @@ download_and_install_fivem() {
     echo "[*] Downloading artifact from:"
     echo "    ${DOWNLOAD_LINK}"
 
-    # Download and extract with retries
     for (( attempt=1; attempt<=RETRY_MAX; attempt++ )); do
         echo "[*] Attempt ${attempt} to download and extract FiveM server..."
 
