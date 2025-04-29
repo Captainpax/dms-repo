@@ -10,7 +10,6 @@ GREEN="\033[1;32m"; YELLOW="\033[1;33m"; RED="\033[1;31m"; BLUE="\033[1;34m"; CY
 # Defaults
 TAG="latest"
 NAMESPACE="captainpax"
-NO_CACHE=true
 SKIP_PUSH=false
 
 # Docker build function
@@ -49,7 +48,7 @@ docker_clean() {
   fi
 }
 
-# Build targets (only FiveM now!)
+# Build targets (expandable later if needed)
 declare -A DOCKER_TARGETS=(
   ["1"]="dockers/games/gtav/fivem Dockerfile dms-fivem"
 )
@@ -64,9 +63,9 @@ while true; do
   echo -e "  ${BOLD}1)${RESET} 🏗️  Build & Push FiveM Image"
   echo -e "  ${BOLD}2)${RESET} 🧹 Docker System Cleanup"
   echo -e "  ${BOLD}3)${RESET} 🚀 Start a Docker Container"
-  echo -e "  ${BOLD}4)${RESET} ❌ Exit"
+  echo -e "  ${BOLD}0)${RESET} ❌ Exit"
   echo ""
-  echo -n "Enter choice [1-4, or -1 for instant build]: "
+  echo -n "Enter choice [0-3, or -1 for instant build]: "
   read -r OPTION
 
   [[ -z "$OPTION" ]] && OPTION=1  # Default: build
@@ -135,7 +134,7 @@ while true; do
         docker run -it --rm "$IMAGE_NAME"
       fi
       ;;
-    4)
+    0)
       echo -e "\n${BLUE}👋 Exiting. Have a great day!${RESET}\n"
       exit 0
       ;;

@@ -18,23 +18,20 @@ RUN apt-get update && \
 # Set working directory
 WORKDIR /home/container
 
-# Copy install and entrypoint scripts into the image
-COPY ./install.sh /install.sh
-COPY ./entrypoint.sh /entrypoint.sh
-
-# Copy default server.cfg template
-COPY ./server.cfg /home/container/server.cfg
+# Copy scripts into container
+COPY entrypoint.sh /home/container/entrypoint.sh
+COPY install.sh /home/container/install.sh
+COPY server.cfg /home/container/server.cfg
 
 # Make scripts executable
-RUN chmod +x /install.sh /entrypoint.sh
+RUN chmod +x /home/container/install.sh /home/container/entrypoint.sh
 
 # Expose default FiveM server ports
 EXPOSE 30120/tcp 30120/udp
 EXPOSE 40120/tcp 40120/udp
 
 # Healthcheck: verify FXServer exists
-HEALTHCHECK --interval=30s --timeout=5s --start-period=30s \
-  CMD [ -f "/home/container/opt/cfx-server/FXServer" ] || exit 1
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s CMD ["bash", "-c", "[ -f /home/container/opt/cfx-server/FXServer ]"]
 
 # Set default entrypoint
-ENTRYPOINT ["/entrypoint.sh"]
+ENTRYPOINT ["/home/container/entrypoint.sh"]

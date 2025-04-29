@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2195dd89-6ddb-4f5e-b3f4-411132f7256e" name="Changes" comment="Refactor FiveM setup and enhance installation process.&#10;&#10;Improved installation script with retries, better error handling, and enhanced directory setup. Bundled `server.cfg` directly into the Docker image to eliminate runtime downloads and increase maintainability. Updated integration to ensure compatibility with the Pterodactyl panel and added robust FXServer validation.">
+    <list default="true" id="2195dd89-6ddb-4f5e-b3f4-411132f7256e" name="Changes" comment="Make FXServer executable and refine FiveM installation.&#10;&#10;Updated the installation script to ensure FXServer is executable, enhancing usability. Simplified the startup command for clarity and streamlined the FiveM setup process for better integration and maintainability. These changes improve compatibility with the Pterodactyl panel while bolstering error handling and directory setup.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eggs/games/gtav/dms-fivem.json" beforeDir="false" afterPath="$PROJECT_DIR$/eggs/games/gtav/dms-fivem.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/deploy.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/Dockerfile" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -171,7 +172,7 @@
       <workItem from="1745781365805" duration="75000" />
       <workItem from="1745785574542" duration="10191000" />
       <workItem from="1745805723723" duration="8938000" />
-      <workItem from="1745879344358" duration="3345000" />
+      <workItem from="1745879344358" duration="5904000" />
     </task>
     <task id="LOCAL-00001" summary="Add IntelliJ IDEA project files to version control&#10;&#10;Include essential project configuration files for IntelliJ IDEA, such as module, VCS, and project settings. Added `.gitignore` to exclude user-specific and environment-dependent files.">
       <option name="closed" value="true" />
@@ -261,7 +262,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745881744062</updated>
     </task>
-    <option name="localTasksCounter" value="12" />
+    <task id="LOCAL-00012" summary="Make FXServer executable and refine FiveM installation.&#10;&#10;Updated the installation script to ensure FXServer is executable, enhancing usability. Simplified the startup command for clarity and streamlined the FiveM setup process for better integration and maintainability. These changes improve compatibility with the Pterodactyl panel while bolstering error handling and directory setup.">
+      <option name="closed" value="true" />
+      <created>1745883531652</created>
+      <option name="number" value="00012" />
+      <option name="presentableId" value="LOCAL-00012" />
+      <option name="project" value="LOCAL" />
+      <updated>1745883531652</updated>
+    </task>
+    <option name="localTasksCounter" value="13" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -281,6 +290,7 @@
     <MESSAGE value="Refactor FiveM setup and improve integration.&#10;&#10;Bundled server.cfg within the Docker image, eliminating runtime downloads and improving maintainability. Updated installation and entrypoint scripts to include better error handling, directory setup, and FXServer validation. Enhanced Dockerfile with health checks and improved compatibility with Pterodactyl." />
     <MESSAGE value="Refactor FiveM setup and enhance integration.&#10;&#10;Bundled `server.cfg` directly into the Docker image to eliminate runtime downloads and improve maintainability. Updated installation script for better error handling, FXServer validation, and directory structure. Improved Dockerfile health checks and ensured compatibility with the Pterodactyl panel." />
     <MESSAGE value="Refactor FiveM setup and enhance installation process.&#10;&#10;Improved installation script with retries, better error handling, and enhanced directory setup. Bundled `server.cfg` directly into the Docker image to eliminate runtime downloads and increase maintainability. Updated integration to ensure compatibility with the Pterodactyl panel and added robust FXServer validation." />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor FiveM setup and enhance installation process.&#10;&#10;Improved installation script with retries, better error handling, and enhanced directory setup. Bundled `server.cfg` directly into the Docker image to eliminate runtime downloads and increase maintainability. Updated integration to ensure compatibility with the Pterodactyl panel and added robust FXServer validation." />
+    <MESSAGE value="Make FXServer executable and refine FiveM installation.&#10;&#10;Updated the installation script to ensure FXServer is executable, enhancing usability. Simplified the startup command for clarity and streamlined the FiveM setup process for better integration and maintainability. These changes improve compatibility with the Pterodactyl panel while bolstering error handling and directory setup." />
+    <option name="LAST_COMMIT_MESSAGE" value="Make FXServer executable and refine FiveM installation.&#10;&#10;Updated the installation script to ensure FXServer is executable, enhancing usability. Simplified the startup command for clarity and streamlined the FiveM setup process for better integration and maintainability. These changes improve compatibility with the Pterodactyl panel while bolstering error handling and directory setup." />
   </component>
 </project>
