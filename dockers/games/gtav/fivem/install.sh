@@ -1,149 +1,151 @@
 #!/bin/bash
-# DMS FiveM Install Script - by Darkmatter Servers (Antimatter Zone LLC)
+# DMS FiveM Smart Install/Update Script - by Darkmatter Servers (Antimatter Zone LLC)
 
 set -euo pipefail
 
 echo ""
 echo "=========================================="
-echo "    [*] Starting DMS FiveM Installation    "
+echo "    [*] Starting DMS FiveM Installer       "
 echo "=========================================="
 echo ""
 
-# Set safe defaults
+# Settings
 FIVEM_VERSION="${FIVEM_VERSION:-recommended}"
-# fallback latest working build 7290
-FIVEM_DL_FALLBACK="https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/7290-a654bcc2adfa27c4e020fc915a1a6343c3b4f921/fx.tar.xz"
-FIVEM_DL_URL="${DOWNLOAD_URL:-}"
+FIVEM_DL_URL="${FIVEM_DL_URL:-}"
 RETRY_MAX=3
 RETRY_DELAY=5
+INSTALL_DIR="/home/container/opt/cfx-server"
+FXSERVER_BIN="$INSTALL_DIR/FXServer"
+BUILD_FILE="/home/container/.fivem_build"
 
-# Make sure required tools exist
-if ! command -v curl &> /dev/null; then
-    echo "[!] curl is not installed. Cannot continue."
-    exit 1
-fi
+# Function to fetch recommended build number
+fetch_recommended_build() {
+    curl -s https://changelogs-live.fivem.net/api/changelog/versions/linux/server | jq -r '.recommended'
+}
 
-if ! command -v jq &> /dev/null; then
-    echo "[*] jq not found, installing..."
-    apt-get update && apt-get install -y jq || {
-        echo "[!] Failed to install jq. Aborting."
-        exit 1
-    }
-fi
+# Function to fetch recommended download link
+fetch_recommended_download() {
+    curl -s https://changelogs-live.fivem.net/api/changelog/versions/linux/server | jq -r '.recommended_download'
+}
 
-# Prepare folder structure
-echo "[*] Preparing server directory structure..."
-mkdir -p /home/container/opt/cfx-server /home/container/resources /home/container/logs /home/container/cache
-echo "[+] Directories ensured."
+# Function to download and install FiveM
+download_and_install_fivem() {
+    echo "[*] Preparing installation directories..."
+    mkdir -p "$INSTALL_DIR" /home/container/resources /home/container/logs /home/container/cache
+    cd "$INSTALL_DIR" || exit 1
 
-# Attempt to fetch changelog metadata
-echo "[*] Fetching FiveM artifact metadata..."
-CHANGELOGS_PAGE=$(curl -fsSL https://changelogs-live.fivem.net/api/changelog/versions/linux/server || echo "")
+    echo "[*] Determining artifact download URL..."
 
-# Determine download link
-echo "[*] Determining download link..."
-
-if [[ "$FIVEM_VERSION" == "recommended" ]] || [[ -z "$FIVEM_VERSION" ]]; then
-    if [[ -n "$CHANGELOGS_PAGE" ]]; then
-        # Successfully fetched metadata
-        DOWNLOAD_LINK=$(echo "$CHANGELOGS_PAGE" | jq -r '.recommended_download')
-        echo "[+] Selected recommended version from live metadata."
+    if [[ -n "$FIVEM_DL_URL" ]]; then
+        DOWNLOAD_LINK="$FIVEM_DL_URL"
+        BUILD_NUM="manual"
+        echo "[!] Manual override download URL detected."
     else
-        # Metadata fetch failed, fallback to hardcoded
-        DOWNLOAD_LINK="$FIVEM_DL_FALLBACK"
-        echo "[!] Warning: Metadata unavailable. Using fallback artifact."
+        RELEASE_PAGE=$(curl -fsSL https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/)
+        CHANGELOGS_PAGE=$(curl -fsSL https://changelogs-live.fivem.net/api/changelog/versions/linux/server)
+
+        if [[ "$FIVEM_VERSION" == "recommended" ]] || [[ -z "$FIVEM_VERSION" ]]; then
+            DOWNLOAD_LINK=$(echo "$CHANGELOGS_PAGE" | jq -r '.recommended_download')
+            BUILD_NUM=$(fetch_recommended_build)
+            echo "[+] Selected recommended build: ${BUILD_NUM}"
+        elif [[ "$FIVEM_VERSION" == "latest" ]]; then
+            DOWNLOAD_LINK=$(echo "$CHANGELOGS_PAGE" | jq -r '.latest_download')
+            BUILD_NUM="latest"
+            echo "[+] Selected latest build."
+        else
+            VERSION_LINK=$(echo "$RELEASE_PAGE" | grep -Eo '"[^"]*\.tar\.xz"' | grep -o '[^"]*' | grep "$FIVEM_VERSION" || true)
+            if [[ -n "$VERSION_LINK" ]]; then
+                DOWNLOAD_LINK="https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/${VERSION_LINK}"
+                BUILD_NUM="$FIVEM_VERSION"
+                echo "[+] Selected custom build: ${FIVEM_VERSION}"
+            else
+                echo "[!] Invalid version '${FIVEM_VERSION}', falling back to recommended."
+                DOWNLOAD_LINK=$(fetch_recommended_download)
+                BUILD_NUM=$(fetch_recommended_build)
+            fi
+        fi
     fi
-elif [[ "$FIVEM_VERSION" == "latest" ]]; then
-    if [[ -n "$CHANGELOGS_PAGE" ]]; then
-        DOWNLOAD_LINK=$(echo "$CHANGELOGS_PAGE" | jq -r '.latest_download')
-        echo "[+] Selected latest version from live metadata."
+
+    if [[ -z "$DOWNLOAD_LINK" ]] || [[ "$DOWNLOAD_LINK" == "null" ]]; then
+        echo "[!] Failed to determine download URL. Aborting installation."
+        exit 1
+    fi
+
+    echo "[*] Downloading artifact from:"
+    echo "    $DOWNLOAD_LINK"
+
+    # Download and extract with retries
+    for (( attempt=1; attempt<=RETRY_MAX; attempt++ )); do
+        echo "[*] Attempt ${attempt} to download and extract FiveM server..."
+
+        rm -rf "$INSTALL_DIR"/*
+        curl -fsSL "$DOWNLOAD_LINK" -o fivem.tar.xz || {
+            echo "[!] Download failed. Retrying in ${RETRY_DELAY}s..."
+            sleep $RETRY_DELAY
+            continue
+        }
+        tar -xf fivem.tar.xz
+        rm -f fivem.tar.xz
+
+        echo "[*] Checking extracted files..."
+        find . -type f || true
+
+        if [[ -f fx.tar.xz ]]; then
+            echo "[!] Nested fx.tar.xz detected, extracting..."
+            tar -xf fx.tar.xz
+            rm -f fx.tar.xz
+            echo "[+] Nested extraction completed."
+        fi
+
+        if [[ -d "./alpine/opt/cfx-server" ]]; then
+            echo "[!] Nested alpine structure detected, flattening..."
+            cp -a ./alpine/opt/cfx-server/. ./ || true
+            rm -rf ./alpine
+            echo "[+] Flattened alpine folder."
+        fi
+
+        if [[ -f "./FXServer" ]]; then
+            echo "[+] FXServer binary found. Installation successful."
+            echo "${BUILD_NUM}" > "${BUILD_FILE}"
+            chmod +x "./FXServer"
+            break
+        else
+            echo "[!] FXServer binary not found. Retrying in ${RETRY_DELAY}s..."
+            sleep $RETRY_DELAY
+        fi
+
+        if [[ $attempt -eq $RETRY_MAX ]]; then
+            echo "=================================================="
+            echo "[-] ERROR: FXServer binary NOT found after ${RETRY_MAX} attempts."
+            echo "[-] Installation failed. Check your build settings or network."
+            echo "=================================================="
+            exit 1
+        fi
+    done
+
+    cd /home/container
+}
+
+# Main logic
+if [[ -f "$FXSERVER_BIN" ]]; then
+    echo "[✔] FXServer binary exists. Checking version..."
+
+    CURRENT_BUILD=$(cat "${BUILD_FILE}" 2>/dev/null || echo "unknown")
+    LATEST_BUILD=$(fetch_recommended_build)
+
+    echo "[*] Current build: ${CURRENT_BUILD}"
+    echo "[*] Latest recommended build: ${LATEST_BUILD}"
+
+    if [[ "$CURRENT_BUILD" != "$LATEST_BUILD" ]]; then
+        echo "[!] Build mismatch detected. Upgrading FiveM server..."
+        download_and_install_fivem
     else
-        DOWNLOAD_LINK="$FIVEM_DL_FALLBACK"
-        echo "[!] Warning: Metadata unavailable. Using fallback artifact."
+        echo "[+] FiveM server is already up-to-date. Skipping install."
     fi
 else
-    # Specific version requested
-    RELEASE_PAGE=$(curl -fsSL https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/ || echo "")
-    VERSION_LINK=$(echo "$RELEASE_PAGE" | grep -Eo '"[^"]*\.tar\.xz"' | grep -o '[^"]*' | grep "$FIVEM_VERSION" || true)
-    if [[ -n "$VERSION_LINK" ]]; then
-        DOWNLOAD_LINK="https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/${VERSION_LINK}"
-        echo "[+] Custom version selected: ${FIVEM_VERSION}"
-    else
-        echo "[!] Custom version not found. Using fallback."
-        DOWNLOAD_LINK="$FIVEM_DL_FALLBACK"
-    fi
+    echo "[!] FXServer not detected. Fresh install starting."
+    download_and_install_fivem
 fi
-
-# Manual override
-if [[ -n "$FIVEM_DL_URL" ]]; then
-    echo "[!] Manual override detected for download URL."
-    DOWNLOAD_LINK="$FIVEM_DL_URL"
-fi
-
-if [[ -z "$DOWNLOAD_LINK" ]] || [[ "$DOWNLOAD_LINK" == "null" ]]; then
-    echo "[!] Failed to determine download link. Aborting."
-    exit 1
-fi
-
-# Show final decision
-echo "[*] Final Download URL:"
-echo "    $DOWNLOAD_LINK"
-
-# Download & Extract FXServer
-cd /home/container/opt/cfx-server || exit 1
-
-for ((attempt=1; attempt<=RETRY_MAX; attempt++)); do
-    echo "[*] Attempt ${attempt} to download and extract artifact..."
-
-    rm -rf /home/container/opt/cfx-server/*
-    curl -fsSL "$DOWNLOAD_LINK" -o fivem.tar.xz || {
-        echo "[!] Download failed. Retrying in ${RETRY_DELAY}s..."
-        sleep $RETRY_DELAY
-        continue
-    }
-    tar -xf fivem.tar.xz
-    rm -f fivem.tar.xz
-
-    echo "[*] Files after extraction:"
-    find . -type f || true
-
-    # Handle nested fx.tar.xz
-    if [[ -f fx.tar.xz ]]; then
-        echo "[!] Nested fx.tar.xz found. Extracting..."
-        tar -xf fx.tar.xz
-        rm -f fx.tar.xz
-        echo "[+] Nested extraction complete."
-    fi
-
-    # Flatten alpine structure if needed
-    if [[ -d "./alpine/opt/cfx-server" ]]; then
-        echo "[!] Detected nested alpine folder. Flattening structure..."
-        cp -a ./alpine/opt/cfx-server/. ./
-        rm -rf ./alpine
-        echo "[+] Structure flattened."
-    fi
-
-    if [[ -f "./FXServer" ]]; then
-        echo "[✔] FXServer binary found. Installation succeeded."
-        break
-    else
-        echo "[!] FXServer binary not found. Retrying in ${RETRY_DELAY}s..."
-        sleep $RETRY_DELAY
-    fi
-
-    if [[ $attempt -eq $RETRY_MAX ]]; then
-        echo ""
-        echo "=================================================="
-        echo "[-] ERROR: FXServer binary NOT found after ${RETRY_MAX} attempts."
-        echo "[-] Installation failed."
-        echo "=================================================="
-        exit 1
-    fi
-done
-
-# Post Install
-cd /home/container
-chmod +x /home/container/opt/cfx-server/FXServer
 
 echo ""
 echo "=========================================="
