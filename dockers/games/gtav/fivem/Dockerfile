@@ -22,7 +22,7 @@ WORKDIR /home/container
 RUN curl -sSL https://github.com/Captainpax/dms-repo/archive/refs/heads/master.zip -o /tmp/dms-repo.zip && \
     unzip /tmp/dms-repo.zip 'dms-repo-master/dockers/games/gtav/fivem/*' -d /tmp && \
     cp -r /tmp/dms-repo-master/dockers/games/gtav/fivem/* /home/container/ && \
-    rm -rf /tmp/*
+    rm -rf /tmp/dms-repo.zip /tmp/dms-repo-master
 
 # Make scripts executable
 RUN chmod +x /home/container/install.sh /home/container/entrypoint.sh
@@ -32,7 +32,7 @@ EXPOSE 30120/tcp 30120/udp
 EXPOSE 40120/tcp 40120/udp
 
 # Healthcheck: verify FXServer exists
-HEALTHCHECK --interval=30s --timeout=5s --start-period=30s CMD ["bash", "-c", "[ -f /home/container/opt/cfx-server/FXServer ]"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s CMD bash -c "[ -f /home/container/opt/cfx-server/FXServer ] || exit 1"
 
 # Set default entrypoint
 ENTRYPOINT ["/home/container/entrypoint.sh"]

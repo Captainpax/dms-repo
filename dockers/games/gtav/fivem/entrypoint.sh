@@ -11,7 +11,8 @@ cd /home/container || {
 # Auto-run installation if FXServer not found
 if [[ ! -f "/home/container/opt/cfx-server/FXServer" ]]; then
     echo "[!] FXServer binary not found. Running installation script..."
-    bash ./install.sh  # <--- Corrected here
+    bash "./install.sh"
+    sleep 2
 fi
 
 # Set a default safe startup command if STARTUP is empty
@@ -25,10 +26,8 @@ echo ":/home/container$ ${MODIFIED_STARTUP}"
 
 # If txAdmin is enabled, print txAdmin panel URL
 if [[ "${TXADMIN_ENABLE:-0}" == "1" ]]; then
-    # Detect external IP safely
     PUBLIC_IP=$(curl -s --max-time 5 https://api.ipify.org || echo "")
 
-    # Fallback to internal Docker IP if no public IP detected
     if [[ -z "$PUBLIC_IP" ]]; then
         echo "[!] Warning: Could not detect external public IP address."
         PUBLIC_IP="127.0.0.1"
@@ -36,6 +35,8 @@ if [[ "${TXADMIN_ENABLE:-0}" == "1" ]]; then
 
     PROTOCOL="http"
     echo "[+] txAdmin panel should be available at: ${PROTOCOL}://${PUBLIC_IP}:${TXADMIN_PORT}"
+else
+    echo "[*] txAdmin is disabled."
 fi
 
 # Finally run the startup command

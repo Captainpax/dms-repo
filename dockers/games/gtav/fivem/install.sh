@@ -11,6 +11,8 @@ echo ""
 
 # Set safe defaults
 FIVEM_VERSION="${FIVEM_VERSION:-recommended}"
+# fallback latest working build 7290
+FIVEM_DL_FALLBACK="https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/7290-a654bcc2adfa27c4e020fc915a1a6343c3b4f921/fx.tar.xz"
 FIVEM_DL_URL="${DOWNLOAD_URL:-}"
 RETRY_MAX=3
 RETRY_DELAY=5
@@ -34,34 +36,41 @@ echo "[*] Preparing server directory structure..."
 mkdir -p /home/container/opt/cfx-server /home/container/resources /home/container/logs /home/container/cache
 echo "[+] Directories ensured."
 
-# Fetch artifact metadata
+# Attempt to fetch changelog metadata
 echo "[*] Fetching FiveM artifact metadata..."
-RELEASE_PAGE=$(curl -fsSL https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/ || true)
-CHANGELOGS_PAGE=$(curl -fsSL https://changelogs-live.fivem.net/api/changelog/versions/linux/server || true)
+CHANGELOGS_PAGE=$(curl -fsSL https://changelogs-live.fivem.net/api/changelog/versions/linux/server || echo "")
 
-if [[ -z "$CHANGELOGS_PAGE" ]]; then
-    echo "[!] Failed to fetch changelog metadata from FiveM. Check network."
-    exit 1
-fi
-
-echo "[+] Metadata fetched."
-
-# Determine which artifact to download
+# Determine download link
 echo "[*] Determining download link..."
+
 if [[ "$FIVEM_VERSION" == "recommended" ]] || [[ -z "$FIVEM_VERSION" ]]; then
-    DOWNLOAD_LINK=$(echo "$CHANGELOGS_PAGE" | jq -r '.recommended_download')
-    echo "[+] Selected recommended version."
-elif [[ "$FIVEM_VERSION" == "latest" ]]; then
-    DOWNLOAD_LINK=$(echo "$CHANGELOGS_PAGE" | jq -r '.latest_download')
-    echo "[+] Selected latest version."
-else
-    VERSION_LINK=$(echo "$RELEASE_PAGE" | grep -Eo '"[^"]*\.tar\.xz"' | grep -o '[^"]*' | grep "$FIVEM_VERSION" || true)
-    if [[ -z "$VERSION_LINK" ]]; then
-        echo "[!] Invalid version '${FIVEM_VERSION}'. Falling back to recommended."
+    if [[ -n "$CHANGELOGS_PAGE" ]]; then
+        # Successfully fetched metadata
         DOWNLOAD_LINK=$(echo "$CHANGELOGS_PAGE" | jq -r '.recommended_download')
+        echo "[+] Selected recommended version from live metadata."
     else
+        # Metadata fetch failed, fallback to hardcoded
+        DOWNLOAD_LINK="$FIVEM_DL_FALLBACK"
+        echo "[!] Warning: Metadata unavailable. Using fallback artifact."
+    fi
+elif [[ "$FIVEM_VERSION" == "latest" ]]; then
+    if [[ -n "$CHANGELOGS_PAGE" ]]; then
+        DOWNLOAD_LINK=$(echo "$CHANGELOGS_PAGE" | jq -r '.latest_download')
+        echo "[+] Selected latest version from live metadata."
+    else
+        DOWNLOAD_LINK="$FIVEM_DL_FALLBACK"
+        echo "[!] Warning: Metadata unavailable. Using fallback artifact."
+    fi
+else
+    # Specific version requested
+    RELEASE_PAGE=$(curl -fsSL https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/ || echo "")
+    VERSION_LINK=$(echo "$RELEASE_PAGE" | grep -Eo '"[^"]*\.tar\.xz"' | grep -o '[^"]*' | grep "$FIVEM_VERSION" || true)
+    if [[ -n "$VERSION_LINK" ]]; then
         DOWNLOAD_LINK="https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/${VERSION_LINK}"
         echo "[+] Custom version selected: ${FIVEM_VERSION}"
+    else
+        echo "[!] Custom version not found. Using fallback."
+        DOWNLOAD_LINK="$FIVEM_DL_FALLBACK"
     fi
 fi
 
@@ -76,7 +85,7 @@ if [[ -z "$DOWNLOAD_LINK" ]] || [[ "$DOWNLOAD_LINK" == "null" ]]; then
     exit 1
 fi
 
-# Show download link
+# Show final decision
 echo "[*] Final Download URL:"
 echo "    $DOWNLOAD_LINK"
 
@@ -98,7 +107,7 @@ for ((attempt=1; attempt<=RETRY_MAX; attempt++)); do
     echo "[*] Files after extraction:"
     find . -type f || true
 
-    # Handle nested fx.tar.xz if present
+    # Handle nested fx.tar.xz
     if [[ -f fx.tar.xz ]]; then
         echo "[!] Nested fx.tar.xz found. Extracting..."
         tar -xf fx.tar.xz
@@ -106,7 +115,7 @@ for ((attempt=1; attempt<=RETRY_MAX; attempt++)); do
         echo "[+] Nested extraction complete."
     fi
 
-    # Flatten if alpine layout detected
+    # Flatten alpine structure if needed
     if [[ -d "./alpine/opt/cfx-server" ]]; then
         echo "[!] Detected nested alpine folder. Flattening structure..."
         cp -a ./alpine/opt/cfx-server/. ./

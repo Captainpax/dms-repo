@@ -4,9 +4,11 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2195dd89-6ddb-4f5e-b3f4-411132f7256e" name="Changes" comment="Refactor FiveM installation and deployment scripts.&#10;&#10;Streamlined installation process with improved error handling and dependency checks. Updated scripts to dynamically fetch missing files and clarified download/extraction processes. These changes enhance reliability, maintainability, and ease of setup.">
+    <list default="true" id="2195dd89-6ddb-4f5e-b3f4-411132f7256e" name="Changes" comment="Refactor FiveM installation and deployment scripts.&#10;&#10;Improved error handling, added dependency checks, and ensured all required files are dynamically fetched. Enhanced folder setup and clarified script processes to improve reliability, maintainability, and ease of installation. Updated container image for better compatibility.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eggs/games/gtav/dms-fivem.json" beforeDir="false" afterPath="$PROJECT_DIR$/eggs/games/gtav/dms-fivem.json" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/entrypoint.sh" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/entrypoint.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/install.sh" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/install.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -186,7 +188,7 @@
       <workItem from="1745781365805" duration="75000" />
       <workItem from="1745785574542" duration="10191000" />
       <workItem from="1745805723723" duration="8938000" />
-      <workItem from="1745879344358" duration="12450000" />
+      <workItem from="1745879344358" duration="13629000" />
     </task>
     <task id="LOCAL-00001" summary="Add IntelliJ IDEA project files to version control&#10;&#10;Include essential project configuration files for IntelliJ IDEA, such as module, VCS, and project settings. Added `.gitignore` to exclude user-specific and environment-dependent files.">
       <option name="closed" value="true" />
@@ -340,7 +342,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745891750133</updated>
     </task>
-    <option name="localTasksCounter" value="20" />
+    <task id="LOCAL-00020" summary="Refactor FiveM installation and deployment scripts.&#10;&#10;Improved error handling, added dependency checks, and ensured all required files are dynamically fetched. Enhanced folder setup and clarified script processes to improve reliability, maintainability, and ease of installation. Updated container image for better compatibility.">
+      <option name="closed" value="true" />
+      <created>1745892717232</created>
+      <option name="number" value="00020" />
+      <option name="presentableId" value="LOCAL-00020" />
+      <option name="project" value="LOCAL" />
+      <updated>1745892717232</updated>
+    </task>
+    <option name="localTasksCounter" value="21" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -370,6 +380,7 @@
     <MESSAGE value="Refactor FiveM Dockerfile and improve error handling&#10;&#10;Streamlined file management by downloading only necessary files from the repository. Enhanced error handling during the build process and updated commands for better clarity and consistency. These changes improve maintainability, build reliability, and deployment efficiency." />
     <MESSAGE value="Refactor FiveM installation and deployment scripts.&#10;&#10;Streamlined installation by adding dependency checks, improving error handling, and enhancing folder structure setup. Updated deployment scripts to fetch missing files dynamically and clarified download/extraction processes. These changes improve reliability, maintainability, and ease of installation." />
     <MESSAGE value="Refactor FiveM installation and deployment scripts.&#10;&#10;Streamlined installation process with improved error handling and dependency checks. Updated scripts to dynamically fetch missing files and clarified download/extraction processes. These changes enhance reliability, maintainability, and ease of setup." />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor FiveM installation and deployment scripts.&#10;&#10;Streamlined installation process with improved error handling and dependency checks. Updated scripts to dynamically fetch missing files and clarified download/extraction processes. These changes enhance reliability, maintainability, and ease of setup." />
+    <MESSAGE value="Refactor FiveM installation and deployment scripts.&#10;&#10;Improved error handling, added dependency checks, and ensured all required files are dynamically fetched. Enhanced folder setup and clarified script processes to improve reliability, maintainability, and ease of installation. Updated container image for better compatibility." />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor FiveM installation and deployment scripts.&#10;&#10;Improved error handling, added dependency checks, and ensured all required files are dynamically fetched. Enhanced folder setup and clarified script processes to improve reliability, maintainability, and ease of installation. Updated container image for better compatibility." />
   </component>
 </project>
