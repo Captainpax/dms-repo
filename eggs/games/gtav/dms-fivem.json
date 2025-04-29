@@ -22,8 +22,8 @@
   },
   "scripts": {
     "installation": {
-      "script": "#!/bin/bash\n\nset -euo pipefail\n\ncd /home/container || exit 1\n\n# Download fresh Darkmatter scripts\n\necho \"[*] Downloading Darkmatter server files...\"\ncurl -fsSL https://cloud.antimatterzone.net/s/9DzxCAFpSNMok6E/download/entrypoint.sh -o entrypoint.sh\ncurl -fsSL https://cloud.antimatterzone.net/s/FpWTPSHS5C2YBpM/download/install.sh -o install.sh\ncurl -fsSL https://cloud.antimatterzone.net/s/5ikTrqTCSdSoPjq/download/server.cfg -o server.cfg\n\nchmod +x entrypoint.sh install.sh\n\necho \"[+] Files downloaded and permissions set.\"\n\n# Run the install to bootstrap FXServer\nbash /home/container/install.sh",
-      "container": "ghcr.io/pterodactyl/installers:debian",
+      "script": "#!/bin/bash\n\nset -euo pipefail\n\n# Ensure working directory\nmkdir -p /home/container\ncd /home/container\n\n# Download critical files\n\necho \"[*] Downloading Darkmatter server files...\"\n\ncurl -fsSL https://cloud.antimatterzone.net/s/9DzxCAFpSNMok6E/download/entrypoint.sh -o entrypoint.sh\ncurl -fsSL https://cloud.antimatterzone.net/s/FpWTPSHS5C2YBpM/download/install.sh -o install.sh\ncurl -fsSL https://cloud.antimatterzone.net/s/5ikTrqTCSdSoPjq/download/server.cfg -o server.cfg\n\n# Check if downloads succeeded\nif [ ! -f entrypoint.sh ] || [ ! -f install.sh ] || [ ! -f server.cfg ]; then\n    echo \"[!] Failed to download all required files. Aborting installation.\"\n    exit 1\nfi\n\nchmod +x entrypoint.sh install.sh\n\n# Run the installer script\nbash /home/container/install.sh\n\n# Cleanup temporary files if needed\nrm -f /home/container/*.tmp || true\n\n\necho \"[✔] Darkmatter DMS FiveM installation completed.\"",
+      "container": "captainpax/dms-fivem:latest",
       "entrypoint": "bash"
     }
   },
