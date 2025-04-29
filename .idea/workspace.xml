@@ -4,9 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2195dd89-6ddb-4f5e-b3f4-411132f7256e" name="Changes" comment="Refactor FiveM setup and deployment scripts&#10;&#10;Streamlined deployment script by removing unused variables, improving menu options, and simplifying exit behavior. Updated installation and Dockerfile scripts for better error handling, clarity, and FXServer executable setup. These changes enhance maintainability, usability, and compatibility with external systems like Pterodactyl.">
-      <change afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/.dockerignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+    <list default="true" id="2195dd89-6ddb-4f5e-b3f4-411132f7256e" name="Changes" comment="Refactor FiveM Dockerfile and add .dockerignore&#10;&#10;Streamlined the Dockerfile by enhancing file management, integrating the Darkmatter repo, and improving cleanup processes. Added a .dockerignore file to exclude unnecessary files and directories, optimizing the build context. These changes improve clarity, maintainability, and build performance.">
       <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/Dockerfile" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -138,7 +136,6 @@
     <configuration name="fivem/Dockerfile" type="docker-deploy" factoryName="dockerfile" temporary="true" server-name="Docker">
       <deployment type="dockerfile">
         <settings>
-          <option name="buildOnly" value="true" />
           <option name="sourceFilePath" value="dockers/games/gtav/fivem/Dockerfile" />
         </settings>
       </deployment>
@@ -188,7 +185,7 @@
       <workItem from="1745781365805" duration="75000" />
       <workItem from="1745785574542" duration="10191000" />
       <workItem from="1745805723723" duration="8938000" />
-      <workItem from="1745879344358" duration="9003000" />
+      <workItem from="1745879344358" duration="9320000" />
     </task>
     <task id="LOCAL-00001" summary="Add IntelliJ IDEA project files to version control&#10;&#10;Include essential project configuration files for IntelliJ IDEA, such as module, VCS, and project settings. Added `.gitignore` to exclude user-specific and environment-dependent files.">
       <option name="closed" value="true" />
@@ -302,7 +299,15 @@
       <option name="project" value="LOCAL" />
       <updated>1745887291848</updated>
     </task>
-    <option name="localTasksCounter" value="15" />
+    <task id="LOCAL-00015" summary="Refactor FiveM Dockerfile and add .dockerignore&#10;&#10;Streamlined the Dockerfile by enhancing file management, integrating the Darkmatter repo, and improving cleanup processes. Added a .dockerignore file to exclude unnecessary files and directories, optimizing the build context. These changes improve clarity, maintainability, and build performance.">
+      <option name="closed" value="true" />
+      <created>1745888775554</created>
+      <option name="number" value="00015" />
+      <option name="presentableId" value="LOCAL-00015" />
+      <option name="project" value="LOCAL" />
+      <updated>1745888775554</updated>
+    </task>
+    <option name="localTasksCounter" value="16" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -327,6 +332,7 @@
     <MESSAGE value="```  &#10;Update deploy script and Dockerfile for better usability  &#10;&#10;Revised the deploy script to adjust option numbering and improve exit handling. Refined the Dockerfile by reorganizing script paths, ensuring executability, and enhancing clarity for FiveM setup. These changes enhance maintainability, integration, and user experience.  &#10;```" />
     <MESSAGE value="Refactor FiveM setup and improve deployment scripts.&#10;&#10;Removed unused NO_CACHE variable and adjusted deploy.sh menu for clarity. Updated Dockerfile to streamline file copying, simplify paths, and ensure FXServer executability. Enhanced maintainability, error handling, and compatibility with the Pterodactyl panel." />
     <MESSAGE value="Refactor FiveM setup and deployment scripts&#10;&#10;Streamlined deployment script by removing unused variables, improving menu options, and simplifying exit behavior. Updated installation and Dockerfile scripts for better error handling, clarity, and FXServer executable setup. These changes enhance maintainability, usability, and compatibility with external systems like Pterodactyl." />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor FiveM setup and deployment scripts&#10;&#10;Streamlined deployment script by removing unused variables, improving menu options, and simplifying exit behavior. Updated installation and Dockerfile scripts for better error handling, clarity, and FXServer executable setup. These changes enhance maintainability, usability, and compatibility with external systems like Pterodactyl." />
+    <MESSAGE value="Refactor FiveM Dockerfile and add .dockerignore&#10;&#10;Streamlined the Dockerfile by enhancing file management, integrating the Darkmatter repo, and improving cleanup processes. Added a .dockerignore file to exclude unnecessary files and directories, optimizing the build context. These changes improve clarity, maintainability, and build performance." />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor FiveM Dockerfile and add .dockerignore&#10;&#10;Streamlined the Dockerfile by enhancing file management, integrating the Darkmatter repo, and improving cleanup processes. Added a .dockerignore file to exclude unnecessary files and directories, optimizing the build context. These changes improve clarity, maintainability, and build performance." />
   </component>
 </project>

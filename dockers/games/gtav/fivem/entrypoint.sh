@@ -11,7 +11,7 @@ cd /home/container || {
 # Auto-run installation if FXServer not found
 if [[ ! -f "/home/container/opt/cfx-server/FXServer" ]]; then
     echo "[!] FXServer binary not found. Running installation script..."
-    bash /install.sh
+    bash ./install.sh  # <--- Corrected here
 fi
 
 # Set a default safe startup command if STARTUP is empty
@@ -35,7 +35,6 @@ if [[ "${TXADMIN_ENABLE:-0}" == "1" ]]; then
     fi
 
     PROTOCOL="http"
-
     echo "[+] txAdmin panel should be available at: ${PROTOCOL}://${PUBLIC_IP}:${TXADMIN_PORT}"
 fi
 
