@@ -8,19 +8,18 @@ BOLD="\033[1m"; RESET="\033[0m"
 GREEN="\033[1;32m"; YELLOW="\033[1;33m"; RED="\033[1;31m"; BLUE="\033[1;34m"; CYAN="\033[1;36m"
 
 cd /home/container || {
-    echo -e "${RED}[-] Failed to change directory to /home/container${RESET}"
-    exit 1
+  echo -e "${RED}[-] Failed to change directory to /home/container${RESET}"
+  exit 1
 }
 
 # ----------------------------------
-# Prompt for required environment variables
+# 🔧 Prompt for required runtime variables
 # ----------------------------------
 
 prompt_if_missing() {
   local var_name="$1"
   local prompt_msg="$2"
   local default_value="${3:-}"
-
   if [[ -z "${!var_name:-}" ]]; then
     if [[ -n "$default_value" ]]; then
       read -rp "$prompt_msg [$default_value]: " input
@@ -46,7 +45,7 @@ prompt_if_missing "RCON_PASSWORD"       "Enter RCON password" "changeme"
 [[ -z "${GAME_BUILD:-}" ]] && read -rp "Enter Game Build Number (or leave blank): " GAME_BUILD
 
 # ----------------------------------
-# Static install check
+# 🧩 Ensure FXServer and config exist
 # ----------------------------------
 
 if [[ ! -f "./opt/cfx-server/FXServer" ]]; then
@@ -60,7 +59,7 @@ else
 fi
 
 # ----------------------------------
-# Show installed build
+# 🧾 Show installed build (if recorded)
 # ----------------------------------
 
 if [[ -f "./.fivem_build" ]]; then
@@ -69,7 +68,7 @@ if [[ -f "./.fivem_build" ]]; then
 fi
 
 # ----------------------------------
-# Launch command
+# 🚀 Build startup command
 # ----------------------------------
 
 STARTUP_CMD="./opt/cfx-server/FXServer +exec server.cfg"
@@ -85,7 +84,7 @@ STARTUP_CMD+=" +set sv_endpoint_add_tcp \"0.0.0.0:${FIVEM_PORT}\""
 STARTUP_CMD+=" +set sv_endpoint_add_udp \"0.0.0.0:${FIVEM_PORT}\""
 
 # ----------------------------------
-# Summary
+# 🔍 Startup Summary
 # ----------------------------------
 
 echo -e "${BLUE}[*] Launching with command:${RESET}"
@@ -102,7 +101,7 @@ fi
 [[ ! -d "./resources" ]] && echo -e "${YELLOW}[!] No /resources/ folder detected.${RESET}"
 
 # ----------------------------------
-# Run the server
+# 🧨 Execute FXServer
 # ----------------------------------
 
 exec /bin/bash -c "${STARTUP_CMD}"

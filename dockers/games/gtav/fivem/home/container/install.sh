@@ -13,48 +13,24 @@ INSTALL_BASE="/home/container"
 INSTALL_DIR="${INSTALL_BASE}/opt/cfx-server"
 FXSERVER_BIN="${INSTALL_DIR}/FXServer"
 BUILD_NUM="7290"
-ARCHIVE_NAME="fx.tar.xz"
 
+# Debug: print initial directory tree
 echo "[*] File system layout at install start:"
 find "${INSTALL_BASE}" -type d -print | sed 's|^|  |'
 
-# Already installed?
+# Binary presence check (since extraction is done at build)
 if [[ -f "$FXSERVER_BIN" ]]; then
-  echo "[✔] FXServer binary already exists at $FXSERVER_BIN"
-  exit 0
-fi
-
-# Ensure fx.tar.xz exists
-if [[ ! -f "${INSTALL_BASE}/${ARCHIVE_NAME}" ]]; then
-  echo "[-] This container is missing ${ARCHIVE_NAME}. Aborting."
-  exit 1
-fi
-
-echo "[*] FXServer binary not found at ${FXSERVER_BIN}"
-echo "[*] Extracting ${ARCHIVE_NAME} into ${INSTALL_DIR}"
-mkdir -p "${INSTALL_DIR}"
-cd "${INSTALL_DIR}"
-
-tar -xf "${INSTALL_BASE}/${ARCHIVE_NAME}"
-
-# Flatten alpine structure if needed
-if [[ -d "./alpine/opt/cfx-server" ]]; then
-  echo "[!] Detected alpine structure — flattening contents..."
-  cp -a ./alpine/opt/cfx-server/. ./ || true
-  rm -rf ./alpine
-fi
-
-# Confirm binary
-if [[ -f "./FXServer" ]]; then
-  chmod +x ./FXServer
-  echo "$BUILD_NUM" > "${INSTALL_BASE}/.fivem_build"
-  echo "[✔] FXServer binary installed successfully."
+  echo "[✔] FXServer binary detected at: $FXSERVER_BIN"
 else
-  echo "[-] FXServer binary not found after extraction. Aborting."
+  echo "[-] FXServer binary not found at ${FXSERVER_BIN}"
+  echo "[-] This container build may be corrupted or incomplete. Aborting."
   exit 1
 fi
 
-# Render and deploy server.cfg
+# Record build number
+echo "${BUILD_NUM}" > "${INSTALL_BASE}/.fivem_build"
+
+# Process server.cfg template
 TEMPLATE="${INSTALL_BASE}/server.cfg"
 TARGET="${INSTALL_DIR}/server.cfg"
 
@@ -71,7 +47,7 @@ else
   echo "[!] Warning: server.cfg template not found at ${TEMPLATE}"
 fi
 
-# Final structure check
+# Final structure display
 echo ""
 echo "[*] File system layout after install:"
 find "${INSTALL_BASE}" -type d -print | sed 's|^|  |'
@@ -81,7 +57,7 @@ echo "=========================================="
 echo "   [✔] DMS FiveM Installation Completed   "
 echo "=========================================="
 echo "   Build: ${BUILD_NUM}"
-echo "   Files extracted to: ${INSTALL_DIR}"
+echo "   Files verified in: ${INSTALL_DIR}"
 echo "   Thanks for using Darkmatter Servers!"
 echo "   https://na.darkmatterservers.com"
 echo ""
