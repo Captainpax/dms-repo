@@ -20,11 +20,11 @@ RETRY_MAX=3
 RETRY_DELAY=5
 
 fetch_recommended_build() {
-  curl -s https://changelogs-live.fivem.net/api/changelog/versions/linux/server | jq -r '.recommended'
+  curl -s https://changelogs-live.fivem.net/api/changelog/versions/server | jq -r '.recommended'
 }
 
 fetch_recommended_download() {
-  curl -s https://changelogs-live.fivem.net/api/changelog/versions/linux/server | jq -r '.recommended_download'
+  curl -s https://changelogs-live.fivem.net/api/changelog/versions/server | jq -r '.recommended_download'
 }
 
 download_and_install_fivem() {
@@ -39,7 +39,7 @@ download_and_install_fivem() {
     BUILD_NUM="manual"
     echo "[!] Manual download override used."
   else
-    CHANGELOGS=$(curl -fsSL https://changelogs-live.fivem.net/api/changelog/versions/linux/server)
+    CHANGELOGS=$(curl -fsSL https://changelogs-live.fivem.net/api/changelog/versions/server)
 
     if [[ "$FIVEM_VERSION" == "recommended" ]] || [[ -z "$FIVEM_VERSION" ]]; then
       DOWNLOAD_LINK=$(echo "$CHANGELOGS" | jq -r '.recommended_download')
@@ -75,8 +75,7 @@ download_and_install_fivem() {
   for (( attempt=1; attempt<=RETRY_MAX; attempt++ )); do
     echo "[*] Attempt $attempt of $RETRY_MAX..."
 
-    # Clean install dir only (not full container)
-    rm -rf "${INSTALL_DIR:?}"/*
+    rm -rf "${INSTALL_DIR:?}/"*
     mkdir -p "${INSTALL_DIR}"
 
     curl -fsSL "$DOWNLOAD_LINK" -o fivem.tar.xz || {
@@ -97,7 +96,6 @@ download_and_install_fivem() {
       rm -f fx.tar.xz
     fi
 
-    # Flatten if it's a nested alpine-style archive
     if [[ -d "./alpine/opt/cfx-server" ]]; then
       echo "[!] Detected nested alpine structure, flattening..."
       cp -a ./alpine/opt/cfx-server/. ./ || true
@@ -125,7 +123,6 @@ download_and_install_fivem() {
 
   cd "$INSTALL_BASE"
 
-  # Copy server.cfg if exists in container root
   if [[ -f "./server.cfg" ]]; then
     echo "[*] Copying server.cfg to ${INSTALL_DIR}/"
     cp ./server.cfg "${INSTALL_DIR}/server.cfg"

@@ -4,12 +4,9 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2195dd89-6ddb-4f5e-b3f4-411132f7256e" name="Changes" comment="Refactor FiveM setup and optimize deployment workflow&#10;&#10;Introduced pre-build file validation in `deploy.sh` to ensure required files exist and prevent build failures. Refactored Dockerfile to clarify paths, improve structure, and enhance maintainability. Adjusted installation and entrypoint scripts for better logging, readability, and compatibility with Pterodactyl panel.">
+    <list default="true" id="2195dd89-6ddb-4f5e-b3f4-411132f7256e" name="Changes" comment="Refactor FiveM setup and improve deployment workflow&#10;&#10;Streamlined `deploy.sh` with better folder validation and enhanced Dockerfile for clarity, structure, and maintainability. Optimized installation and entrypoint scripts, improving logging, readability, and handling of environment variables. Updated `.dockerignore` and related configurations for better organization and Pterodactyl compatibility.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/deploy.sh" beforeDir="false" afterPath="$PROJECT_DIR$/deploy.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/.dockerignore" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/.dockerignore" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/home/container/entrypoint.sh" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/home/container/entrypoint.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/home/container/install.sh" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/home/container/install.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -56,32 +53,32 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
-    "Docker.base.executor": "Run",
-    "Docker.fivem/Dockerfile.executor": "Run",
-    "Docker.ubuntu/Dockerfile (1).executor": "Run",
-    "Docker.ubuntu/Dockerfile.executor": "Run",
-    "Docker.vps.executor": "Run",
-    "ModuleVcsDetector.initialDetectionPerformed": "true",
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "SHELLCHECK.PATH": "C:\\Users\\trist\\AppData\\Roaming\\JetBrains\\IntelliJIdea2025.1\\plugins\\Shell Script\\shellcheck.exe",
-    "Shell Script.deploy.sh.executor": "Run",
-    "git-widget-placeholder": "master",
-    "ignore.virus.scanning.warn.message": "true",
-    "last_opened_file_path": "B:/darkmatter-repo/dms-repo/dockers/games/gtav/fivem/home/container",
-    "node.js.detected.package.eslint": "true",
-    "node.js.detected.package.tslint": "true",
-    "node.js.selected.package.eslint": "(autodetect)",
-    "node.js.selected.package.tslint": "(autodetect)",
-    "nodejs_package_manager_path": "npm",
-    "run.code.analysis.last.selected.profile": "pProject Default",
-    "settings.editor.selected.configurable": "discord-application",
-    "vue.rearranger.settings.migration": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
+    &quot;Docker.base.executor&quot;: &quot;Run&quot;,
+    &quot;Docker.fivem/Dockerfile.executor&quot;: &quot;Run&quot;,
+    &quot;Docker.ubuntu/Dockerfile (1).executor&quot;: &quot;Run&quot;,
+    &quot;Docker.ubuntu/Dockerfile.executor&quot;: &quot;Run&quot;,
+    &quot;Docker.vps.executor&quot;: &quot;Run&quot;,
+    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;SHELLCHECK.PATH&quot;: &quot;C:\\Users\\trist\\AppData\\Roaming\\JetBrains\\IntelliJIdea2025.1\\plugins\\Shell Script\\shellcheck.exe&quot;,
+    &quot;Shell Script.deploy.sh.executor&quot;: &quot;Run&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
+    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
+    &quot;last_opened_file_path&quot;: &quot;B:/darkmatter-repo/dms-repo/dockers/games/gtav/fivem/home/container&quot;,
+    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
+    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
+    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
+    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
+    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
+    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
+    &quot;settings.editor.selected.configurable&quot;: &quot;discord-application&quot;,
+    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="B:\darkmatter-repo\dms-repo\dockers\games\gtav\fivem\home\container" />
@@ -194,7 +191,7 @@
       <workItem from="1745805723723" duration="8938000" />
       <workItem from="1745879344358" duration="21063000" />
       <workItem from="1746122650132" duration="275000" />
-      <workItem from="1746122944740" duration="6182000" />
+      <workItem from="1746122944740" duration="6880000" />
     </task>
     <task id="LOCAL-00001" summary="Add IntelliJ IDEA project files to version control&#10;&#10;Include essential project configuration files for IntelliJ IDEA, such as module, VCS, and project settings. Added `.gitignore` to exclude user-specific and environment-dependent files.">
       <option name="closed" value="true" />
@@ -444,14 +441,32 @@
       <option name="project" value="LOCAL" />
       <updated>1746126245549</updated>
     </task>
-    <option name="localTasksCounter" value="32" />
+    <task id="LOCAL-00032" summary="Refactor FiveM setup and improve deployment workflow&#10;&#10;Streamlined `deploy.sh` with better folder validation and enhanced Dockerfile for clarity, structure, and maintainability. Optimized installation and entrypoint scripts, improving logging, readability, and handling of environment variables. Updated `.dockerignore` and related configurations for better organization and Pterodactyl compatibility.">
+      <option name="closed" value="true" />
+      <created>1746129521308</created>
+      <option name="number" value="00032" />
+      <option name="presentableId" value="LOCAL-00032" />
+      <option name="project" value="LOCAL" />
+      <updated>1746129521308</updated>
+    </task>
+    <option name="localTasksCounter" value="33" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
     <option name="version" value="3" />
   </component>
+  <component name="Vcs.Log.Tabs.Properties">
+    <option name="TAB_STATES">
+      <map>
+        <entry key="MAIN">
+          <value>
+            <State />
+          </value>
+        </entry>
+      </map>
+    </option>
+  </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Add server.cfg and update FiveM setup for better integration&#10;&#10;Bundled a default server.cfg within the Docker image, removing the need to download it during runtime. Updated installation scripts and Dockerfile to handle server.cfg appropriately, enhancing maintainability. Improved overall clarity and alignment with Pterodactyl panel compatibility best practices." />
     <MESSAGE value="Bundle server.cfg and improve FiveM setup integration&#10;&#10;Bundled a default `server.cfg` within the Docker image, removing the need for runtime downloads. Enhanced installation scripts and Dockerfile for better maintainability, including improved directory handling and health checks. Adjusted txAdmin setup for clarity and ensured alignment with Pterodactyl panel compatibility." />
     <MESSAGE value="Refactor FiveM setup and improve integration.&#10;&#10;Bundled server.cfg within the Docker image, eliminating runtime downloads and improving maintainability. Updated installation and entrypoint scripts to include better error handling, directory setup, and FXServer validation. Enhanced Dockerfile with health checks and improved compatibility with Pterodactyl." />
     <MESSAGE value="Refactor FiveM setup and enhance integration.&#10;&#10;Bundled `server.cfg` directly into the Docker image to eliminate runtime downloads and improve maintainability. Updated installation script for better error handling, FXServer validation, and directory structure. Improved Dockerfile health checks and ensured compatibility with the Pterodactyl panel." />
@@ -476,6 +491,7 @@
     <MESSAGE value="Refactor FiveM setup and Dockerfile for improved efficiency.&#10;&#10;Updated Dockerfile to use Ubuntu 24.04 for compatibility and modernized dependencies. Streamlined install scripts, improved folder structure, and removed redundant comments. Enhanced IntelliJ project configuration for better maintainability." />
     <MESSAGE value="Refactor FiveM setup and optimize Dockerfile/scripts&#10;&#10;Modernized Dockerfile with cleaner structure and updated dependencies for compatibility. Streamlined install and entrypoint scripts by improving readability, reducing redundancy, and enhancing logging. Updated file locations and IntelliJ project settings to improve organization and maintainability." />
     <MESSAGE value="Refactor FiveM setup and optimize deployment workflow&#10;&#10;Introduced pre-build file validation in `deploy.sh` to ensure required files exist and prevent build failures. Refactored Dockerfile to clarify paths, improve structure, and enhance maintainability. Adjusted installation and entrypoint scripts for better logging, readability, and compatibility with Pterodactyl panel." />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor FiveM setup and optimize deployment workflow&#10;&#10;Introduced pre-build file validation in `deploy.sh` to ensure required files exist and prevent build failures. Refactored Dockerfile to clarify paths, improve structure, and enhance maintainability. Adjusted installation and entrypoint scripts for better logging, readability, and compatibility with Pterodactyl panel." />
+    <MESSAGE value="Refactor FiveM setup and improve deployment workflow&#10;&#10;Streamlined `deploy.sh` with better folder validation and enhanced Dockerfile for clarity, structure, and maintainability. Optimized installation and entrypoint scripts, improving logging, readability, and handling of environment variables. Updated `.dockerignore` and related configurations for better organization and Pterodactyl compatibility." />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor FiveM setup and improve deployment workflow&#10;&#10;Streamlined `deploy.sh` with better folder validation and enhanced Dockerfile for clarity, structure, and maintainability. Optimized installation and entrypoint scripts, improving logging, readability, and handling of environment variables. Updated `.dockerignore` and related configurations for better organization and Pterodactyl compatibility." />
   </component>
 </project>

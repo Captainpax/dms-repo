@@ -12,28 +12,6 @@ cd /home/container || {
     exit 1
 }
 
-# Ensure FXServer is installed
-if [[ ! -f "./opt/cfx-server/FXServer" ]]; then
-    echo -e "${YELLOW}[!] FXServer binary not found. Running installer...${RESET}"
-    bash "./install.sh" || {
-        echo -e "${RED}[!] Install failed. Retrying in 3 seconds...${RESET}"
-        sleep 3
-        bash "./install.sh" || {
-            echo -e "${RED}[-] Install failed again. Aborting.${RESET}"
-            exit 1
-        }
-    }
-    sleep 1
-else
-    echo -e "${GREEN}[+] FXServer binary found. Skipping install.${RESET}"
-fi
-
-# Display build info
-if [[ -f "./.fivem_build" ]]; then
-    BUILD_VERSION=$(< ./.fivem_build)
-    echo -e "${CYAN}[*] Installed FiveM Build: ${BOLD}${BUILD_VERSION}${RESET}"
-fi
-
 # ----------------------------------
 # Prompt for missing environment variables
 # ----------------------------------
@@ -62,8 +40,41 @@ prompt_if_missing "PROJECT_DESCRIPTION" "Enter Project Description" "Welcome to 
 prompt_if_missing "TXADMIN_PORT" "Enter txAdmin Port" "40120"
 prompt_if_missing "TXADMIN_ENABLE" "Enable txAdmin? (1 = yes, 0 = no)" "1"
 prompt_if_missing "FIVEM_PORT" "Enter base FiveM port" "30120"
-
+prompt_if_missing "FIVEM_VERSION" "Enter FiveM Build Version (recommended/latest/custom)" "recommended"
 [[ -z "${GAME_BUILD:-}" ]] && read -rp "Enter Game Build Number (or leave blank): " GAME_BUILD
+
+# ----------------------------------
+# Ensure FXServer is installed
+# ----------------------------------
+
+if [[ ! -f "./opt/cfx-server/FXServer" ]]; then
+  echo -e "${YELLOW}[!] FXServer binary not found. Running installer...${RESET}"
+
+  FIVEM_VERSION="${FIVEM_VERSION}" \
+  GAME_BUILD="${GAME_BUILD:-}" \
+  bash "./install.sh" || {
+    echo -e "${RED}[!] Install failed. Retrying in 3 seconds...${RESET}"
+    sleep 3
+    FIVEM_VERSION="${FIVEM_VERSION}" \
+    GAME_BUILD="${GAME_BUILD:-}" \
+    bash "./install.sh" || {
+      echo -e "${RED}[-] Install failed again. Aborting.${RESET}"
+      exit 1
+    }
+  }
+  sleep 1
+else
+  echo -e "${GREEN}[+] FXServer binary found. Skipping install.${RESET}"
+fi
+
+# ----------------------------------
+# Display build info
+# ----------------------------------
+
+if [[ -f "./.fivem_build" ]]; then
+  BUILD_VERSION=$(< ./.fivem_build)
+  echo -e "${CYAN}[*] Installed FiveM Build: ${BOLD}${BUILD_VERSION}${RESET}"
+fi
 
 # ----------------------------------
 # Build startup command
@@ -83,21 +94,25 @@ STARTUP_CMD+=" +set txAdminEnabled ${TXADMIN_ENABLE}"
 STARTUP_CMD+=" +set sv_endpoint_add_tcp \"0.0.0.0:${FIVEM_PORT}\""
 STARTUP_CMD+=" +set sv_endpoint_add_udp \"0.0.0.0:${FIVEM_PORT}\""
 
-# Log final command
+# ----------------------------------
+# Launch Summary
+# ----------------------------------
+
 echo -e "${BLUE}[*] Launching with command:${RESET}"
 echo -e "${BOLD}:/home/container$ ${STARTUP_CMD}${RESET}"
 
-# TXAdmin info
 if [[ "${TXADMIN_ENABLE}" == "1" ]]; then
-    PUBLIC_IP=$(curl -s --max-time 5 https://api.ipify.org || echo "127.0.0.1")
-    echo -e "${GREEN}[+] txAdmin available at: http://${PUBLIC_IP}:${TXADMIN_PORT}${RESET}"
+  PUBLIC_IP=$(curl -s --max-time 5 https://api.ipify.org || echo "127.0.0.1")
+  echo -e "${GREEN}[+] txAdmin available at: http://${PUBLIC_IP}:${TXADMIN_PORT}${RESET}"
 else
-    echo -e "${YELLOW}[*] txAdmin is disabled.${RESET}"
+  echo -e "${YELLOW}[*] txAdmin is disabled.${RESET}"
 fi
 
-# Basic checks
 [[ ! -f "./opt/cfx-server/server.cfg" ]] && echo -e "${RED}[!] Warning: opt/cfx-server/server.cfg missing! Startup may fail.${RESET}"
 [[ ! -d "./resources" ]] && echo -e "${YELLOW}[!] No /resources/ folder detected.${RESET}"
 
-# Launch FXServer
+# ----------------------------------
+# Run Server
+# ----------------------------------
+
 exec /bin/bash -c "${STARTUP_CMD}"
