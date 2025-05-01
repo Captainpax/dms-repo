@@ -12,6 +12,28 @@ TAG="latest"
 NAMESPACE="captainpax"
 SKIP_PUSH=false
 
+# Required build files for fivem
+REQUIRED_FILES=(
+  "dockers/games/gtav/fivem/home/container/entrypoint.sh"
+  "dockers/games/gtav/fivem/home/container/install.sh"
+  "dockers/games/gtav/fivem/home/container/opt/cfx-server/server.cfg"
+)
+
+check_required_files() {
+  echo -e "${CYAN}🔎 Checking required files before build...${RESET}"
+  local all_present=true
+  for file in "${REQUIRED_FILES[@]}"; do
+    if [[ ! -f "$file" ]]; then
+      echo -e "${RED}❌ Missing: $file${RESET}"
+      all_present=false
+    fi
+  done
+  if [[ "$all_present" = false ]]; then
+    echo -e "${RED}🚫 One or more required files are missing. Aborting build.${RESET}"
+    exit 1
+  fi
+}
+
 # Docker build function
 build_and_push() {
   local context="$1"
@@ -19,10 +41,12 @@ build_and_push() {
   local dockerfile="$3"
 
   echo -e "\n${CYAN}🔨 Building: ${BOLD}${image}${RESET}\n"
-  if [ ! -f "${context}/${dockerfile}" ]; then
+  if [[ ! -f "${context}/${dockerfile}" ]]; then
     echo -e "${RED}❌ ERROR: Dockerfile not found at ${context}/${dockerfile}${RESET}"
     exit 1
   fi
+
+  check_required_files
 
   pushd "$context" > /dev/null || exit 1
   docker build --no-cache -t "${image}" -f "${dockerfile}" .
@@ -79,11 +103,8 @@ while true; do
 
       echo -e "${YELLOW}Do you want to push after build? (y/N):${RESET}"
       read -r push_choice
-      if [[ "$push_choice" =~ ^[Yy]$ ]]; then
-        SKIP_PUSH=false
-      else
-        SKIP_PUSH=true
-      fi
+      SKIP_PUSH=true
+      [[ "$push_choice" =~ ^[Yy]$ ]] && SKIP_PUSH=false
 
       IFS=' ' read -r CONTEXT DOCKERFILE IMAGE_SUFFIX <<< "${DOCKER_TARGETS[1]}"
       IMAGE="${NAMESPACE}/${IMAGE_SUFFIX}:${TAG}"

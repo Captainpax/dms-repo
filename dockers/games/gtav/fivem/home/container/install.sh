@@ -120,6 +120,15 @@ download_and_install_fivem() {
     done
 
     cd "$INSTALL_BASE"
+
+    # Copy server.cfg if present
+    if [[ -f "./server.cfg" ]]; then
+        echo "[*] Copying server.cfg to ${INSTALL_DIR}/"
+        cp ./server.cfg "${INSTALL_DIR}/server.cfg"
+        echo "[+] server.cfg copied successfully."
+    else
+        echo "[!] Warning: server.cfg not found in working directory."
+    fi
 }
 
 # ----------------------------------

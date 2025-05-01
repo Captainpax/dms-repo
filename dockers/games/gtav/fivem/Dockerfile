@@ -24,10 +24,10 @@ RUN mkdir -p /home/container/opt/cfx-server \
 # Set working directory
 WORKDIR /home/container
 
-# Copy local scripts and server.cfg into the container
-COPY home/container/entrypoint.sh /home/container/entrypoint.sh
-COPY home/container/install.sh    /home/container/install.sh
-COPY home/container/server.cfg    /home/container/server.cfg
+# Copy files into /home/container only — not deeper
+COPY dockers/games/gtav/fivem/home/container/entrypoint.sh /home/container/entrypoint.sh
+COPY dockers/games/gtav/fivem/home/container/install.sh    /home/container/install.sh
+COPY dockers/games/gtav/fivem/home/container/server.cfg    /home/container/server.cfg
 
 # Make scripts executable
 RUN chmod +x /home/container/entrypoint.sh /home/container/install.sh
@@ -40,9 +40,10 @@ EXPOSE 30120/tcp 30120/udp
 EXPOSE 40120/tcp 40120/udp
 
 # Healthcheck to verify FXServer exists
-HEALTHCHECK --interval=30s --timeout=5s --start-period=30s CMD ["bash", "-c", "[ -f /home/container/opt/cfx-server/FXServer ]"]
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s \
+  CMD ["bash", "-c", "[ -f /home/container/opt/cfx-server/FXServer ]"]
 
-# Switch to container user (Pterodactyl uses uid 1000)
+# Run as container user (UID 1000 required by Pterodactyl)
 USER 1000:1000
 
 # Entrypoint

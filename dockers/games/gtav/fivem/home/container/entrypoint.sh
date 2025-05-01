@@ -66,7 +66,7 @@ else
 fi
 
 # Basic checks
-[[ ! -f "./server.cfg" ]] && echo -e "${RED}[!] Warning: server.cfg missing!${RESET}"
+[[ ! -f "./opt/cfx-server/server.cfg" ]] && echo -e "${RED}[!] Warning: opt/cfx-server/server.cfg missing! Startup may fail.${RESET}"
 [[ ! -d "./resources" ]] && echo -e "${YELLOW}[!] No /resources/ folder detected.${RESET}"
 
 # Launch FXServer
