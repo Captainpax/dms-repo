@@ -4,9 +4,10 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2195dd89-6ddb-4f5e-b3f4-411132f7256e" name="Changes" comment="Add fx.tar.xz to GTA V FiveM Docker container&#10;&#10;Add the fx.tar.xz file to the specified Docker container directory for use with the GTA V FiveM setup. This change provides necessary files for proper container initialization.">
+    <list default="true" id="2195dd89-6ddb-4f5e-b3f4-411132f7256e" name="Changes" comment="Refactor FiveM Docker setup for clarity and efficiency&#10;&#10;Improved Dockerfile and scripts to streamline workflows, enhance usability, and ensure a consistent environment. Key changes include restructuring directories, refining commands, extracting binaries at build time, and optimizing permission handling. These updates improve maintainability, reduce runtime overhead, and align with container best practices.">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/home/container/entrypoint.sh" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/home/container/entrypoint.sh" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/home/container/install.sh" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/home/container/install.sh" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -193,7 +194,7 @@
       <workItem from="1745805723723" duration="8938000" />
       <workItem from="1745879344358" duration="21063000" />
       <workItem from="1746122650132" duration="275000" />
-      <workItem from="1746122944740" duration="14892000" />
+      <workItem from="1746122944740" duration="16161000" />
     </task>
     <task id="LOCAL-00001" summary="Add IntelliJ IDEA project files to version control&#10;&#10;Include essential project configuration files for IntelliJ IDEA, such as module, VCS, and project settings. Added `.gitignore` to exclude user-specific and environment-dependent files.">
       <option name="closed" value="true" />
@@ -515,7 +516,15 @@
       <option name="project" value="LOCAL" />
       <updated>1746139336126</updated>
     </task>
-    <option name="localTasksCounter" value="41" />
+    <task id="LOCAL-00041" summary="Refactor FiveM Docker setup for clarity and efficiency&#10;&#10;Improved Dockerfile and scripts to streamline workflows, enhance usability, and ensure a consistent environment. Key changes include restructuring directories, refining commands, extracting binaries at build time, and optimizing permission handling. These updates improve maintainability, reduce runtime overhead, and align with container best practices.">
+      <option name="closed" value="true" />
+      <created>1746140521618</created>
+      <option name="number" value="00041" />
+      <option name="presentableId" value="LOCAL-00041" />
+      <option name="project" value="LOCAL" />
+      <updated>1746140521618</updated>
+    </task>
+    <option name="localTasksCounter" value="42" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -533,7 +542,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Refactor FiveM Dockerfile and add .dockerignore&#10;&#10;Streamlined the Dockerfile by enhancing file management, integrating the Darkmatter repo, and improving cleanup processes. Added a .dockerignore file to exclude unnecessary files and directories, optimizing the build context. These changes improve clarity, maintainability, and build performance." />
     <MESSAGE value="Refactor FiveM Dockerfile and improve error handling&#10;&#10;Enhanced the Dockerfile by improving file management, verifying required files, and integrating error handling during the build process. Updated file paths and commands for consistency and clarity. These changes improve maintainability, build reliability, and deployment efficiency." />
     <MESSAGE value="Refactor FiveM Dockerfile and improve error handling&#10;&#10;Streamlined file management by downloading only necessary files from the repository. Enhanced error handling during the build process and updated commands for better clarity and consistency. These changes improve maintainability, build reliability, and deployment efficiency." />
     <MESSAGE value="Refactor FiveM installation and deployment scripts.&#10;&#10;Streamlined installation by adding dependency checks, improving error handling, and enhancing folder structure setup. Updated deployment scripts to fetch missing files dynamically and clarified download/extraction processes. These changes improve reliability, maintainability, and ease of installation." />
@@ -558,6 +566,7 @@
     <MESSAGE value="Refactor FiveM setup and improve Docker configuration.&#10;&#10;Streamlined Dockerfile and setup scripts for clarity and consistency. Enhanced environment configuration, directory structure, and runtime dependencies. Improved error handling and validation for streamlined deployment workflows." />
     <MESSAGE value="Refactor FiveM setup and improve deployment workflows&#10;&#10;Streamlined deploy.sh and Dockerfile for improved clarity and usability. Added an auto-build-and-run option, enhanced error handling, and optimized environment configuration. Removed unused variables and redundant files to enhance maintainability and deployment consistency." />
     <MESSAGE value="Add fx.tar.xz to GTA V FiveM Docker container&#10;&#10;Add the fx.tar.xz file to the specified Docker container directory for use with the GTA V FiveM setup. This change provides necessary files for proper container initialization." />
-    <option name="LAST_COMMIT_MESSAGE" value="Add fx.tar.xz to GTA V FiveM Docker container&#10;&#10;Add the fx.tar.xz file to the specified Docker container directory for use with the GTA V FiveM setup. This change provides necessary files for proper container initialization." />
+    <MESSAGE value="Refactor FiveM Docker setup for clarity and efficiency&#10;&#10;Improved Dockerfile and scripts to streamline workflows, enhance usability, and ensure a consistent environment. Key changes include restructuring directories, refining commands, extracting binaries at build time, and optimizing permission handling. These updates improve maintainability, reduce runtime overhead, and align with container best practices." />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor FiveM Docker setup for clarity and efficiency&#10;&#10;Improved Dockerfile and scripts to streamline workflows, enhance usability, and ensure a consistent environment. Key changes include restructuring directories, refining commands, extracting binaries at build time, and optimizing permission handling. These updates improve maintainability, reduce runtime overhead, and align with container best practices." />
   </component>
 </project>

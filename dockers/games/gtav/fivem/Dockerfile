@@ -19,53 +19,59 @@ ENV HOME=/home/container
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         bash curl wget git unzip xz-utils file jq \
-        libstdc++6 libgcc-s1 libc6 libcurl4 \
-        ca-certificates tree gettext && \
+        libstdc++6 libgcc-s1 libc6 libcurl4 ca-certificates tree gettext && \
     rm -rf /var/lib/apt/lists/*
 
 # ---------------------------------------------
-# 📁 Prepare container directory structure
+# 📁 Prepare filesystem layout
 # ---------------------------------------------
-RUN mkdir -p "$HOME"/{opt/cfx-server,resources,logs,cache}
+RUN mkdir -p ${HOME}/opt/cfx-server \
+             ${HOME}/resources \
+             ${HOME}/logs \
+             ${HOME}/cache
 
 # ---------------------------------------------
-# 📁 Copy static server payload (scripts + cfg + fx.tar.xz)
+# 📦 Copy static build assets (scripts + fx.tar.xz + cfg)
 # ---------------------------------------------
-COPY dockers/games/gtav/fivem/home/container/ "$HOME"/
+COPY dockers/games/gtav/fivem/home/container/ ${HOME}/
 
 # ---------------------------------------------
-# 📦 Extract FiveM binary
-# (done at build time to avoid runtime install)
+# 🧪 Extract FiveM binary and sanity check (at build time)
 # ---------------------------------------------
-RUN tar -xf "$HOME/fx.tar.xz" -C "$HOME/opt/cfx-server" && \
-    if [ -d "$HOME/opt/cfx-server/alpine/opt/cfx-server" ]; then \
+RUN mkdir -p ${HOME}/opt/cfx-server && \
+    tar -xf ${HOME}/fx.tar.xz -C ${HOME}/opt/cfx-server && \
+    if [ -d "${HOME}/opt/cfx-server/alpine/opt/cfx-server" ]; then \
       echo "[!] Flattening nested alpine structure..."; \
-      cp -a "$HOME/opt/cfx-server/alpine/opt/cfx-server/." "$HOME/opt/cfx-server/" && \
-      rm -rf "$HOME/opt/cfx-server/alpine"; \
+      cp -a ${HOME}/opt/cfx-server/alpine/opt/cfx-server/. ${HOME}/opt/cfx-server/ && \
+      rm -rf ${HOME}/opt/cfx-server/alpine; \
     fi && \
-    rm -f "$HOME/fx.tar.xz"
+    echo "[*] Sanity check on FXServer binary:" && \
+    file ${HOME}/opt/cfx-server/FXServer && \
+    ldd ${HOME}/opt/cfx-server/FXServer || true && \
+    rm -f ${HOME}/fx.tar.xz
+RUN chmod +x /home/container/opt/cfx-server/FXServer
 
 # ---------------------------------------------
-# ✅ Set permissions for scripts and container ownership
+# ✅ Fix ownership and permissions
 # ---------------------------------------------
-RUN chmod +x "$HOME"/entrypoint.sh "$HOME"/install.sh && \
-    chown -R 1000:1000 "$HOME"
+RUN chmod +x ${HOME}/entrypoint.sh ${HOME}/install.sh && \
+    chown -R 1000:1000 ${HOME}
 
 # ---------------------------------------------
-# 🌐 Expose FiveM and txAdmin ports
+# 🌐 Expose ports (game & txAdmin)
 # ---------------------------------------------
 EXPOSE 30120/tcp 30120/udp
 EXPOSE 40120/tcp 40120/udp
 
-# 🩺 Healthcheck for FXServer binary
+# 🩺 Healthcheck (validates binary existence)
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s \
-  CMD [ "bash", "-c", "[ -f /home/container/opt/cfx-server/FXServer ]" ]
+  CMD ["bash", "-c", "[ -f /home/container/opt/cfx-server/FXServer ]"]
 
-# 👤 Required by Pterodactyl (must run as UID 1000)
+# 👤 Pterodactyl requires UID:GID 1000
 USER 1000:1000
 
-# 🏠 Required working directory (matches Pterodactyl)
+# ⛩️ Set working directory (Pterodactyl standard)
 WORKDIR /home/container
 
-# 🚀 Launch script
+# 🚀 Entrypoint script (launches runtime logic)
 ENTRYPOINT ["/home/container/entrypoint.sh"]
