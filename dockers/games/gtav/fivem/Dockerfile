@@ -28,26 +28,26 @@ RUN mkdir -p /home/container/opt/cfx-server \
              /home/container/cache
 
 # ---------------------------------------------
-# 📁 Copy all runtime scripts and config files
+# 📁 Copy runtime scripts and static FXServer build
 # ---------------------------------------------
 COPY dockers/games/gtav/fivem/home/container/ /home/container/
 
-# ✅ Permissions
+# ✅ Set permissions
 RUN chmod +x /home/container/entrypoint.sh /home/container/install.sh && \
     chown -R 1000:1000 /home/container
 
 # ---------------------------------------------
-# 🌐 Network ports (FiveM & txAdmin)
+# 🌐 Expose default FiveM and txAdmin ports
 # ---------------------------------------------
 EXPOSE 30120/tcp 30120/udp
 EXPOSE 40120/tcp 40120/udp
 
-# 🩺 Healthcheck: ensure FXServer is installed
+# 🩺 Healthcheck: validate FXServer exists
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s \
   CMD ["bash", "-c", "[ -f /home/container/opt/cfx-server/FXServer ]"]
 
-# 👤 Use Pterodactyl's container user
+# 👤 Run as Pterodactyl container user (UID 1000)
 USER 1000:1000
 
-# 🚀 Entrypoint script (boot logic)
+# 🚀 Entrypoint script
 ENTRYPOINT ["/home/container/entrypoint.sh"]

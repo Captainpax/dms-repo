@@ -13,7 +13,7 @@ cd /home/container || {
 }
 
 # ----------------------------------
-# Prompt for missing environment variables
+# Prompt for required variables
 # ----------------------------------
 
 prompt_if_missing() {
@@ -40,35 +40,24 @@ prompt_if_missing "PROJECT_DESCRIPTION" "Enter Project Description" "Welcome to 
 prompt_if_missing "TXADMIN_PORT" "Enter txAdmin Port" "40120"
 prompt_if_missing "TXADMIN_ENABLE" "Enable txAdmin? (1 = yes, 0 = no)" "1"
 prompt_if_missing "FIVEM_PORT" "Enter base FiveM port" "30120"
-prompt_if_missing "FIVEM_VERSION" "Enter FiveM Build Version (recommended/latest/custom)" "recommended"
 [[ -z "${GAME_BUILD:-}" ]] && read -rp "Enter Game Build Number (or leave blank): " GAME_BUILD
 
 # ----------------------------------
-# Ensure FXServer is installed
+# Verify FXServer is installed
 # ----------------------------------
 
 if [[ ! -f "./opt/cfx-server/FXServer" ]]; then
-  echo -e "${YELLOW}[!] FXServer binary not found. Running installer...${RESET}"
-
-  FIVEM_VERSION="${FIVEM_VERSION}" \
-  GAME_BUILD="${GAME_BUILD:-}" \
+  echo -e "${YELLOW}[!] FXServer binary not found. Running static install...${RESET}"
   bash "./install.sh" || {
-    echo -e "${RED}[!] Install failed. Retrying in 3 seconds...${RESET}"
-    sleep 3
-    FIVEM_VERSION="${FIVEM_VERSION}" \
-    GAME_BUILD="${GAME_BUILD:-}" \
-    bash "./install.sh" || {
-      echo -e "${RED}[-] Install failed again. Aborting.${RESET}"
-      exit 1
-    }
+    echo -e "${RED}[-] Static install failed. Aborting.${RESET}"
+    exit 1
   }
-  sleep 1
 else
-  echo -e "${GREEN}[+] FXServer binary found. Skipping install.${RESET}"
+  echo -e "${GREEN}[+] FXServer binary found. Proceeding...${RESET}"
 fi
 
 # ----------------------------------
-# Display build info
+# Show installed build
 # ----------------------------------
 
 if [[ -f "./.fivem_build" ]]; then
@@ -77,16 +66,14 @@ if [[ -f "./.fivem_build" ]]; then
 fi
 
 # ----------------------------------
-# Build startup command
+# Build launch command
 # ----------------------------------
 
 STARTUP_CMD="./opt/cfx-server/FXServer +exec server.cfg"
 STARTUP_CMD+=" +set sv_licenseKey \"${FIVEM_LICENSE}\""
 STARTUP_CMD+=" +set steam_webApiKey \"${STEAM_WEBAPIKEY}\""
 STARTUP_CMD+=" +set onesync \"${ONESYNC_STATE}\""
-
-[[ -n "${GAME_BUILD}" ]] && STARTUP_CMD+=" +set sv_enforceGameBuild ${GAME_BUILD}"
-
+[[ -n "${GAME_BUILD:-}" ]] && STARTUP_CMD+=" +set sv_enforceGameBuild ${GAME_BUILD}"
 STARTUP_CMD+=" +sets sv_projectName \"${PROJECT_NAME}\""
 STARTUP_CMD+=" +sets sv_projectDesc \"${PROJECT_DESCRIPTION}\""
 STARTUP_CMD+=" +set txAdminPort ${TXADMIN_PORT}"
@@ -95,7 +82,7 @@ STARTUP_CMD+=" +set sv_endpoint_add_tcp \"0.0.0.0:${FIVEM_PORT}\""
 STARTUP_CMD+=" +set sv_endpoint_add_udp \"0.0.0.0:${FIVEM_PORT}\""
 
 # ----------------------------------
-# Launch Summary
+# Launch summary
 # ----------------------------------
 
 echo -e "${BLUE}[*] Launching with command:${RESET}"
@@ -108,11 +95,11 @@ else
   echo -e "${YELLOW}[*] txAdmin is disabled.${RESET}"
 fi
 
-[[ ! -f "./opt/cfx-server/server.cfg" ]] && echo -e "${RED}[!] Warning: opt/cfx-server/server.cfg missing! Startup may fail.${RESET}"
+[[ ! -f "./opt/cfx-server/server.cfg" ]] && echo -e "${RED}[!] Warning: server.cfg is missing inside opt/cfx-server!${RESET}"
 [[ ! -d "./resources" ]] && echo -e "${YELLOW}[!] No /resources/ folder detected.${RESET}"
 
 # ----------------------------------
-# Run Server
+# Execute FXServer
 # ----------------------------------
 
 exec /bin/bash -c "${STARTUP_CMD}"
