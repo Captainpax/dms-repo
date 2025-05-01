@@ -7,47 +7,50 @@ FROM ubuntu:24.04
 LABEL maintainer="Antimatter Zone LLC"
 LABEL org.opencontainers.image.source="https://github.com/Captainpax/dms-repo"
 
-# 📦 Environment and non-interactive mode
+# ⚙️ Environment configuration
 ENV DEBIAN_FRONTEND=noninteractive
+ENV HOME=/home/container
 
 # ---------------------------------------------
-# 📦 Install required system dependencies
+# 📦 Install essential runtime dependencies
 # ---------------------------------------------
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-        curl wget git unzip xz-utils file jq ca-certificates \
-        bash libstdc++6 libgcc-s1 libc6 libcurl4 tree && \
+        bash curl wget git unzip xz-utils file jq \
+        libstdc++6 libgcc-s1 libc6 libcurl4 \
+        ca-certificates tree && \
     rm -rf /var/lib/apt/lists/*
 
 # ---------------------------------------------
-# 🗂️ Create container home and data structure
+# 📂 Create required directory structure
 # ---------------------------------------------
-RUN mkdir -p /home/container/opt/cfx-server \
-             /home/container/resources \
-             /home/container/logs \
-             /home/container/cache
+RUN mkdir -p ${HOME}/opt/cfx-server \
+             ${HOME}/resources \
+             ${HOME}/logs \
+             ${HOME}/cache
 
 # ---------------------------------------------
-# 📁 Copy all runtime scripts, cfg, and fx.tar.xz
+# 📁 Copy runtime assets (scripts, cfg, archive)
 # ---------------------------------------------
-COPY dockers/games/gtav/fivem/home/container/ /home/container/
+COPY dockers/games/gtav/fivem/home/container/ ${HOME}/
 
-# ✅ Set permissions
-RUN chmod +x /home/container/entrypoint.sh /home/container/install.sh && \
-    chown -R 1000:1000 /home/container
+# ✅ Set ownership and permissions
+RUN chmod +x ${HOME}/entrypoint.sh ${HOME}/install.sh && \
+    chown -R 1000:1000 ${HOME}
 
 # ---------------------------------------------
-# 🌐 Expose ports
+# 🌐 Expose FiveM and txAdmin ports
 # ---------------------------------------------
 EXPOSE 30120/tcp 30120/udp
 EXPOSE 40120/tcp 40120/udp
 
-# 🩺 Healthcheck: ensure FXServer exists
+# 🩺 Healthcheck: ensure FXServer is installed
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s \
   CMD ["bash", "-c", "[ -f /home/container/opt/cfx-server/FXServer ]"]
 
-# 👤 Pterodactyl user
+# 👤 Use Pterodactyl's standard UID
 USER 1000:1000
 
-# 🚀 Boot entrypoint
+# 🚀 Entrypoint script
+WORKDIR /home/container
 ENTRYPOINT ["/home/container/entrypoint.sh"]

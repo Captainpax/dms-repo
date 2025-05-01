@@ -15,17 +15,16 @@ FXSERVER_BIN="${INSTALL_DIR}/FXServer"
 BUILD_NUM="7290"
 ARCHIVE_NAME="fx.tar.xz"
 
-# Debug: print file structure
 echo "[*] File system layout at install start:"
 find "${INSTALL_BASE}" -type d -print | sed 's|^|  |'
 
-# Skip if already installed
+# Already installed?
 if [[ -f "$FXSERVER_BIN" ]]; then
   echo "[✔] FXServer binary already exists at $FXSERVER_BIN"
   exit 0
 fi
 
-# Check for fx.tar.xz
+# Ensure fx.tar.xz exists
 if [[ ! -f "${INSTALL_BASE}/${ARCHIVE_NAME}" ]]; then
   echo "[-] This container is missing ${ARCHIVE_NAME}. Aborting."
   exit 1
@@ -38,14 +37,14 @@ cd "${INSTALL_DIR}"
 
 tar -xf "${INSTALL_BASE}/${ARCHIVE_NAME}"
 
-# Flatten alpine-style structure if needed
+# Flatten alpine structure if needed
 if [[ -d "./alpine/opt/cfx-server" ]]; then
   echo "[!] Detected alpine structure — flattening contents..."
   cp -a ./alpine/opt/cfx-server/. ./ || true
   rm -rf ./alpine
 fi
 
-# Confirm installation
+# Confirm binary
 if [[ -f "./FXServer" ]]; then
   chmod +x ./FXServer
   echo "$BUILD_NUM" > "${INSTALL_BASE}/.fivem_build"
@@ -56,23 +55,23 @@ else
 fi
 
 # Render and deploy server.cfg
-SERVER_CFG_TEMPLATE="${INSTALL_BASE}/server.cfg"
-SERVER_CFG_OUTPUT="${INSTALL_DIR}/server.cfg"
+TEMPLATE="${INSTALL_BASE}/server.cfg"
+TARGET="${INSTALL_DIR}/server.cfg"
 
-if [[ -f "$SERVER_CFG_TEMPLATE" ]]; then
+if [[ -f "$TEMPLATE" ]]; then
   echo "[*] Rendering server.cfg template with environment variables..."
 
   export FIVEM_PORT SERVER_HOSTNAME PROJECT_NAME PROJECT_DESCRIPTION \
          MAX_PLAYERS FIVEM_LICENSE STEAM_WEBAPIKEY RCON_PASSWORD \
          GAME_BUILD ONESYNC_STATE
 
-  envsubst < "$SERVER_CFG_TEMPLATE" > "$SERVER_CFG_OUTPUT"
+  envsubst < "$TEMPLATE" > "$TARGET"
   echo "[+] server.cfg rendered and deployed."
 else
-  echo "[!] Warning: server.cfg template not found at ${SERVER_CFG_TEMPLATE}"
+  echo "[!] Warning: server.cfg template not found at ${TEMPLATE}"
 fi
 
-# Final debug: show layout after install
+# Final structure check
 echo ""
 echo "[*] File system layout after install:"
 find "${INSTALL_BASE}" -type d -print | sed 's|^|  |'
