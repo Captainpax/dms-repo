@@ -1,6 +1,5 @@
 #!/bin/bash
 
-# Move to this script's directory (repo root)
 cd "$(dirname "$0")" || exit 1
 
 # Colors
@@ -11,8 +10,6 @@ GREEN="\033[1;32m"; YELLOW="\033[1;33m"; RED="\033[1;31m"; BLUE="\033[1;34m"; CY
 TAG="latest"
 NAMESPACE="captainpax"
 SKIP_PUSH=false
-
-# Required folder path relative to repo root
 REQUIRED_FOLDER="dockers/games/gtav/fivem/home/container"
 
 check_required_folder() {
@@ -23,7 +20,6 @@ check_required_folder() {
   fi
 }
 
-# Docker build logic (build from repo root using Dockerfile path)
 build_and_push() {
   local dockerfile="$1"
   local image="$2"
@@ -36,7 +32,6 @@ build_and_push() {
   fi
 
   check_required_folder
-
   docker build --no-cache -t "${image}" -f "$dockerfile" .
 
   if [[ "$SKIP_PUSH" == false ]]; then
@@ -46,7 +41,6 @@ build_and_push() {
   fi
 }
 
-# Docker cleanup logic
 docker_clean() {
   echo -e "${YELLOW}⚠️ Prune ALL unused Docker data? (y/N):${RESET}"
   read -r confirm
@@ -59,27 +53,49 @@ docker_clean() {
   fi
 }
 
-# Image definitions (build context is always root, Dockerfile path is explicit)
 declare -A DOCKER_TARGETS=(
   ["1"]="dockers/games/gtav/fivem/Dockerfile dms-fivem"
 )
 
-# Interactive menu
+auto_build_and_run() {
+  echo -e "\n${CYAN}🏗️  Auto-building with default settings...${RESET}"
+
+  TAG="latest"
+  NAMESPACE="captainpax"
+  SKIP_PUSH=false
+
+  IFS=' ' read -r DOCKERFILE IMAGE_SUFFIX <<< "${DOCKER_TARGETS[1]}"
+  IMAGE="${NAMESPACE}/${IMAGE_SUFFIX}:${TAG}"
+
+  build_and_push "$DOCKERFILE" "$IMAGE"
+  echo -e "\n${GREEN}✅ Build completed. Image: ${IMAGE}${RESET}\n"
+
+  echo -e "${YELLOW}📂 You can now upload custom files (drag/drop or sync). Press Enter when ready to continue...${RESET}"
+  read -r
+
+  echo -e "${BLUE}🚀 Running container from image ${BOLD}${IMAGE}${RESET}..."
+  docker run -it --rm "$IMAGE"
+}
+
 while true; do
   clear
   echo -e "${BOLD}${CYAN}=========================================${RESET}"
   echo -e "${BOLD}${CYAN}🚀 Darkmatter Servers Docker Deployment Tool${RESET}"
   echo -e "${BOLD}${CYAN}=========================================${RESET}\n"
   echo -e "${BOLD}Menu Options:${RESET}"
-  echo -e "  ${BOLD}1)${RESET} 🏗️  Build & Push FiveM Image"
-  echo -e "  ${BOLD}2)${RESET} 🧹 Docker System Cleanup"
-  echo -e "  ${BOLD}3)${RESET} 🚀 Start a Docker Container"
-  echo -e "  ${BOLD}0)${RESET} ❌ Exit"
+  echo -e "  ${BOLD}-1)${RESET} ⚙️  Auto Build & Run With Defaults"
+  echo -e "  ${BOLD}1)${RESET}  🏗️  Build & Push FiveM Image"
+  echo -e "  ${BOLD}2)${RESET}  🧹 Docker System Cleanup"
+  echo -e "  ${BOLD}3)${RESET}  🚀 Start a Docker Container"
+  echo -e "  ${BOLD}0)${RESET}  ❌ Exit"
   echo ""
-  echo -n "Enter choice [0-3]: "
+  echo -n "Enter choice [-1 to 3]: "
   read -r OPTION
 
   case $OPTION in
+    -1)
+      auto_build_and_run
+      ;;
     1)
       echo -e "\n${CYAN}🏗️  Preparing FiveM image build...${RESET}\n"
 

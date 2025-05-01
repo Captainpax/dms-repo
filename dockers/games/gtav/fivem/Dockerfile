@@ -8,7 +8,6 @@ LABEL maintainer="Antimatter Zone LLC"
 LABEL org.opencontainers.image.source="https://github.com/Captainpax/dms-repo"
 
 # ⚙️ Environment configuration
-ENV DEBIAN_FRONTEND=noninteractive
 ENV HOME=/home/container
 
 # ---------------------------------------------
@@ -17,8 +16,8 @@ ENV HOME=/home/container
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
         bash curl wget git unzip xz-utils file jq \
-        libstdc++6 libgcc-s1 libc6 libcurl4 \
-        ca-certificates tree && \
+        libstdc++6 libgcc-s1 libc6 libcurl4 ca-certificates \
+        tree gettext && \
     rm -rf /var/lib/apt/lists/*
 
 # ---------------------------------------------
