@@ -8,37 +8,42 @@ LABEL org.opencontainers.image.source="https://github.com/Captainpax/dms-repo"
 # Set environment settings
 ENV DEBIAN_FRONTEND=noninteractive
 
-# Update, install runtime dependencies
+# Install required runtime dependencies
 RUN apt-get update && \
     apt-get install -y --no-install-recommends \
-    curl wget git unzip xz-utils file jq ca-certificates \
-    bash libstdc++6 libgcc-s1 libc6 libcurl4 && \
+        curl wget git unzip xz-utils file jq ca-certificates \
+        bash libstdc++6 libgcc-s1 libc6 libcurl4 && \
     rm -rf /var/lib/apt/lists/*
 
-# Create container folder structure manually
-RUN mkdir -p /home/container/opt/cfx-server /home/container/resources /home/container/logs /home/container/cache
+# Create container folder structure
+RUN mkdir -p /home/container/opt/cfx-server \
+             /home/container/resources \
+             /home/container/logs \
+             /home/container/cache
 
 # Set working directory
 WORKDIR /home/container
 
-# Download latest entrypoint.sh, install.sh, and server.cfg directly to /home/container
-RUN curl -fsSL https://cloud.antimatterzone.net/s/9DzxCAFpSNMok6E/download/entrypoint.sh -o /home/container/entrypoint.sh && \
-    curl -fsSL https://cloud.antimatterzone.net/s/FpWTPSHS5C2YBpM/download/install.sh -o /home/container/install.sh && \
-    curl -fsSL https://cloud.antimatterzone.net/s/5ikTrqTCSdSoPjq/download/server.cfg -o /home/container/server.cfg && \
-    chmod +x /home/container/entrypoint.sh /home/container/install.sh
+# Copy local scripts and server.cfg into the container
+COPY home/container/entrypoint.sh /home/container/entrypoint.sh
+COPY home/container/install.sh    /home/container/install.sh
+COPY home/container/server.cfg    /home/container/server.cfg
 
-# Set correct ownership for Pterodactyl (user 1000)
+# Make scripts executable
+RUN chmod +x /home/container/entrypoint.sh /home/container/install.sh
+
+# Set correct ownership for Pterodactyl's container user (1000)
 RUN chown -R 1000:1000 /home/container
 
-# Expose default FiveM ports
+# Expose default FiveM and txAdmin ports
 EXPOSE 30120/tcp 30120/udp
 EXPOSE 40120/tcp 40120/udp
 
 # Healthcheck to verify FXServer exists
 HEALTHCHECK --interval=30s --timeout=5s --start-period=30s CMD ["bash", "-c", "[ -f /home/container/opt/cfx-server/FXServer ]"]
 
-# Run everything as Pterodactyl user 1000:1000
+# Switch to container user (Pterodactyl uses uid 1000)
 USER 1000:1000
 
-# Set default entrypoint
+# Entrypoint
 ENTRYPOINT ["/home/container/entrypoint.sh"]

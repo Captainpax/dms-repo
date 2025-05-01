@@ -3,7 +3,7 @@
 
 set -euo pipefail
 
-# Colors
+# Styling
 BOLD="\033[1m"; RESET="\033[0m"
 GREEN="\033[1;32m"; YELLOW="\033[1;33m"; RED="\033[1;31m"; BLUE="\033[1;34m"; CYAN="\033[1;36m"
 
@@ -12,41 +12,39 @@ cd /home/container || {
     exit 1
 }
 
-# Auto-run installation if FXServer binary missing
+# Ensure FXServer is installed
 if [[ ! -f "./opt/cfx-server/FXServer" ]]; then
-    echo -e "${YELLOW}[!] FXServer binary not found. Running installation script...${RESET}"
+    echo -e "${YELLOW}[!] FXServer binary not found. Running installer...${RESET}"
     bash "./install.sh" || {
-        echo -e "${RED}[!] Initial install failed! Retrying once...${RESET}"
+        echo -e "${RED}[!] Install failed. Retrying in 3 seconds...${RESET}"
         sleep 3
         bash "./install.sh" || {
-            echo -e "${RED}[-] Install failed again. Aborting startup.${RESET}"
+            echo -e "${RED}[-] Install failed again. Aborting.${RESET}"
             exit 1
         }
     }
-    sleep 2
+    sleep 1
 else
-    echo -e "${GREEN}[+] FXServer binary detected. Skipping install.${RESET}"
+    echo -e "${GREEN}[+] FXServer binary found. Skipping install.${RESET}"
 fi
 
-# Show installed FiveM build if known
+# Display build info
 if [[ -f "./.fivem_build" ]]; then
-    BUILD_VERSION=$(cat ./.fivem_build)
+    BUILD_VERSION=$(< ./.fivem_build)
     echo -e "${CYAN}[*] Installed FiveM Build: ${BOLD}${BUILD_VERSION}${RESET}"
 fi
 
 # ----------------------------------
-# Build the startup command carefully with strict safety
+# Build startup command
 # ----------------------------------
 
 STARTUP_CMD="./opt/cfx-server/FXServer +exec server.cfg"
 
-STARTUP_CMD+=" +set sv_licenseKey \"${FIVEM_LICENSE:?Environment variable FIVEM_LICENSE is required}\""
+STARTUP_CMD+=" +set sv_licenseKey \"${FIVEM_LICENSE:?Missing FIVEM_LICENSE env variable}\""
 STARTUP_CMD+=" +set steam_webApiKey \"${STEAM_WEBAPIKEY:-changeme}\""
 STARTUP_CMD+=" +set onesync \"${ONESYNC_STATE:-on}\""
 
-if [[ -n "${GAME_BUILD:-}" ]]; then
-    STARTUP_CMD+=" +set sv_enforceGameBuild ${GAME_BUILD}"
-fi
+[[ -n "${GAME_BUILD:-}" ]] && STARTUP_CMD+=" +set sv_enforceGameBuild ${GAME_BUILD}"
 
 STARTUP_CMD+=" +sets sv_projectName \"${PROJECT_NAME:-Darkmatter Server}\""
 STARTUP_CMD+=" +sets sv_projectDesc \"${PROJECT_DESCRIPTION:-Welcome to Darkmatter!}\""
@@ -55,21 +53,21 @@ STARTUP_CMD+=" +set txAdminEnabled ${TXADMIN_ENABLE:-1}"
 STARTUP_CMD+=" +set sv_endpoint_add_tcp \"0.0.0.0:${FIVEM_PORT:-30120}\""
 STARTUP_CMD+=" +set sv_endpoint_add_udp \"0.0.0.0:${FIVEM_PORT:-30120}\""
 
-# Display built startup command
-echo -e "${BLUE}[*] Preparing to start container with command:${RESET}"
+# Log final command
+echo -e "${BLUE}[*] Launching with command:${RESET}"
 echo -e "${BOLD}:/home/container$ ${STARTUP_CMD}${RESET}"
 
-# Show txAdmin link if enabled
+# TXAdmin info
 if [[ "${TXADMIN_ENABLE:-0}" == "1" ]]; then
     PUBLIC_IP=$(curl -s --max-time 5 https://api.ipify.org || echo "127.0.0.1")
-    echo -e "${GREEN}[+] txAdmin panel should be available at: http://${PUBLIC_IP}:${TXADMIN_PORT}${RESET}"
+    echo -e "${GREEN}[+] txAdmin available at: http://${PUBLIC_IP}:${TXADMIN_PORT:-40120}${RESET}"
 else
     echo -e "${YELLOW}[*] txAdmin is disabled.${RESET}"
 fi
 
-# Runtime health checks
-[[ ! -f "./server.cfg" ]] && echo -e "${RED}[!] Warning: server.cfg not found! Startup may fail.${RESET}"
-[[ ! -d "./resources" ]] && echo -e "${YELLOW}[!] Warning: No /resources/ directory detected.${RESET}"
+# Basic checks
+[[ ! -f "./server.cfg" ]] && echo -e "${RED}[!] Warning: server.cfg missing!${RESET}"
+[[ ! -d "./resources" ]] && echo -e "${YELLOW}[!] No /resources/ folder detected.${RESET}"
 
-# Final Launch
+# Launch FXServer
 exec /bin/bash -c "${STARTUP_CMD}"
