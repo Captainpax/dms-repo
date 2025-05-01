@@ -46,10 +46,16 @@ download_and_install_fivem() {
       BUILD_NUM=$(fetch_recommended_build)
       echo "[+] Using recommended build: $BUILD_NUM"
     elif [[ "$FIVEM_VERSION" == "latest" ]]; then
-      DOWNLOAD_LINK=$(echo "$CHANGELOGS" | jq -r '.latest_download')
-      BUILD_NUM="latest"
-      echo "[+] Using latest build"
+      DOWNLOAD_LINK=$(echo "$CHANGELOGS" | jq -r '.latest_download // empty')
+      BUILD_NUM=$(echo "$CHANGELOGS" | jq -r '.latest // "unknown"')
+      if [[ -z "$DOWNLOAD_LINK" || "$DOWNLOAD_LINK" == "null" ]]; then
+        echo "[!] Failed to get latest build. Falling back to recommended."
+        DOWNLOAD_LINK=$(fetch_recommended_download)
+        BUILD_NUM=$(fetch_recommended_build)
+      fi
+      echo "[+] Using latest build: $BUILD_NUM"
     else
+      echo "[*] Looking up custom build version: $FIVEM_VERSION"
       RELEASES=$(curl -fsSL https://runtime.fivem.net/artifacts/fivem/build_linux/master/)
       MATCH=$(echo "$RELEASES" | grep -oE '"[^"]*\.tar\.xz"' | grep -o '[^"]*' | grep "$FIVEM_VERSION" || true)
       if [[ -n "$MATCH" ]]; then
@@ -57,9 +63,16 @@ download_and_install_fivem() {
         BUILD_NUM="$FIVEM_VERSION"
         echo "[+] Using custom build: $BUILD_NUM"
       else
-        echo "[!] Invalid version '${FIVEM_VERSION}' — falling back to recommended."
-        DOWNLOAD_LINK=$(fetch_recommended_download)
-        BUILD_NUM=$(fetch_recommended_build)
+        echo "[!] Build '${FIVEM_VERSION}' not found. Falling back to latest available build..."
+        MATCH=$(echo "$RELEASES" | grep -oE '"[^"]*\.tar\.xz"' | grep -o '[^"]*' | sort -r | head -n 1)
+        if [[ -n "$MATCH" ]]; then
+          DOWNLOAD_LINK="https://runtime.fivem.net/artifacts/fivem/build_linux/master/${MATCH}"
+          BUILD_NUM=$(echo "$MATCH" | cut -d '-' -f1)
+          echo "[+] Found closest match: $BUILD_NUM"
+        else
+          echo "[!] Failed to find any build at all. Aborting."
+          exit 1
+        fi
       fi
     fi
   fi
