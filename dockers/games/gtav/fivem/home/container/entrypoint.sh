@@ -35,38 +35,68 @@ if [[ -f "./.fivem_build" ]]; then
 fi
 
 # ----------------------------------
+# Prompt for missing environment variables
+# ----------------------------------
+
+prompt_if_missing() {
+  local var_name="$1"
+  local prompt_msg="$2"
+  local default_value="${3:-}"
+
+  if [[ -z "${!var_name:-}" ]]; then
+    if [[ -n "$default_value" ]]; then
+      read -rp "$prompt_msg [$default_value]: " input
+      export "$var_name"="${input:-$default_value}"
+    else
+      read -rp "$prompt_msg: " input
+      export "$var_name"="$input"
+    fi
+  fi
+}
+
+prompt_if_missing "FIVEM_LICENSE" "Enter your FiveM License Key"
+prompt_if_missing "STEAM_WEBAPIKEY" "Enter your Steam Web API Key" "changeme"
+prompt_if_missing "ONESYNC_STATE" "Enable OneSync? (on/off)" "on"
+prompt_if_missing "PROJECT_NAME" "Enter Project Name" "Darkmatter Server"
+prompt_if_missing "PROJECT_DESCRIPTION" "Enter Project Description" "Welcome to Darkmatter!"
+prompt_if_missing "TXADMIN_PORT" "Enter txAdmin Port" "40120"
+prompt_if_missing "TXADMIN_ENABLE" "Enable txAdmin? (1 = yes, 0 = no)" "1"
+prompt_if_missing "FIVEM_PORT" "Enter base FiveM port" "30120"
+
+[[ -z "${GAME_BUILD:-}" ]] && read -rp "Enter Game Build Number (or leave blank): " GAME_BUILD
+
+# ----------------------------------
 # Build startup command
 # ----------------------------------
 
 STARTUP_CMD="./opt/cfx-server/FXServer +exec server.cfg"
+STARTUP_CMD+=" +set sv_licenseKey \"${FIVEM_LICENSE}\""
+STARTUP_CMD+=" +set steam_webApiKey \"${STEAM_WEBAPIKEY}\""
+STARTUP_CMD+=" +set onesync \"${ONESYNC_STATE}\""
 
-STARTUP_CMD+=" +set sv_licenseKey \"${FIVEM_LICENSE:?Missing FIVEM_LICENSE env variable}\""
-STARTUP_CMD+=" +set steam_webApiKey \"${STEAM_WEBAPIKEY:-changeme}\""
-STARTUP_CMD+=" +set onesync \"${ONESYNC_STATE:-on}\""
+[[ -n "${GAME_BUILD}" ]] && STARTUP_CMD+=" +set sv_enforceGameBuild ${GAME_BUILD}"
 
-[[ -n "${GAME_BUILD:-}" ]] && STARTUP_CMD+=" +set sv_enforceGameBuild ${GAME_BUILD}"
-
-STARTUP_CMD+=" +sets sv_projectName \"${PROJECT_NAME:-Darkmatter Server}\""
-STARTUP_CMD+=" +sets sv_projectDesc \"${PROJECT_DESCRIPTION:-Welcome to Darkmatter!}\""
-STARTUP_CMD+=" +set txAdminPort ${TXADMIN_PORT:-40120}"
-STARTUP_CMD+=" +set txAdminEnabled ${TXADMIN_ENABLE:-1}"
-STARTUP_CMD+=" +set sv_endpoint_add_tcp \"0.0.0.0:${FIVEM_PORT:-30120}\""
-STARTUP_CMD+=" +set sv_endpoint_add_udp \"0.0.0.0:${FIVEM_PORT:-30120}\""
+STARTUP_CMD+=" +sets sv_projectName \"${PROJECT_NAME}\""
+STARTUP_CMD+=" +sets sv_projectDesc \"${PROJECT_DESCRIPTION}\""
+STARTUP_CMD+=" +set txAdminPort ${TXADMIN_PORT}"
+STARTUP_CMD+=" +set txAdminEnabled ${TXADMIN_ENABLE}"
+STARTUP_CMD+=" +set sv_endpoint_add_tcp \"0.0.0.0:${FIVEM_PORT}\""
+STARTUP_CMD+=" +set sv_endpoint_add_udp \"0.0.0.0:${FIVEM_PORT}\""
 
 # Log final command
 echo -e "${BLUE}[*] Launching with command:${RESET}"
 echo -e "${BOLD}:/home/container$ ${STARTUP_CMD}${RESET}"
 
 # TXAdmin info
-if [[ "${TXADMIN_ENABLE:-0}" == "1" ]]; then
+if [[ "${TXADMIN_ENABLE}" == "1" ]]; then
     PUBLIC_IP=$(curl -s --max-time 5 https://api.ipify.org || echo "127.0.0.1")
-    echo -e "${GREEN}[+] txAdmin available at: http://${PUBLIC_IP}:${TXADMIN_PORT:-40120}${RESET}"
+    echo -e "${GREEN}[+] txAdmin available at: http://${PUBLIC_IP}:${TXADMIN_PORT}${RESET}"
 else
     echo -e "${YELLOW}[*] txAdmin is disabled.${RESET}"
 fi
 
 # Basic checks
-[[ ! -f "./server.cfg" ]] && echo -e "${RED}[!] Warning: server.cfg missing!${RESET}"
+[[ ! -f "./opt/cfx-server/server.cfg" ]] && echo -e "${RED}[!] Warning: opt/cfx-server/server.cfg missing! Startup may fail.${RESET}"
 [[ ! -d "./resources" ]] && echo -e "${YELLOW}[!] No /resources/ folder detected.${RESET}"
 
 # Launch FXServer

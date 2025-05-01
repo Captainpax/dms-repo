@@ -1,27 +1,27 @@
-# Ignore everything first
+# Ignore everything by default
 *
 
-# Allow only the fivem docker folder
-!dockers/games/gtav/fivem/**
+# ✅ Allow all necessary FiveM Docker build files
+!dockers/games/gtav/fivem/Dockerfile
+!dockers/games/gtav/fivem/home/container/
+!dockers/games/gtav/fivem/home/container/**
 
-# Ignore unnecessary IDE/editor/project files
+# ❌ Ignore local/editor/IDE/project metadata
 .idea/
 .vscode/
 *.iml
 *.log
 
-# Ignore Git metadata
+# ❌ Ignore Git
 .git/
 .gitignore
 
-# Ignore Mac and Windows junk files
+# ❌ Ignore OS junk
 .DS_Store
 Thumbs.db
 
-# Ignore archive zips
+# ❌ Ignore common archives and temp output
 *.zip
-
-# Ignore build artifacts
 __pycache__/
 node_modules/
 dist/
