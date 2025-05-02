@@ -12,18 +12,25 @@ LABEL org.opencontainers.image.source="https://github.com/Captainpax/dms-repo"
 # ---------------------------------------------
 ENV DEBIAN_FRONTEND=noninteractive
 ENV HOME=/home/container
+WORKDIR ${HOME}
 
 # ---------------------------------------------
-# 📦 Install runtime dependencies
+# 📦 System Dependencies
 # ---------------------------------------------
-RUN apt-get update && \
-    apt-get install -y --no-install-recommends \
-        bash curl wget git unzip xz-utils file jq \
-        libstdc++6 libgcc-s1 libc6 libcurl4 ca-certificates tree gettext && \
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl wget git bash xz-utils unzip file jq ca-certificates \
+    libstdc++6 libgcc-s1 libc6 libcurl4 tree gettext tar gnupg && \
     rm -rf /var/lib/apt/lists/*
 
 # ---------------------------------------------
-# 📁 Prepare filesystem layout
+# 📥 Node.js 23.x (from Nodesource)
+# ---------------------------------------------
+RUN curl -fsSL https://deb.nodesource.com/setup_23.x | bash - && \
+    apt-get install -y nodejs && \
+    node -v && npm -v
+
+# ---------------------------------------------
+# 📁 Prepare layout
 # ---------------------------------------------
 RUN mkdir -p ${HOME}/opt/cfx-server \
              ${HOME}/resources \
@@ -31,47 +38,32 @@ RUN mkdir -p ${HOME}/opt/cfx-server \
              ${HOME}/cache
 
 # ---------------------------------------------
-# 📦 Copy static build assets (scripts + fx.tar.xz + cfg)
+# 📂 Copy all project files
 # ---------------------------------------------
 COPY dockers/games/gtav/fivem/home/container/ ${HOME}/
 
 # ---------------------------------------------
-# 🧪 Extract FiveM binary and sanity check (at build time)
+# 📦 Install Node dependencies (for tar module)
 # ---------------------------------------------
-RUN mkdir -p ${HOME}/opt/cfx-server && \
-    tar -xf ${HOME}/fx.tar.xz -C ${HOME}/opt/cfx-server && \
-    if [ -d "${HOME}/opt/cfx-server/alpine/opt/cfx-server" ]; then \
-      echo "[!] Flattening nested alpine structure..."; \
-      cp -a ${HOME}/opt/cfx-server/alpine/opt/cfx-server/. ${HOME}/opt/cfx-server/ && \
-      rm -rf ${HOME}/opt/cfx-server/alpine; \
-    fi && \
-    echo "[*] Sanity check on FXServer binary:" && \
-    file ${HOME}/opt/cfx-server/FXServer && \
-    ldd ${HOME}/opt/cfx-server/FXServer || true && \
-    rm -f ${HOME}/fx.tar.xz
-RUN chmod +x /home/container/opt/cfx-server/FXServer
+RUN npm install
 
 # ---------------------------------------------
-# ✅ Fix ownership and permissions
+# ✅ Set final permissions
 # ---------------------------------------------
-RUN chmod +x ${HOME}/entrypoint.sh ${HOME}/install.sh && \
+RUN chmod +x ${HOME}/initmain.mjs && \
     chown -R 1000:1000 ${HOME}
 
 # ---------------------------------------------
-# 🌐 Expose ports (game & txAdmin)
+# 🌐 Expose game & txAdmin ports
 # ---------------------------------------------
 EXPOSE 30120/tcp 30120/udp
 EXPOSE 40120/tcp 40120/udp
 
-# 🩺 Healthcheck (validates binary existence)
-HEALTHCHECK --interval=30s --timeout=5s --start-period=30s \
-  CMD ["bash", "-c", "[ -f /home/container/opt/cfx-server/FXServer ]"]
+# 🩺 Healthcheck for Pterodactyl binary validation
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s CMD [ "bash", "-c", "[ -x /home/container/opt/cfx-server/FXServer ]" ]
 
-# 👤 Pterodactyl requires UID:GID 1000
+# 👤 Pterodactyl-standard UID:GID
 USER 1000:1000
 
-# ⛩️ Set working directory (Pterodactyl standard)
-WORKDIR /home/container
-
-# 🚀 Entrypoint script (launches runtime logic)
-ENTRYPOINT ["/home/container/entrypoint.sh"]
+# 🚀 Run initmain directly (handles setup + startup)
+ENTRYPOINT ["node", "--no-warnings", "--enable-source-maps", "/home/container/initmain.mjs"]

@@ -1,0 +1,16 @@
+{
+  "name": "dms-fivem-init",
+  "version": "1.2.0",
+  "description": "Cross-platform Node.js FXServer initializer and launcher for Darkmatter Servers",
+  "type": "module",
+  "main": "initmain.mjs",
+  "scripts": {
+    "start": "node --no-warnings --enable-source-maps initmain.mjs",
+    "log": "tail -f logs/init.log || Get-Content -Path logs/init.log -Wait"
+  },
+  "dependencies": {
+    "tar": "^6.2.0"
+  },
+  "author": "Darkmatter Servers (Antimatter Zone LLC)",
+  "license": "MIT"
+}

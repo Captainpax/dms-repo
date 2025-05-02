@@ -4,11 +4,16 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2195dd89-6ddb-4f5e-b3f4-411132f7256e" name="Changes" comment="Refactor FiveM Docker setup for clarity and efficiency&#10;&#10;Improved Dockerfile and scripts to streamline workflows, enhance usability, and ensure a consistent environment. Key changes include restructuring directories, refining commands, extracting binaries at build time, and optimizing permission handling. These updates improve maintainability, reduce runtime overhead, and align with container best practices.">
+    <list default="true" id="2195dd89-6ddb-4f5e-b3f4-411132f7256e" name="Changes" comment="Refactor FiveM Docker setup for clarity and efficiency&#10;&#10;Streamlined Dockerfile, entrypoint, and install scripts for improved maintainability and usability. Key improvements include optimized directory structures, better binary handling, enhanced logging with styling, and stricter validation workflows. These changes align with best practices, reduce runtime overhead, and ensure a consistent environment.">
+      <change afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/home/container/initmain.mjs" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/home/container/package.json" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/home/container/windows.7z" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/home/container/entrypoint.sh" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/home/container/entrypoint.sh" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/home/container/install.sh" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/home/container/install.sh" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/home/container/entrypoint.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/home/container/fx.tar.xz" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/home/container/linux.tar.xz" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/home/container/install.sh" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/home/container/server.cfg" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/home/container/server.cfg" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -19,6 +24,8 @@
     <option name="RECENT_TEMPLATES">
       <list>
         <option value="Dockerfile" />
+        <option value="JavaScript File" />
+        <option value="package.json" />
       </list>
     </option>
   </component>
@@ -56,32 +63,37 @@
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent">{
-  &quot;keyToString&quot;: {
-    &quot;ASKED_SHARE_PROJECT_CONFIGURATION_FILES&quot;: &quot;true&quot;,
-    &quot;Docker.base.executor&quot;: &quot;Run&quot;,
-    &quot;Docker.fivem/Dockerfile.executor&quot;: &quot;Run&quot;,
-    &quot;Docker.ubuntu/Dockerfile (1).executor&quot;: &quot;Run&quot;,
-    &quot;Docker.ubuntu/Dockerfile.executor&quot;: &quot;Run&quot;,
-    &quot;Docker.vps.executor&quot;: &quot;Run&quot;,
-    &quot;ModuleVcsDetector.initialDetectionPerformed&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
-    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
-    &quot;SHELLCHECK.PATH&quot;: &quot;C:\\Users\\trist\\AppData\\Roaming\\JetBrains\\IntelliJIdea2025.1\\plugins\\Shell Script\\shellcheck.exe&quot;,
-    &quot;Shell Script.deploy.sh.executor&quot;: &quot;Run&quot;,
-    &quot;git-widget-placeholder&quot;: &quot;master&quot;,
-    &quot;ignore.virus.scanning.warn.message&quot;: &quot;true&quot;,
-    &quot;last_opened_file_path&quot;: &quot;B:/darkmatter-repo/dms-repo/dockers/games/gtav/fivem/home/container&quot;,
-    &quot;node.js.detected.package.eslint&quot;: &quot;true&quot;,
-    &quot;node.js.detected.package.tslint&quot;: &quot;true&quot;,
-    &quot;node.js.selected.package.eslint&quot;: &quot;(autodetect)&quot;,
-    &quot;node.js.selected.package.tslint&quot;: &quot;(autodetect)&quot;,
-    &quot;nodejs_package_manager_path&quot;: &quot;npm&quot;,
-    &quot;run.code.analysis.last.selected.profile&quot;: &quot;pProject Default&quot;,
-    &quot;settings.editor.selected.configurable&quot;: &quot;discord-application&quot;,
-    &quot;vue.rearranger.settings.migration&quot;: &quot;true&quot;
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "ASKED_SHARE_PROJECT_CONFIGURATION_FILES": "true",
+    "Docker.base.executor": "Run",
+    "Docker.fivem/Dockerfile.executor": "Run",
+    "Docker.ubuntu/Dockerfile (1).executor": "Run",
+    "Docker.ubuntu/Dockerfile.executor": "Run",
+    "Docker.vps.executor": "Run",
+    "ModuleVcsDetector.initialDetectionPerformed": "true",
+    "Node.js.initmain.mjs.executor": "Run",
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "SHELLCHECK.PATH": "C:\\Users\\trist\\AppData\\Roaming\\JetBrains\\IntelliJIdea2025.1\\plugins\\Shell Script\\shellcheck.exe",
+    "Shell Script.deploy.sh.executor": "Run",
+    "git-widget-placeholder": "master",
+    "ignore.virus.scanning.warn.message": "true",
+    "javascript.nodejs.core.library.configured.version": "23.11.0",
+    "javascript.nodejs.core.library.typings.version": "22.15.3",
+    "last_opened_file_path": "B:/darkmatter-repo/dms-repo/dockers/games/gtav/fivem/home/container",
+    "node.js.detected.package.eslint": "true",
+    "node.js.detected.package.tslint": "true",
+    "node.js.selected.package.eslint": "(autodetect)",
+    "node.js.selected.package.tslint": "(autodetect)",
+    "nodejs_interpreter_path": "C:/Users/trist/AppData/Roaming/JetBrains/IntelliJIdea2025.1/node/versions/23.11.0/node",
+    "nodejs_package_manager_path": "A:\\Program Files\\nodejs\\node.exe",
+    "npm.log.executor": "Run",
+    "run.code.analysis.last.selected.profile": "pProject Default",
+    "settings.editor.selected.configurable": "settings.nodejs",
+    "vue.rearranger.settings.migration": "true"
   }
-}</component>
+}]]></component>
   <component name="RecentsManager">
     <key name="CopyFile.RECENT_KEYS">
       <recent name="B:\darkmatter-repo\dms-repo\dockers\games\gtav\fivem\home\container" />
@@ -97,7 +109,7 @@
       <recent name="B:\darkmatter-repo\dms-repo" />
     </key>
   </component>
-  <component name="RunManager" selected="Docker.fivem/Dockerfile">
+  <component name="RunManager" selected="npm.log">
     <configuration default="true" type="JetRunConfigurationType">
       <module name="dms-repo" />
       <method v="2">
@@ -109,19 +121,7 @@
       <option name="filePath" />
       <method v="2" />
     </configuration>
-    <configuration name="deploy.sh" type="ShConfigurationType" temporary="true">
-      <option name="SCRIPT_TEXT" value="" />
-      <option name="INDEPENDENT_SCRIPT_PATH" value="true" />
-      <option name="SCRIPT_PATH" value="$PROJECT_DIR$/deploy.sh" />
-      <option name="SCRIPT_OPTIONS" value="" />
-      <option name="INDEPENDENT_SCRIPT_WORKING_DIRECTORY" value="true" />
-      <option name="SCRIPT_WORKING_DIRECTORY" value="$PROJECT_DIR$" />
-      <option name="INDEPENDENT_INTERPRETER_PATH" value="false" />
-      <option name="INTERPRETER_PATH" value="C:/Windows/System32/cmd.exe" />
-      <option name="INTERPRETER_OPTIONS" value="" />
-      <option name="EXECUTE_IN_TERMINAL" value="true" />
-      <option name="EXECUTE_SCRIPT_FILE" value="true" />
-      <envs />
+    <configuration name="initmain.mjs" type="NodeJSConfigurationType" temporary="true" path-to-node="node" nameIsGenerated="true" path-to-js-file="initmain.mjs" working-dir="$PROJECT_DIR$/dockers/games/gtav/fivem/home/container">
       <method v="2" />
     </configuration>
     <configuration default="true" type="docker-deploy" factoryName="dockerfile" temporary="true">
@@ -158,18 +158,30 @@
       </deployment>
       <method v="2" />
     </configuration>
+    <configuration name="log" type="js.build_tools.npm" temporary="true" nameIsGenerated="true">
+      <package-json value="$PROJECT_DIR$/dockers/games/gtav/fivem/home/container/package.json" />
+      <command value="run" />
+      <scripts>
+        <script value="log" />
+      </scripts>
+      <node-interpreter value="project" />
+      <envs />
+      <method v="2" />
+    </configuration>
     <list>
       <item itemvalue="Docker.fivem/Dockerfile" />
       <item itemvalue="Docker.vps" />
       <item itemvalue="Docker.base" />
-      <item itemvalue="Shell Script.deploy.sh" />
+      <item itemvalue="Node.js.initmain.mjs" />
+      <item itemvalue="npm.log" />
     </list>
     <recent_temporary>
       <list>
+        <item itemvalue="npm.log" />
+        <item itemvalue="Node.js.initmain.mjs" />
         <item itemvalue="Docker.fivem/Dockerfile" />
         <item itemvalue="Docker.vps" />
         <item itemvalue="Docker.base" />
-        <item itemvalue="Shell Script.deploy.sh" />
       </list>
     </recent_temporary>
   </component>
@@ -194,7 +206,9 @@
       <workItem from="1745805723723" duration="8938000" />
       <workItem from="1745879344358" duration="21063000" />
       <workItem from="1746122650132" duration="275000" />
-      <workItem from="1746122944740" duration="16161000" />
+      <workItem from="1746122944740" duration="17226000" />
+      <workItem from="1746147960597" duration="888000" />
+      <workItem from="1746194149076" duration="4208000" />
     </task>
     <task id="LOCAL-00001" summary="Add IntelliJ IDEA project files to version control&#10;&#10;Include essential project configuration files for IntelliJ IDEA, such as module, VCS, and project settings. Added `.gitignore` to exclude user-specific and environment-dependent files.">
       <option name="closed" value="true" />
@@ -524,7 +538,15 @@
       <option name="project" value="LOCAL" />
       <updated>1746140521618</updated>
     </task>
-    <option name="localTasksCounter" value="42" />
+    <task id="LOCAL-00042" summary="Refactor FiveM Docker setup for clarity and efficiency&#10;&#10;Streamlined Dockerfile, entrypoint, and install scripts for improved maintainability and usability. Key improvements include optimized directory structures, better binary handling, enhanced logging with styling, and stricter validation workflows. These changes align with best practices, reduce runtime overhead, and ensure a consistent environment.">
+      <option name="closed" value="true" />
+      <created>1746141767644</created>
+      <option name="number" value="00042" />
+      <option name="presentableId" value="LOCAL-00042" />
+      <option name="project" value="LOCAL" />
+      <updated>1746141767644</updated>
+    </task>
+    <option name="localTasksCounter" value="43" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -542,8 +564,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Refactor FiveM Dockerfile and improve error handling&#10;&#10;Enhanced the Dockerfile by improving file management, verifying required files, and integrating error handling during the build process. Updated file paths and commands for consistency and clarity. These changes improve maintainability, build reliability, and deployment efficiency." />
-    <MESSAGE value="Refactor FiveM Dockerfile and improve error handling&#10;&#10;Streamlined file management by downloading only necessary files from the repository. Enhanced error handling during the build process and updated commands for better clarity and consistency. These changes improve maintainability, build reliability, and deployment efficiency." />
     <MESSAGE value="Refactor FiveM installation and deployment scripts.&#10;&#10;Streamlined installation by adding dependency checks, improving error handling, and enhancing folder structure setup. Updated deployment scripts to fetch missing files dynamically and clarified download/extraction processes. These changes improve reliability, maintainability, and ease of installation." />
     <MESSAGE value="Refactor FiveM installation and deployment scripts.&#10;&#10;Streamlined installation process with improved error handling and dependency checks. Updated scripts to dynamically fetch missing files and clarified download/extraction processes. These changes enhance reliability, maintainability, and ease of setup." />
     <MESSAGE value="Refactor FiveM installation and deployment scripts.&#10;&#10;Improved error handling, added dependency checks, and ensured all required files are dynamically fetched. Enhanced folder setup and clarified script processes to improve reliability, maintainability, and ease of installation. Updated container image for better compatibility." />
@@ -567,6 +587,12 @@
     <MESSAGE value="Refactor FiveM setup and improve deployment workflows&#10;&#10;Streamlined deploy.sh and Dockerfile for improved clarity and usability. Added an auto-build-and-run option, enhanced error handling, and optimized environment configuration. Removed unused variables and redundant files to enhance maintainability and deployment consistency." />
     <MESSAGE value="Add fx.tar.xz to GTA V FiveM Docker container&#10;&#10;Add the fx.tar.xz file to the specified Docker container directory for use with the GTA V FiveM setup. This change provides necessary files for proper container initialization." />
     <MESSAGE value="Refactor FiveM Docker setup for clarity and efficiency&#10;&#10;Improved Dockerfile and scripts to streamline workflows, enhance usability, and ensure a consistent environment. Key changes include restructuring directories, refining commands, extracting binaries at build time, and optimizing permission handling. These updates improve maintainability, reduce runtime overhead, and align with container best practices." />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor FiveM Docker setup for clarity and efficiency&#10;&#10;Improved Dockerfile and scripts to streamline workflows, enhance usability, and ensure a consistent environment. Key changes include restructuring directories, refining commands, extracting binaries at build time, and optimizing permission handling. These updates improve maintainability, reduce runtime overhead, and align with container best practices." />
+    <MESSAGE value="Refactor FiveM Docker setup for clarity and efficiency&#10;&#10;Streamlined Dockerfile and related scripts to enhance maintainability, usability, and alignment with best practices. Key changes include improved directory structuring, refined command usage, static binary extraction at build time, and optimized permission handling. These updates reduce runtime overhead, simplify workflows, and ensure a consistent, reliable container environment." />
+    <MESSAGE value="Refactor FiveM Docker setup for clarity and efficiency&#10;&#10;Streamlined Dockerfile, entrypoint, and install scripts for improved maintainability and usability. Key improvements include optimized directory structures, better binary handling, enhanced logging with styling, and stricter validation workflows. These changes align with best practices, reduce runtime overhead, and ensure a consistent environment." />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor FiveM Docker setup for clarity and efficiency&#10;&#10;Streamlined Dockerfile, entrypoint, and install scripts for improved maintainability and usability. Key improvements include optimized directory structures, better binary handling, enhanced logging with styling, and stricter validation workflows. These changes align with best practices, reduce runtime overhead, and ensure a consistent environment." />
+  </component>
+  <component name="XSLT-Support.FileAssociations.UIState">
+    <expand />
+    <select />
   </component>
 </project>
