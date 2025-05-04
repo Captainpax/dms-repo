@@ -1,39 +1,24 @@
-# 🧼 Base FXServer image
+# 🧱 Base image with FXServer
 FROM routmoute/fxserver:recommended
 
-# 👤 Metadata
-LABEL maintainer="Antimatter Zone LLC"
-LABEL org.opencontainers.image.source="https://github.com/Captainpax/dms-repo"
-
-# ⚙️ Environment
-ENV HOME=/home/container
-WORKDIR ${HOME}
-
-# 👑 Become root to install deps and copy files
-USER root
-
-# 📦 Install Alpine-compatible Node.js + npm
+# 🧰 Install Node.js and npm from Alpine packages
 RUN apk add --no-cache nodejs npm
 
-# 📂 Copy server files
-COPY dockers/games/gtav/fivem/home/container/ ${HOME}/
+# 📂 Copy project files into container
+COPY dockers/games/gtav/fivem/home/container/ /home/container/
 
-# 📦 Install Node dependencies if package.json exists
-RUN if [ -f "${HOME}/package.json" ]; then npm install --omit=dev; fi
+# 📦 Run npm install if package.json is present
+RUN [ -f /home/container/package.json ] && \
+    npm --prefix /home/container install --omit=dev || \
+    echo "⚠️  Skipping npm install (no package.json found)"
 
-# ✅ Set correct permissions for Pterodactyl (uses UID/GID 1000 = cfx)
-RUN chmod +x ${HOME}/initmain.mjs && \
-    chown -R cfx:cfx ${HOME}
+# 🔐 Set permissions (allow chown to fail on some host FS like Windows)
+RUN chmod +x /home/container/initmain.mjs && \
+    chown -R cfx:cfx /home/container || \
+    echo "⚠️  chown failed (possibly due to Docker volume bind permissions)"
 
-# 🌐 Expose FXServer and txAdmin ports
-EXPOSE 30120/tcp 30120/udp
-EXPOSE 40120/tcp 40120/udp
-
-# 🩺 Optional healthcheck
-HEALTHCHECK --interval=30s --timeout=5s --start-period=30s CMD test -x ${HOME}/initmain.mjs
-
-# 👤 Switch to correct user
+# 👤 Switch to non-root user required by Pterodactyl
 USER cfx
 
-# 🚀 Entrypoint
-ENTRYPOINT ["node", "--no-warnings", "--enable-source-maps", "/home/container/initmain.mjs"]
+# 🚀 Default startup command
+CMD ["node", "--no-warnings", "--enable-source-maps", "/home/container/initmain.mjs"]
