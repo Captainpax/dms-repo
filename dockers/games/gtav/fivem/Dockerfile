@@ -1,73 +1,41 @@
-# ---------------------------------------------
-# 🧼 Base Image: Minimal Debian Slim
-# ---------------------------------------------
-FROM debian:bullseye-slim
+# 🧼 Base FXServer image
+FROM routmoute/fxserver:recommended
 
 # 👤 Metadata
 LABEL maintainer="Antimatter Zone LLC"
 LABEL org.opencontainers.image.source="https://github.com/Captainpax/dms-repo"
 
-# ---------------------------------------------
 # ⚙️ Environment
-# ---------------------------------------------
-ENV HOME=/home/container \
-    DEBIAN_FRONTEND=noninteractive
+ENV HOME=/home/container
 WORKDIR ${HOME}
 
-# ---------------------------------------------
-# 📦 System Dependencies
-# ---------------------------------------------
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl ca-certificates bash unzip jq gnupg file \
-    xz-utils git gettext libatomic1 libssl1.1 libv8-dev \
-    libstdc++6 libcurl4 \
- && rm -rf /var/lib/apt/lists/*
+# 👑 Become root to modify image
+USER root
 
-# ---------------------------------------------
-# 📥 Node.js 23.x (from NodeSource)
-# ---------------------------------------------
-RUN curl -fsSL https://deb.nodesource.com/setup_23.x | bash - && \
-    apt-get install -y nodejs && \
-    rm -rf /var/lib/apt/lists/*
+# 📦 Download working Node.js binary from official Alpine Node image
+RUN mkdir -p /tmp/node && \
+    wget -qO- https://unofficial-builds.nodejs.org/download/release/v20.11.1/node-v20.11.1-linux-x64-musl.tar.gz \
+    | tar -xz -C /tmp/node --strip-components=1 && \
+    cp /tmp/node/bin/node /usr/local/bin/node && \
+    cp /tmp/node/bin/npm /usr/local/bin/npm && \
+    rm -rf /tmp/node
 
-# ---------------------------------------------
-# 📥 Download FXServer (Build 14758)
-# ---------------------------------------------
-RUN curl -sSL -o linux.tar.xz https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/14758-36b17e986ff6393de11928a14d485c8ed053c194/fx.tar.xz
+# 📂 Copy your files into the container
+COPY dockers/games/gtav/fivem/home/container/ ${HOME}/
 
-# ---------------------------------------------
-# 📂 Copy Entrypoint & Assets
-# ---------------------------------------------
-COPY dockers/games/gtav/fivem/home/container/ ./
+# ✅ Set permissions (use existing 'cfx' user/group: 1000:1000)
+RUN chmod +x ${HOME}/initmain.mjs && \
+    chown -R cfx:cfx ${HOME}
 
-# ---------------------------------------------
-# 📁 Ensure resources folder exists
-# ---------------------------------------------
-RUN mkdir -p resources
-
-# ---------------------------------------------
-# 📦 Install Node Dependencies
-# ---------------------------------------------
-RUN npm install
-
-# ---------------------------------------------
-# ✅ Permissions & Ownership
-# ---------------------------------------------
-RUN chmod +x initmain.mjs && \
-    groupadd -g 1000 user && useradd -u 1000 -g 1000 -d ${HOME} -s /bin/bash user && \
-    chown -R user:user ${HOME}
-
-# ---------------------------------------------
-# 🌐 Expose Game + txAdmin Ports
-# ---------------------------------------------
+# 🌐 Expose common FXServer and txAdmin ports
 EXPOSE 30120/tcp 30120/udp
 EXPOSE 40120/tcp 40120/udp
 
-# 🩺 Healthcheck (for panel)
-HEALTHCHECK --interval=30s --timeout=5s --start-period=30s CMD test -x /home/container/initmain.mjs
+# 🩺 Optional: Pterodactyl panel healthcheck
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s CMD test -x ${HOME}/initmain.mjs
 
-# 👤 Run as container user (Pterodactyl safe)
-USER user
+# 👤 Run as Pterodactyl-compatible user
+USER cfx
 
 # 🚀 Entrypoint
-ENTRYPOINT ["node", "--no-warnings", "--enable-source-maps", "initmain.mjs"]
+ENTRYPOINT ["node", "--no-warnings", "--enable-source-maps", "/home/container/initmain.mjs"]

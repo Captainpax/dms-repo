@@ -4,7 +4,12 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2195dd89-6ddb-4f5e-b3f4-411132f7256e" name="Changes" comment="Refactor FiveM Docker setup to use Node.js initializer&#10;&#10;Replaced bash scripts with a Node.js-based initialization process for better maintainability and cross-platform support. Streamlined the Dockerfile with optimized dependencies, Debian Slim base image, and standardized directory structures. Added `initmain.mjs` for enhanced startup logic, dynamic configuration, improved logging, and runtime optimizations." />
+    <list default="true" id="2195dd89-6ddb-4f5e-b3f4-411132f7256e" name="Changes" comment="Refactor FXServer initialization and startup process.&#10;&#10;Replaced `execFile` with `spawn` for improved process handling and output management. Enhanced error messages, logging, and code clarity in `initmain.mjs`. Updated section headings for consistency and readability.">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/Dockerfile" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/home/container/initmain.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/home/container/initmain.mjs" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/eggs/games/gtav/dms-fivem.json" beforeDir="false" afterPath="$PROJECT_DIR$/eggs/games/gtav/dms-fivem.json" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -204,7 +209,7 @@
       <workItem from="1746369466032" duration="1326000" />
       <workItem from="1746381075370" duration="99000" />
       <workItem from="1746383394813" duration="132000" />
-      <workItem from="1746384502486" duration="3585000" />
+      <workItem from="1746384502486" duration="8516000" />
     </task>
     <task id="LOCAL-00001" summary="Add IntelliJ IDEA project files to version control&#10;&#10;Include essential project configuration files for IntelliJ IDEA, such as module, VCS, and project settings. Added `.gitignore` to exclude user-specific and environment-dependent files.">
       <option name="closed" value="true" />
@@ -566,7 +571,15 @@
       <option name="project" value="LOCAL" />
       <updated>1746387968491</updated>
     </task>
-    <option name="localTasksCounter" value="46" />
+    <task id="LOCAL-00046" summary="Refactor FXServer initialization and startup process.&#10;&#10;Replaced `execFile` with `spawn` for improved process handling and output management. Enhanced error messages, logging, and code clarity in `initmain.mjs`. Updated section headings for consistency and readability.">
+      <option name="closed" value="true" />
+      <created>1746388391206</created>
+      <option name="number" value="00046" />
+      <option name="presentableId" value="LOCAL-00046" />
+      <option name="project" value="LOCAL" />
+      <updated>1746388391206</updated>
+    </task>
+    <option name="localTasksCounter" value="47" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -584,7 +597,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Enhance FiveM installation and startup scripts.&#10;&#10;Refactored Dockerfile, install.sh, and entrypoint.sh to improve reliability, modularity, and compatibility. Added dynamic artifact fetching, enhanced folder structure setup, and clarified runtime configurations. Updated txAdmin handling, improved error handling, and implemented automatic version checks and updates." />
     <MESSAGE value="Refactor FiveM setup and deployment scripts&#10;&#10;Updated Dockerfile, install, and entrypoint scripts for improved modularity, error handling, and dynamic artifact fetching. Enhanced folder structure setup, added version checks, clarified configuration options, and ensured compatibility with ESX Legacy and txAdmin. These updates streamline installation and improve reliability and maintainability." />
     <MESSAGE value="Refactor FiveM startup and deployment scripts&#10;&#10;Simplified and optimized the FiveM entrypoint script for better modularity and readability. Replaced array-based startup commands with a more streamlined string-based approach and improved dynamic parameter handling. Added runtime health checks for essential files and directories, ensuring a more robust and reliable setup." />
     <MESSAGE value="Fix FiveM artifact URL in install script.&#10;&#10;Updated the artifact URLs in `install.sh` to replace `build_proot_linux` with `build_linux`, ensuring the correct links are used for fetching builds. This change improves compatibility and prevents potential download errors during installation." />
@@ -609,7 +621,8 @@
     <MESSAGE value="Refactor FiveM Docker setup to use Node.js initializer&#10;&#10;Replaced bash scripts with a Node.js-based initializer for improved maintainability and cross-platform compatibility. Updated the Dockerfile to install dependencies, streamline directory structures, and align with Pterodactyl standards. Added `initmain.mjs` for enhanced startup logic, dynamic configuration rendering, and better logging." />
     <MESSAGE value="Refactor FiveM Docker setup to use Node.js initializer&#10;&#10;Replaced bash scripts with a Node.js-based initialization process for improved maintainability and platform compatibility. Updated the Dockerfile to streamline dependencies, adopt Debian Slim as base, and standardize directory structures. Introduced `initmain.mjs` for dynamic configuration, enhanced logging, and optimized runtime processes." />
     <MESSAGE value="Refactor FiveM Docker setup to use Node.js initializer&#10;&#10;Replaced bash scripts with a Node.js-based initialization process for better maintainability and cross-platform support. Streamlined the Dockerfile with optimized dependencies, Debian Slim base image, and standardized directory structures. Added `initmain.mjs` for enhanced startup logic, dynamic configuration, improved logging, and runtime optimizations." />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor FiveM Docker setup to use Node.js initializer&#10;&#10;Replaced bash scripts with a Node.js-based initialization process for better maintainability and cross-platform support. Streamlined the Dockerfile with optimized dependencies, Debian Slim base image, and standardized directory structures. Added `initmain.mjs` for enhanced startup logic, dynamic configuration, improved logging, and runtime optimizations." />
+    <MESSAGE value="Refactor FXServer initialization and startup process.&#10;&#10;Replaced `execFile` with `spawn` for improved process handling and output management. Enhanced error messages, logging, and code clarity in `initmain.mjs`. Updated section headings for consistency and readability." />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor FXServer initialization and startup process.&#10;&#10;Replaced `execFile` with `spawn` for improved process handling and output management. Enhanced error messages, logging, and code clarity in `initmain.mjs`. Updated section headings for consistency and readability." />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />

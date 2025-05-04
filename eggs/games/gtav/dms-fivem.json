@@ -15,9 +15,11 @@
   "file_denylist": [],
   "startup": "node --no-warnings --enable-source-maps /home/container/initmain.mjs",
   "config": {
-    "files": "{}",
-    "startup": "{\"done\": \"[✔] FXServer ready\"}",
-    "logs": "{}",
+    "files": {},
+    "startup": {
+      "done": "[✔] FXServer ready"
+    },
+    "logs": {},
     "stop": "exit 0"
   },
   "scripts": {
@@ -27,5 +29,87 @@
       "entrypoint": "bash"
     }
   },
-  "variables": []
+  "variables": [
+    {
+      "name": "FiveM License Key",
+      "description": "Your CFX license key from https://keymaster.fivem.net",
+      "env_variable": "FIVEM_LICENSE",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "required": true
+    },
+    {
+      "name": "Steam Web API Key",
+      "description": "Your Steam Web API key from https://steamcommunity.com/dev/apikey",
+      "env_variable": "STEAM_WEBAPIKEY",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "required": false
+    },
+    {
+      "name": "Enable OneSync",
+      "description": "Enable OneSync (on/off)",
+      "env_variable": "ONESYNC",
+      "default_value": "on",
+      "user_viewable": true,
+      "user_editable": true,
+      "required": false
+    },
+    {
+      "name": "Project Name",
+      "description": "Displayed project name on server list.",
+      "env_variable": "PROJECT_NAME",
+      "default_value": "Darkmatter Server",
+      "user_viewable": true,
+      "user_editable": true,
+      "required": false
+    },
+    {
+      "name": "Project Description",
+      "description": "Displayed server description.",
+      "env_variable": "PROJECT_DESCRIPTION",
+      "default_value": "Welcome to Darkmatter!",
+      "user_viewable": true,
+      "user_editable": true,
+      "required": false
+    },
+    {
+      "name": "txAdmin Enabled",
+      "description": "Set to 1 to enable txAdmin",
+      "env_variable": "TXADMIN_ENABLE",
+      "default_value": "1",
+      "user_viewable": true,
+      "user_editable": true,
+      "required": false
+    },
+    {
+      "name": "txAdmin Port",
+      "description": "Port used by txAdmin web UI",
+      "env_variable": "TXADMIN_PORT",
+      "default_value": "40120",
+      "user_viewable": true,
+      "user_editable": true,
+      "required": false
+    },
+    {
+      "name": "Base FiveM Port",
+      "description": "Game port for FXServer",
+      "env_variable": "FIVEM_PORT",
+      "default_value": "30120",
+      "user_viewable": true,
+      "user_editable": true,
+      "required": false
+    },
+    {
+      "name": "Game Build Number",
+      "description": "Optional: Force a specific game build number.",
+      "env_variable": "GAME_BUILD_NUMBER",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "required": false
+    }
+  ]
 }
