@@ -9,7 +9,7 @@
     "log": "tail -f logs/init.log || Get-Content -Path logs/init.log -Wait"
   },
   "dependencies": {
-    "tar": "^6.2.0"
+    "tar": "7.4.3"
   },
   "author": "Darkmatter Servers (Antimatter Zone LLC)",
   "license": "MIT"

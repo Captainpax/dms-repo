@@ -5,9 +5,9 @@
     "update_url": null
   },
   "exported_at": null,
-  "name": "DMS FiveM Server (Node Powered)",
+  "name": "DMS FiveM Server (Node + txAdmin)",
   "author": "captainpax@antimatterzone.net",
-  "description": "Standalone FiveM FXServer (DMS Edition, Node-based) - Auto-extraction, config rendering, and cross-platform support.",
+  "description": "Standalone FiveM FXServer using Node.js entrypoint. Auto-extracts and starts FXServer. txAdmin handles all server configuration.",
   "features": [],
   "docker_images": {
     "Darkmatter FiveM Node Build": "captainpax/dms-fivem:latest"
@@ -16,9 +16,9 @@
   "startup": "node --no-warnings --enable-source-maps /home/container/initmain.mjs",
   "config": {
     "files": "{}",
-    "startup": "{\"done\": \"[✔] FXServer binary ready\"}",
+    "startup": "{\"done\": \"[✔] FXServer ready\"}",
     "logs": "{}",
-    "stop": "^C"
+    "stop": "exit 0"
   },
   "scripts": {
     "installation": {
@@ -27,126 +27,5 @@
       "entrypoint": "bash"
     }
   },
-  "variables": [
-    {
-      "name": "FiveM License Key",
-      "env_variable": "FIVEM_LICENSE",
-      "description": "Required: Get your license key at https://keymaster.fivem.net/.",
-      "default_value": "",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "required|string|min:10|max:60",
-      "field_type": "text"
-    },
-    {
-      "name": "Steam Web API Key",
-      "env_variable": "STEAM_WEBAPIKEY",
-      "description": "Optional: Steam API key. Enables Steam features.",
-      "default_value": "",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "nullable|string|min:10|max:60",
-      "field_type": "text"
-    },
-    {
-      "name": "OneSync State",
-      "env_variable": "ONESYNC_STATE",
-      "description": "Enable OneSync (on/off/legacy).",
-      "default_value": "on",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "required|string|in:on,off,legacy",
-      "field_type": "text"
-    },
-    {
-      "name": "Game Build",
-      "env_variable": "GAME_BUILD",
-      "description": "GTA V game build to use. Leave blank for default.",
-      "default_value": "",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "nullable|numeric",
-      "field_type": "text"
-    },
-    {
-      "name": "Project Name",
-      "env_variable": "PROJECT_NAME",
-      "description": "Server name displayed in FiveM.",
-      "default_value": "Darkmatter Server",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "nullable|string|max:60",
-      "field_type": "text"
-    },
-    {
-      "name": "Project Description",
-      "env_variable": "PROJECT_DESCRIPTION",
-      "description": "Server browser description.",
-      "default_value": "Welcome to Darkmatter!",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "nullable|string|max:100",
-      "field_type": "text"
-    },
-    {
-      "name": "Enable txAdmin",
-      "env_variable": "TXADMIN_ENABLE",
-      "description": "Enable txAdmin (1 = yes, 0 = no)",
-      "default_value": "1",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "required|boolean",
-      "field_type": "text"
-    },
-    {
-      "name": "txAdmin Port",
-      "env_variable": "TXADMIN_PORT",
-      "description": "Port for txAdmin panel.",
-      "default_value": "40120",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "required|numeric|min:1024|max:65535",
-      "field_type": "text"
-    },
-    {
-      "name": "FiveM Game Port",
-      "env_variable": "FIVEM_PORT",
-      "description": "Main game port. Default: 30120.",
-      "default_value": "30120",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "required|numeric|min:1024|max:65535",
-      "field_type": "text"
-    },
-    {
-      "name": "Server Hostname",
-      "env_variable": "SERVER_HOSTNAME",
-      "description": "Name shown on FiveM list.",
-      "default_value": "Darkmatter DMS Server",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "required|string|max:100",
-      "field_type": "text"
-    },
-    {
-      "name": "Max Players",
-      "env_variable": "MAX_PLAYERS",
-      "description": "Maximum player slots.",
-      "default_value": "32",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "required|numeric|min:1|max:1024",
-      "field_type": "text"
-    },
-    {
-      "name": "RCON Password",
-      "env_variable": "RCON_PASSWORD",
-      "description": "Optional RCON password.",
-      "default_value": "",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "nullable|string|min:4|max:32",
-      "field_type": "text"
-    }
-  ]
+  "variables": []
 }

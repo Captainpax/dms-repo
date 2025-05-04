@@ -1,5 +1,5 @@
 # ---------------------------------------------
-# 🧼 Base Image: Debian Slim (glibc compatible)
+# 🧼 Base Image: Minimal Debian Slim
 # ---------------------------------------------
 FROM debian:bullseye-slim
 
@@ -10,68 +10,64 @@ LABEL org.opencontainers.image.source="https://github.com/Captainpax/dms-repo"
 # ---------------------------------------------
 # ⚙️ Environment
 # ---------------------------------------------
-ENV HOME=/home/container
+ENV HOME=/home/container \
+    DEBIAN_FRONTEND=noninteractive
 WORKDIR ${HOME}
-ENV DEBIAN_FRONTEND=noninteractive
 
 # ---------------------------------------------
-# 📦 Install dependencies
+# 📦 System Dependencies
 # ---------------------------------------------
 RUN apt-get update && apt-get install -y --no-install-recommends \
-    curl ca-certificates bash unzip jq gnupg \
-    file xz-utils git gettext \
-    libatomic1 libssl1.1 libv8-dev \
+    curl ca-certificates bash unzip jq gnupg file \
+    xz-utils git gettext libatomic1 libssl1.1 libv8-dev \
     libstdc++6 libcurl4 \
-    && rm -rf /var/lib/apt/lists/*
+ && rm -rf /var/lib/apt/lists/*
 
 # ---------------------------------------------
-# 📥 Install Node.js 23.x from NodeSource
+# 📥 Node.js 23.x (from NodeSource)
 # ---------------------------------------------
 RUN curl -fsSL https://deb.nodesource.com/setup_23.x | bash - && \
     apt-get install -y nodejs && \
     rm -rf /var/lib/apt/lists/*
 
 # ---------------------------------------------
-# 📥 Download FXServer archive into container
+# 📥 Download FXServer (Build 14758)
 # ---------------------------------------------
-RUN curl -sSL -o ${HOME}/linux.tar.xz https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/14758-36b17e986ff6393de11928a14d485c8ed053c194/fx.tar.xz
+RUN curl -sSL -o linux.tar.xz https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/14758-36b17e986ff6393de11928a14d485c8ed053c194/fx.tar.xz
 
 # ---------------------------------------------
-# 📂 Copy project files (initmain.mjs, server.cfg, etc.)
+# 📂 Copy Entrypoint & Assets
 # ---------------------------------------------
-COPY dockers/games/gtav/fivem/home/container/ ${HOME}/
+COPY dockers/games/gtav/fivem/home/container/ ./
 
 # ---------------------------------------------
-# 📁 Ensure resources/ folder exists
+# 📁 Ensure resources folder exists
 # ---------------------------------------------
-RUN mkdir -p ${HOME}/resources
-
-# 👉 Optional: Add default resources here
-# COPY ./default-resources/* ${HOME}/resources/
+RUN mkdir -p resources
 
 # ---------------------------------------------
-# 📦 Install Node dependencies
+# 📦 Install Node Dependencies
 # ---------------------------------------------
-RUN npm i
+RUN npm install
 
 # ---------------------------------------------
-# ✅ Set final permissions
+# ✅ Permissions & Ownership
 # ---------------------------------------------
-RUN chmod +x ${HOME}/initmain.mjs && \
+RUN chmod +x initmain.mjs && \
     groupadd -g 1000 user && useradd -u 1000 -g 1000 -d ${HOME} -s /bin/bash user && \
     chown -R user:user ${HOME}
 
 # ---------------------------------------------
-# 🌐 Expose game & txAdmin ports
+# 🌐 Expose Game + txAdmin Ports
 # ---------------------------------------------
 EXPOSE 30120/tcp 30120/udp
 EXPOSE 40120/tcp 40120/udp
 
-# 🩺 Healthcheck for Pterodactyl binary validation
-HEALTHCHECK --interval=30s --timeout=5s --start-period=30s CMD [ "test", "-x", "/home/container/opt/cfx-server/FXServer" ]
+# 🩺 Healthcheck (for panel)
+HEALTHCHECK --interval=30s --timeout=5s --start-period=30s CMD test -x /home/container/initmain.mjs
 
-# 👤 Run as Pterodactyl UID/GID
+# 👤 Run as container user (Pterodactyl safe)
 USER user
 
-# 🚀 Entrypoint to run initmain
-ENTRYPOINT ["node", "--no-warnings", "--enable-source-maps", "/home/container/initmain.mjs"]
+# 🚀 Entrypoint
+ENTRYPOINT ["node", "--no-warnings", "--enable-source-maps", "initmain.mjs"]
