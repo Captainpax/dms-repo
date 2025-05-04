@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-import { execFile, exec } from 'node:child_process';
+import { exec, spawn } from 'node:child_process';
 import { mkdir, chmod, cp as copy, rm, appendFile } from 'node:fs/promises';
 import { existsSync, mkdirSync } from 'node:fs';
 import { resolve } from 'node:path';
@@ -8,14 +8,14 @@ import { promisify } from 'node:util';
 
 const execAsync = promisify(exec);
 
-// === Constants ===
+// === Paths ===
 const BASE = '/home/container';
 const FX_DIR = resolve(BASE, 'opt/cfx-server');
 const FX_BIN = resolve(FX_DIR, 'FXServer');
 const ARCHIVE = resolve(BASE, 'linux.tar.xz');
 const LOG_FILE = resolve(BASE, 'logs/init.log');
 
-// === Console Colors ===
+// === Colors ===
 const color = {
     reset: '\x1b[0m', bold: '\x1b[1m',
     red: '\x1b[1;31m', green: '\x1b[1;32m',
@@ -33,10 +33,10 @@ function exitError(msg) {
     log(`[-] ${msg}`, color.red).then(() => process.exit(1));
 }
 
-// === FXServer Extraction ===
+// === Extract FXServer if not ready ===
 async function extractFX() {
     await log(`[*] Extracting FXServer for ${platform()}...`, color.cyan);
-    if (!existsSync(ARCHIVE)) exitError(`Missing ${ARCHIVE}`);
+    if (!existsSync(ARCHIVE)) exitError(`Missing archive: ${ARCHIVE}`);
     const tarPath = ARCHIVE.replace(/\.xz$/, '');
 
     try {
@@ -57,7 +57,7 @@ async function extractFX() {
     await log('[+] FXServer extracted.', color.green);
 }
 
-// === Validate & Launch FXServer ===
+// === Verify and Launch FXServer ===
 async function startFX() {
     if (!existsSync(FX_BIN)) {
         await log('[*] FXServer not found — extracting...', color.yellow);
@@ -71,16 +71,16 @@ async function startFX() {
         exitError(`FXServer not executable at ${FX_BIN}`);
     }
 
-    const fx = execFile(FX_BIN);
-    fx.stdout?.pipe(process.stdout);
-    fx.stderr?.pipe(process.stderr);
-    fx.on('exit', async code => {
-        await log(`[!] FXServer exited with code ${code}`, code === 0 ? color.green : color.red);
-        process.exit(code);
+    await log(`[*] Starting FXServer (PID handoff)...`, color.cyan);
+    const fx = spawn(FX_BIN, [], { stdio: 'inherit' });
+
+    fx.on('exit', code => {
+        log(`[!] FXServer exited with code ${code}`, code === 0 ? color.green : color.red)
+            .finally(() => process.exit(code));
     });
 }
 
-// === Main ===
+// === Run ===
 (async () => {
     await log('==========================================', color.cyan);
     await log('  [*] DMS FiveM Node Entrypoint Launcher  ', color.cyan);

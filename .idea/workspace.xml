@@ -4,13 +4,7 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="2195dd89-6ddb-4f5e-b3f4-411132f7256e" name="Changes" comment="Refactor FiveM Docker setup to use Node.js initializer&#10;&#10;Replaced bash scripts with a Node.js-based initialization process for improved maintainability and platform compatibility. Updated the Dockerfile to streamline dependencies, adopt Debian Slim as base, and standardize directory structures. Introduced `initmain.mjs` for dynamic configuration, enhanced logging, and optimized runtime processes.">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/Dockerfile" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/Dockerfile" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/home/container/initmain.mjs" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/home/container/initmain.mjs" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/dockers/games/gtav/fivem/home/container/package.json" beforeDir="false" afterPath="$PROJECT_DIR$/dockers/games/gtav/fivem/home/container/package.json" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/eggs/games/gtav/dms-fivem.json" beforeDir="false" afterPath="$PROJECT_DIR$/eggs/games/gtav/dms-fivem.json" afterDir="false" />
-    </list>
+    <list default="true" id="2195dd89-6ddb-4f5e-b3f4-411132f7256e" name="Changes" comment="Refactor FiveM Docker setup to use Node.js initializer&#10;&#10;Replaced bash scripts with a Node.js-based initialization process for better maintainability and cross-platform support. Streamlined the Dockerfile with optimized dependencies, Debian Slim base image, and standardized directory structures. Added `initmain.mjs` for enhanced startup logic, dynamic configuration, improved logging, and runtime optimizations." />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -210,7 +204,7 @@
       <workItem from="1746369466032" duration="1326000" />
       <workItem from="1746381075370" duration="99000" />
       <workItem from="1746383394813" duration="132000" />
-      <workItem from="1746384502486" duration="3245000" />
+      <workItem from="1746384502486" duration="3585000" />
     </task>
     <task id="LOCAL-00001" summary="Add IntelliJ IDEA project files to version control&#10;&#10;Include essential project configuration files for IntelliJ IDEA, such as module, VCS, and project settings. Added `.gitignore` to exclude user-specific and environment-dependent files.">
       <option name="closed" value="true" />
@@ -564,7 +558,15 @@
       <option name="project" value="LOCAL" />
       <updated>1746381172335</updated>
     </task>
-    <option name="localTasksCounter" value="45" />
+    <task id="LOCAL-00045" summary="Refactor FiveM Docker setup to use Node.js initializer&#10;&#10;Replaced bash scripts with a Node.js-based initialization process for better maintainability and cross-platform support. Streamlined the Dockerfile with optimized dependencies, Debian Slim base image, and standardized directory structures. Added `initmain.mjs` for enhanced startup logic, dynamic configuration, improved logging, and runtime optimizations.">
+      <option name="closed" value="true" />
+      <created>1746387968491</created>
+      <option name="number" value="00045" />
+      <option name="presentableId" value="LOCAL-00045" />
+      <option name="project" value="LOCAL" />
+      <updated>1746387968491</updated>
+    </task>
+    <option name="localTasksCounter" value="46" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -582,7 +584,6 @@
     </option>
   </component>
   <component name="VcsManagerConfiguration">
-    <MESSAGE value="Refactor FiveM installation and deployment scripts.&#10;&#10;Improved error handling, added dependency checks, and ensured all required files are dynamically fetched. Enhanced folder setup and clarified script processes to improve reliability, maintainability, and ease of installation. Updated container image for better compatibility." />
     <MESSAGE value="Enhance FiveM installation and startup scripts.&#10;&#10;Refactored Dockerfile, install.sh, and entrypoint.sh to improve reliability, modularity, and compatibility. Added dynamic artifact fetching, enhanced folder structure setup, and clarified runtime configurations. Updated txAdmin handling, improved error handling, and implemented automatic version checks and updates." />
     <MESSAGE value="Refactor FiveM setup and deployment scripts&#10;&#10;Updated Dockerfile, install, and entrypoint scripts for improved modularity, error handling, and dynamic artifact fetching. Enhanced folder structure setup, added version checks, clarified configuration options, and ensured compatibility with ESX Legacy and txAdmin. These updates streamline installation and improve reliability and maintainability." />
     <MESSAGE value="Refactor FiveM startup and deployment scripts&#10;&#10;Simplified and optimized the FiveM entrypoint script for better modularity and readability. Replaced array-based startup commands with a more streamlined string-based approach and improved dynamic parameter handling. Added runtime health checks for essential files and directories, ensuring a more robust and reliable setup." />
@@ -607,7 +608,8 @@
     <MESSAGE value="Refactor FiveM Docker setup for clarity and efficiency&#10;&#10;Streamlined Dockerfile, entrypoint, and install scripts for improved maintainability and usability. Key improvements include optimized directory structures, better binary handling, enhanced logging with styling, and stricter validation workflows. These changes align with best practices, reduce runtime overhead, and ensure a consistent environment." />
     <MESSAGE value="Refactor FiveM Docker setup to use Node.js initializer&#10;&#10;Replaced bash scripts with a Node.js-based initializer for improved maintainability and cross-platform compatibility. Updated the Dockerfile to install dependencies, streamline directory structures, and align with Pterodactyl standards. Added `initmain.mjs` for enhanced startup logic, dynamic configuration rendering, and better logging." />
     <MESSAGE value="Refactor FiveM Docker setup to use Node.js initializer&#10;&#10;Replaced bash scripts with a Node.js-based initialization process for improved maintainability and platform compatibility. Updated the Dockerfile to streamline dependencies, adopt Debian Slim as base, and standardize directory structures. Introduced `initmain.mjs` for dynamic configuration, enhanced logging, and optimized runtime processes." />
-    <option name="LAST_COMMIT_MESSAGE" value="Refactor FiveM Docker setup to use Node.js initializer&#10;&#10;Replaced bash scripts with a Node.js-based initialization process for improved maintainability and platform compatibility. Updated the Dockerfile to streamline dependencies, adopt Debian Slim as base, and standardize directory structures. Introduced `initmain.mjs` for dynamic configuration, enhanced logging, and optimized runtime processes." />
+    <MESSAGE value="Refactor FiveM Docker setup to use Node.js initializer&#10;&#10;Replaced bash scripts with a Node.js-based initialization process for better maintainability and cross-platform support. Streamlined the Dockerfile with optimized dependencies, Debian Slim base image, and standardized directory structures. Added `initmain.mjs` for enhanced startup logic, dynamic configuration, improved logging, and runtime optimizations." />
+    <option name="LAST_COMMIT_MESSAGE" value="Refactor FiveM Docker setup to use Node.js initializer&#10;&#10;Replaced bash scripts with a Node.js-based initialization process for better maintainability and cross-platform support. Streamlined the Dockerfile with optimized dependencies, Debian Slim base image, and standardized directory structures. Added `initmain.mjs` for enhanced startup logic, dynamic configuration, improved logging, and runtime optimizations." />
   </component>
   <component name="XSLT-Support.FileAssociations.UIState">
     <expand />
