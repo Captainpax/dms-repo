@@ -5,24 +5,24 @@
     "update_url": null
   },
   "exported_at": null,
-  "name": "DMS FiveM Server",
+  "name": "DMS FiveM Server (Node Powered)",
   "author": "captainpax@antimatterzone.net",
-  "description": "Standalone FiveM FXServer (DMS Edition) - Full auto-install, auto-update, ESX Legacy ready, and production-optimized. Built by Darkmatter Servers (AntimatterZone).",
+  "description": "Standalone FiveM FXServer (DMS Edition, Node-based) - Auto-extraction, config rendering, and cross-platform support.",
   "features": [],
   "docker_images": {
-    "Darkmatter FiveM Build (Recommended)": "captainpax/dms-fivem:latest"
+    "Darkmatter FiveM Node Build": "captainpax/dms-fivem:latest"
   },
   "file_denylist": [],
-  "startup": "/home/container/entrypoint.sh",
+  "startup": "node --no-warnings --enable-source-maps /home/container/initmain.mjs",
   "config": {
     "files": "{}",
-    "startup": "{\"done\": \"Preparing to start container with command:\"}",
+    "startup": "{\"done\": \"[✔] FXServer binary ready\"}",
     "logs": "{}",
     "stop": "^C"
   },
   "scripts": {
     "installation": {
-      "script": "#!/bin/bash\n\nset -euo pipefail\n\n# Prepare basic folder structure\nmkdir -p /home/container /home/container/resources /home/container/opt/cfx-server /home/container/logs /home/container/cache\ncd /home/container\n\n# Download required DMS stack files\ncurl -fsSL https://cloud.antimatterzone.net/s/9DzxCAFpSNMok6E/download/entrypoint.sh -o entrypoint.sh\ncurl -fsSL https://cloud.antimatterzone.net/s/FpWTPSHS5C2YBpM/download/install.sh -o install.sh\ncurl -fsSL https://cloud.antimatterzone.net/s/5ikTrqTCSdSoPjq/download/server.cfg -o server.cfg\n\n# Verify download success\nif [ ! -f entrypoint.sh ] || [ ! -f install.sh ] || [ ! -f server.cfg ]; then\n    echo \"[!] Download failed. Aborting installation.\"\n    exit 1\nfi\n\nchmod +x entrypoint.sh install.sh\n\n# Run main install script\nbash ./install.sh\n\n# Cleanup temporary files\nrm -f /home/container/*.tmp || true\n\necho \"[✔] Darkmatter Servers FiveM install completed successfully.\"",
+      "script": "#!/bin/bash\nset -euo pipefail\ncd /home/container\nnpm install\n",
       "container": "captainpax/dms-fivem:latest",
       "entrypoint": "bash"
     }
@@ -30,8 +30,8 @@
   "variables": [
     {
       "name": "FiveM License Key",
-      "description": "Required: Get your license key at https://keymaster.fivem.net/. Needed to authenticate your server.",
       "env_variable": "FIVEM_LICENSE",
+      "description": "Required: Get your license key at https://keymaster.fivem.net/.",
       "default_value": "",
       "user_viewable": true,
       "user_editable": true,
@@ -40,8 +40,8 @@
     },
     {
       "name": "Steam Web API Key",
-      "description": "Optional: Steam API key from https://steamcommunity.com/dev/apikey. Used for Steam authentication (player features).",
       "env_variable": "STEAM_WEBAPIKEY",
+      "description": "Optional: Steam API key. Enables Steam features.",
       "default_value": "",
       "user_viewable": true,
       "user_editable": true,
@@ -50,8 +50,8 @@
     },
     {
       "name": "OneSync State",
-      "description": "Enable OneSync technology. Set to 'on' (recommended) for large player slots. Values: on, off, legacy. More at https://docs.fivem.net/docs/server-manual/onesync/",
       "env_variable": "ONESYNC_STATE",
+      "description": "Enable OneSync (on/off/legacy).",
       "default_value": "on",
       "user_viewable": true,
       "user_editable": true,
@@ -60,8 +60,8 @@
     },
     {
       "name": "Game Build",
-      "description": "Specific GTA V game build number to force (example: 2699 for latest). Leave blank for automatic. List of builds: https://docs.fivem.net/docs/server-manual/game-build/",
       "env_variable": "GAME_BUILD",
+      "description": "GTA V game build to use. Leave blank for default.",
       "default_value": "",
       "user_viewable": true,
       "user_editable": true,
@@ -69,19 +69,9 @@
       "field_type": "text"
     },
     {
-      "name": "FiveM Version",
-      "description": "Which FiveM artifact version to install: 'recommended', 'latest', or exact build ID (e.g. 6482).",
-      "env_variable": "FIVEM_VERSION",
-      "default_value": "recommended",
-      "user_viewable": true,
-      "user_editable": true,
-      "rules": "required|string",
-      "field_type": "text"
-    },
-    {
       "name": "Project Name",
-      "description": "Displayed name of your server on the FiveM server list. Example: 'Darkmatter RP'.",
       "env_variable": "PROJECT_NAME",
+      "description": "Server name displayed in FiveM.",
       "default_value": "Darkmatter Server",
       "user_viewable": true,
       "user_editable": true,
@@ -90,8 +80,8 @@
     },
     {
       "name": "Project Description",
-      "description": "Short description shown on FiveM server browser. Example: 'Welcome to Darkmatter City!'",
       "env_variable": "PROJECT_DESCRIPTION",
+      "description": "Server browser description.",
       "default_value": "Welcome to Darkmatter!",
       "user_viewable": true,
       "user_editable": true,
@@ -100,8 +90,8 @@
     },
     {
       "name": "Enable txAdmin",
-      "description": "Enable txAdmin web panel for server management (1 = enable, 0 = disable). Learn more at https://docs.fivem.net/docs/server-manual/txadmin/",
       "env_variable": "TXADMIN_ENABLE",
+      "description": "Enable txAdmin (1 = yes, 0 = no)",
       "default_value": "1",
       "user_viewable": true,
       "user_editable": true,
@@ -110,8 +100,8 @@
     },
     {
       "name": "txAdmin Port",
-      "description": "Port used by txAdmin panel. Default: 40120. Make sure it's open in your firewall settings.",
       "env_variable": "TXADMIN_PORT",
+      "description": "Port for txAdmin panel.",
       "default_value": "40120",
       "user_viewable": true,
       "user_editable": true,
@@ -120,8 +110,8 @@
     },
     {
       "name": "FiveM Game Port",
-      "description": "Primary FiveM port (TCP/UDP) where players connect. Default: 30120.",
       "env_variable": "FIVEM_PORT",
+      "description": "Main game port. Default: 30120.",
       "default_value": "30120",
       "user_viewable": true,
       "user_editable": true,
@@ -130,8 +120,8 @@
     },
     {
       "name": "Server Hostname",
-      "description": "The visible hostname in FiveM server list. Example: '[US] Darkmatter RP - Serious RP'.",
       "env_variable": "SERVER_HOSTNAME",
+      "description": "Name shown on FiveM list.",
       "default_value": "Darkmatter DMS Server",
       "user_viewable": true,
       "user_editable": true,
@@ -140,8 +130,8 @@
     },
     {
       "name": "Max Players",
-      "description": "Max number of players allowed on server. Adjust carefully if you modify OneSync settings.",
       "env_variable": "MAX_PLAYERS",
+      "description": "Maximum player slots.",
       "default_value": "32",
       "user_viewable": true,
       "user_editable": true,
@@ -150,8 +140,8 @@
     },
     {
       "name": "RCON Password",
-      "description": "Password for remote server console access (optional). Useful for tools like BattleMetrics.",
       "env_variable": "RCON_PASSWORD",
+      "description": "Optional RCON password.",
       "default_value": "",
       "user_viewable": true,
       "user_editable": true,
