@@ -44,26 +44,24 @@ async function log(msg, clr = color.reset) {
         process.exit(1);
     }
 
-    // Debug: show directory contents before launch
     await log('[*] Listing cfx-server dir before spawn:', color.yellow);
     for (const file of readdirSync(BASE)) console.log(`- ${file}`);
 
-    // Construct FiveM args
-    const fxArgs = [
-        '+exec', 'server.cfg',
-        '+set', 'sv_licenseKey', process.env.FIVEM_LICENSE ?? '',
-        '+set', 'steam_webApiKey', process.env.STEAM_WEBAPIKEY ?? '',
-        '+set', 'onesync', process.env.ONESYNC ?? 'on',
-        '+set', 'txAdminEnabled', process.env.TXADMIN_ENABLE ?? '1',
-        '+set', 'txAdminPort', process.env.TXADMIN_PORT ?? '40120',
-        '+set', 'sv_maxclients', process.env.MAX_PLAYERS ?? '32',
-        '+set', 'sv_enforceGameBuild', process.env.GAME_BUILD_NUMBER ?? '',
-        '+sets', 'sv_projectName', process.env.PROJECT_NAME ?? 'Darkmatter Server',
-        '+sets', 'sv_projectDesc', process.env.PROJECT_DESCRIPTION ?? 'Welcome to Darkmatter!'
-    ];
+    // Construct startup args (only include if defined)
+    const args = ['+exec', 'server.cfg'];
+
+    if (process.env.FIVEM_LICENSE) args.push('+set', 'sv_licenseKey', process.env.FIVEM_LICENSE);
+    if (process.env.STEAM_WEBAPIKEY) args.push('+set', 'steam_webApiKey', process.env.STEAM_WEBAPIKEY);
+    if (process.env.ONESYNC) args.push('+set', 'onesync', process.env.ONESYNC);
+    if (process.env.TXADMIN_ENABLE) args.push('+set', 'txAdminEnabled', process.env.TXADMIN_ENABLE);
+    if (process.env.TXADMIN_PORT) args.push('+set', 'txAdminPort', process.env.TXADMIN_PORT);
+    if (process.env.MAX_PLAYERS) args.push('+set', 'sv_maxclients', process.env.MAX_PLAYERS);
+    if (process.env.GAME_BUILD_NUMBER) args.push('+set', 'sv_enforceGameBuild', process.env.GAME_BUILD_NUMBER);
+    if (process.env.PROJECT_NAME) args.push('+sets', 'sv_projectName', process.env.PROJECT_NAME);
+    if (process.env.PROJECT_DESCRIPTION) args.push('+sets', 'sv_projectDesc', process.env.PROJECT_DESCRIPTION);
 
     await log(`[*] Starting FXServer (PID handoff): ${FX_BIN}`, color.cyan);
-    const fx = spawn(FX_BIN, fxArgs, { stdio: 'inherit' });
+    const fx = spawn(FX_BIN, args, { stdio: 'inherit' });
 
     fx.on('error', async err => {
         await log(`[✖] Spawn failed: ${err.message}`, color.red);

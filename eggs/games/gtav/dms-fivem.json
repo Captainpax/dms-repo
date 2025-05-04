@@ -10,21 +10,19 @@
   "description": "Standalone FiveM FXServer using Node.js entrypoint. Auto-extracts and starts FXServer. txAdmin handles all server configuration.",
   "features": [],
   "docker_images": {
-    "Darkmatter FiveM Node Build": "captainpax/dms-fivem:latest"
+    "Darkmatter FiveM": "captainpax/dms-fivem:latest"
   },
   "file_denylist": [],
   "startup": "node --no-warnings --enable-source-maps /home/container/initmain.mjs",
   "config": {
-    "files": {},
-    "startup": {
-      "done": "[✔] FXServer ready"
-    },
-    "logs": {},
+    "files": "{}",
+    "startup": "{\"done\": \"[✔] FXServer ready\"}",
+    "logs": "{}",
     "stop": "exit 0"
   },
   "scripts": {
     "installation": {
-      "script": "#!/bin/bash\nset -euo pipefail\ncd /home/container\nnpm install\n",
+      "script": "#!/bin/bash\ncd /home/container\nnpm install\n",
       "container": "captainpax/dms-fivem:latest",
       "entrypoint": "bash"
     }
@@ -32,84 +30,93 @@
   "variables": [
     {
       "name": "FiveM License Key",
-      "description": "Your CFX license key from https://keymaster.fivem.net",
+      "description": "Your CFX license key for server authentication.",
       "env_variable": "FIVEM_LICENSE",
       "default_value": "",
       "user_viewable": true,
       "user_editable": true,
-      "required": true
+      "rules": "required|string|starts_with:cfxk_",
+      "field_type": "text"
     },
     {
       "name": "Steam Web API Key",
-      "description": "Your Steam Web API key from https://steamcommunity.com/dev/apikey",
+      "description": "Your Steam Web API Key (from https://steamcommunity.com/dev/apikey).",
       "env_variable": "STEAM_WEBAPIKEY",
       "default_value": "",
       "user_viewable": true,
       "user_editable": true,
-      "required": false
+      "rules": "required|alpha_num|size:32",
+      "field_type": "text"
     },
     {
       "name": "Enable OneSync",
-      "description": "Enable OneSync (on/off)",
+      "description": "Enable OneSync mode (on/off).",
       "env_variable": "ONESYNC",
       "default_value": "on",
       "user_viewable": true,
       "user_editable": true,
-      "required": false
+      "rules": "required|string|in:on,off",
+      "field_type": "text"
     },
     {
       "name": "Project Name",
-      "description": "Displayed project name on server list.",
+      "description": "The name of your FiveM server.",
       "env_variable": "PROJECT_NAME",
       "default_value": "Darkmatter Server",
       "user_viewable": true,
       "user_editable": true,
-      "required": false
+      "rules": "required|string|max:60",
+      "field_type": "text"
     },
     {
       "name": "Project Description",
-      "description": "Displayed server description.",
+      "description": "A description shown under your server name in the list.",
       "env_variable": "PROJECT_DESCRIPTION",
       "default_value": "Welcome to Darkmatter!",
       "user_viewable": true,
       "user_editable": true,
-      "required": false
+      "rules": "nullable|string|max:200",
+      "field_type": "text"
     },
     {
       "name": "txAdmin Enabled",
-      "description": "Set to 1 to enable txAdmin",
+      "description": "Enable txAdmin (1 = yes, 0 = no).",
       "env_variable": "TXADMIN_ENABLE",
       "default_value": "1",
       "user_viewable": true,
       "user_editable": true,
-      "required": false
+      "rules": "required|boolean",
+      "field_type": "text"
     },
     {
       "name": "txAdmin Port",
-      "description": "Port used by txAdmin web UI",
+      "description": "Port used by txAdmin (default 40120).",
       "env_variable": "TXADMIN_PORT",
       "default_value": "40120",
       "user_viewable": true,
       "user_editable": true,
-      "required": false
+      "rules": "required|integer|between:1024,65535",
+      "field_type": "text"
     },
     {
-      "name": "Base FiveM Port",
-      "description": "Game port for FXServer",
-      "env_variable": "FIVEM_PORT",
+      "name": "Game Port",
+      "description": "Base port for FXServer (default 30120).",
+      "env_variable": "GAME_PORT",
       "default_value": "30120",
       "user_viewable": true,
       "user_editable": true,
-      "required": false
+      "rules": "required|integer|between:1024,65535",
+      "field_type": "text"
     },
     {
       "name": "Game Build Number",
-      "description": "Optional: Force a specific game build number.",
+      "description": "Overrides the default game build (leave blank to use latest).",
       "env_variable": "GAME_BUILD_NUMBER",
       "default_value": "",
       "user_viewable": true,
       "user_editable": true,
-      "required": false
+      "rules": "nullable|integer",
+      "field_type": "text"
     }
   ]
 }
