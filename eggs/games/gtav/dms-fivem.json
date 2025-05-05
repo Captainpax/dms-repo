@@ -18,11 +18,17 @@
     "files": "{}",
     "startup": "{\"done\": \"[✔] FXServer ready\"}",
     "logs": "{}",
-    "stop": "exit 0"
+    "stop": "exit 0",
+    "ports": {
+      "default": "{{GAME_PORT}}",
+      "additional": [
+        "{{TXADMIN_PORT}}"
+      ]
+    }
   },
   "scripts": {
     "installation": {
-      "script": "#!/bin/bash\ncd /home/container\nnpm install\n",
+      "script": "#!/bin/bash\necho \"[DMS FiveM] No install step required. Using prebuilt container.\"\n",
       "container": "captainpax/dms-fivem:latest",
       "entrypoint": "bash"
     }
@@ -116,6 +122,16 @@
       "user_viewable": true,
       "user_editable": true,
       "rules": "nullable|integer",
+      "field_type": "text"
+    },
+    {
+      "name": "txAdmin Profile Dir",
+      "description": "txAdmin data location (do not change unless debugging)",
+      "env_variable": "TXADMIN_PROFILE_DIR",
+      "default_value": "/home/container/txData",
+      "user_viewable": false,
+      "user_editable": false,
+      "rules": "nullable|string",
       "field_type": "text"
     }
   ]
