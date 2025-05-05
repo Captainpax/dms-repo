@@ -20,6 +20,34 @@ check_required_folder() {
   fi
 }
 
+get_exposed_ports() {
+  local dockerfile="$1"
+  grep -i '^EXPOSE' "$dockerfile" | awk '{for (i=2;i<=NF;i++) print $i}'
+}
+
+ensure_expose_ports_exist() {
+  local dockerfile="$1"
+  if ! grep -iq '^EXPOSE' "$dockerfile"; then
+    echo -e "${YELLOW}⚠️ No EXPOSE lines found. Injecting fallback ports into Dockerfile...${RESET}"
+    echo -e "\n# Added by deploy.sh fallback\nEXPOSE 30120/tcp 30120/udp 40120/udp" >> "$dockerfile"
+  fi
+}
+
+generate_port_flags() {
+  local dockerfile="$1"
+  local port_list=()
+
+  while read -r port; do
+    [[ -z "$port" ]] && continue
+    proto="tcp"
+    [[ "$port" =~ /udp$ ]] && proto="udp"
+    port_clean="${port%/*}"
+    port_list+=("-p" "${port_clean}:${port_clean}/${proto}")
+  done < <(get_exposed_ports "$dockerfile")
+
+  echo "${port_list[@]}"
+}
+
 build_and_push() {
   local dockerfile="$1"
   local image="$2"
@@ -31,6 +59,7 @@ build_and_push() {
     exit 1
   fi
 
+  ensure_expose_ports_exist "$dockerfile"
   check_required_folder
   docker build --no-cache -t "${image}" -f "$dockerfile" .
 
@@ -70,11 +99,19 @@ auto_build_and_run() {
   build_and_push "$DOCKERFILE" "$IMAGE"
   echo -e "\n${GREEN}✅ Build completed. Image: ${IMAGE}${RESET}\n"
 
-  echo -e "${YELLOW}📂 You can now upload custom files (drag/drop or sync). Press Enter when ready to continue...${RESET}"
-  read -r
+  echo -e "${YELLOW}📂 Would you like to upload custom files now? (y/N):${RESET}"
+  read -r upload_confirm
+  if [[ "$upload_confirm" =~ ^[Yy]$ ]]; then
+    echo -e "${YELLOW}📂 You can now upload custom files (drag/drop or sync). Press Enter when ready to continue...${RESET}"
+    read -r
+  else
+    echo -e "${BLUE}↩️ Skipping upload step.${RESET}"
+  fi
 
-  echo -e "${BLUE}🚀 Running container from image ${BOLD}${IMAGE}${RESET}..."
-  docker run -it --rm "$IMAGE"
+  PORT_FLAGS=$(generate_port_flags "$DOCKERFILE")
+  echo -e "${CYAN}📡 Port bindings:${RESET} $PORT_FLAGS"
+  echo -e "${YELLOW}⚠️ DEBUG: docker run -it --rm $PORT_FLAGS $IMAGE${RESET}\n"
+  docker run -it --rm $PORT_FLAGS "$IMAGE"
 }
 
 while true; do
@@ -127,7 +164,14 @@ while true; do
         echo -e "${RED}❌ No image specified. Returning to menu.${RESET}"
       else
         echo -e "${BLUE}🚀 Running container from image ${BOLD}${IMAGE_NAME}${RESET}..."
-        docker run -it --rm "$IMAGE_NAME"
+
+        IFS=' ' read -r DOCKERFILE IMAGE_SUFFIX <<< "${DOCKER_TARGETS[1]}"
+        ensure_expose_ports_exist "$DOCKERFILE"
+        PORT_FLAGS=$(generate_port_flags "$DOCKERFILE")
+
+        echo -e "${CYAN}📡 Port bindings:${RESET} $PORT_FLAGS"
+        echo -e "${YELLOW}⚠️ DEBUG: docker run -it --rm $PORT_FLAGS $IMAGE_NAME${RESET}\n"
+        docker run -it --rm $PORT_FLAGS "$IMAGE_NAME"
       fi
       ;;
     0)
