@@ -4,8 +4,9 @@ FROM ghcr.io/pterodactyl/yolks:debian
 # 👤 Become root for installation
 USER root
 
-# 🧰 Install Node.js v23 and native dependencies
-RUN curl -fsSL https://deb.nodesource.com/setup_23.x | bash - && \
+# 🧰 Install Node.js v23, native dependencies, and Wine (with i386 support)
+RUN dpkg --add-architecture i386 && \
+    curl -fsSL https://deb.nodesource.com/setup_23.x | bash - && \
     apt-get update && \
     apt-get install -y \
         nodejs \
@@ -18,7 +19,19 @@ RUN curl -fsSL https://deb.nodesource.com/setup_23.x | bash - && \
         python3 \
         make \
         g++ \
+        wine64 \
+        wine32 \
+        winbind \
+        cabextract \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
+
+# 🍷 Configure Wine environment and initialize prefix ahead of file copy
+ENV WINEARCH=win64 \
+    WINEPREFIX=/home/container/wine
+
+RUN mkdir -p /home/container && \
+    chown -R 1000:1000 /home/container && \
+    runuser -u container -- wineboot --init
 
 # 📂 Set working dir early
 WORKDIR /home/container
