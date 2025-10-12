@@ -1,5 +1,5 @@
-# 🧱 Use Pterodactyl's Debian yolk as base
-FROM ghcr.io/pterodactyl/yolks:debian
+# 🧱 Use Pterodactyl's Debian yolk as base (Bookworm for supported apt sources)
+FROM ghcr.io/pterodactyl/yolks:debian:bookworm
 
 # 👤 Become root for installation
 USER root
@@ -37,7 +37,7 @@ RUN mkdir -p /home/container && \
 WORKDIR /home/container
 
 # 📂 Copy in your initializer and manifest files
-COPY dockers/games/gtav/fivem/home/container/ /home/container/
+COPY home/container/ /home/container/
 
 # 📦 Install Node dependencies (per package.json)
 RUN if [ -f package.json ]; then \
