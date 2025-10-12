@@ -1,29 +1,34 @@
-# 🧱 Use Pterodactyl's Debian yolk as base
-FROM ghcr.io/pterodactyl/yolks:debian
+# 🧱 Use Debian Bookworm slim as the base so modern apt repositories resolve
+FROM debian:bookworm-slim
 
-# 👤 Become root for installation
-USER root
+# ⚙️ Avoid interactive apt prompts during image builds
+ENV DEBIAN_FRONTEND=noninteractive
+
+# 👤 Create the Pterodactyl-compatible container user (UID 1000)
+RUN useradd -m -u 1000 container
 
 # 🧰 Install Node.js v23, native dependencies, and Wine (with i386 support)
 RUN dpkg --add-architecture i386 && \
+    apt-get update && \
+    apt-get install -y --no-install-recommends \
+        ca-certificates \
+        curl \
+        gnupg \
+        xz-utils && \
     curl -fsSL https://deb.nodesource.com/setup_23.x | bash - && \
     apt-get update && \
-    apt-get install -y \
-        nodejs \
-        curl \
-        xz-utils \
-        ca-certificates \
-        gnupg \
-        tar \
+    apt-get install -y --no-install-recommends \
         build-essential \
-        python3 \
-        make \
-        g++ \
-        wine64 \
-        wine32 \
-        winbind \
         cabextract \
-    && apt-get clean && rm -rf /var/lib/apt/lists/*
+        g++ \
+        make \
+        nodejs \
+        python3 \
+        tar \
+        winbind \
+        wine32 \
+        wine64 && \
+    apt-get clean && rm -rf /var/lib/apt/lists/*
 
 # 🍷 Configure Wine environment and initialize prefix ahead of file copy
 ENV WINEARCH=win64 \
@@ -37,7 +42,7 @@ RUN mkdir -p /home/container && \
 WORKDIR /home/container
 
 # 📂 Copy in your initializer and manifest files
-COPY dockers/games/gtav/fivem/home/container/ /home/container/
+COPY home/container/ /home/container/
 
 # 📦 Install Node dependencies (per package.json)
 RUN if [ -f package.json ]; then \
