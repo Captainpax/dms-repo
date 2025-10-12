@@ -1,10 +1,12 @@
 # Ignore everything by default
 *
 
-# ✅ Allow all necessary FiveM Docker build files
-!dockers/games/gtav/fivem/Dockerfile
-!dockers/games/gtav/fivem/home/container/
-!dockers/games/gtav/fivem/home/container/**
+# ✅ Allow all necessary FiveM Docker build files (paths are relative to this directory)
+!Dockerfile
+!.dockerignore
+!home/
+!home/container/
+!home/container/**
 
 # ❌ Ignore local/editor/IDE/project metadata
 .idea/
