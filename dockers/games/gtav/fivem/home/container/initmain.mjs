@@ -4,13 +4,12 @@
  * @version 4.9.0
  * @description
  *   DMS FXServer Bootstrapper (setup, firstBoot, start) with correct
- *   extraction from FiveM’s proot Alpine artifact.
+ *   extraction from FiveM’s Windows artifact.
  */
 
 import { spawn } from 'node:child_process';
 import {
     createWriteStream,
-    createReadStream,
     existsSync,
     mkdirSync,
     readdirSync,
@@ -23,15 +22,12 @@ import { access, appendFile, chmod } from 'node:fs/promises';
 import { resolve, relative } from 'node:path';
 import { networkInterfaces } from 'node:os';
 import { get } from 'https';
-import { pipeline } from 'node:stream/promises';
-import lzma from 'lzma-native';
-import * as tar from 'tar';
 
 /** Paths **/
 const HOME      = '/home/container';
 const BASE      = resolve(HOME, 'opt/cfx-server');
 const EXTRACTED = resolve(BASE, 'extracted');
-const FX_BIN    = resolve(BASE, 'FXServer');
+const FX_BIN    = resolve(BASE, 'FXServer.exe');
 const LOG_DIR   = resolve(BASE, 'logs');
 const LOG_FILE  = resolve(LOG_DIR, 'init.log');
 const TXADMIN_DIR    = process.env.TXADMIN_PROFILE_DIR ||= resolve(HOME, 'txData');
@@ -40,7 +36,8 @@ const FIRSTBOOT_MARKER = resolve(LOG_DIR, '.dms_firstboot_complete');
 
 /** Artifact **/
 const BUILD_ID    = '7290';
-const ARTIFACT_URL = `https://runtime.fivem.net/artifacts/fivem/build_proot_linux/master/${BUILD_ID}-a654bcc2adfa27c4e020fc915a1a6343c3b4f921/fx.tar.xz`;
+const ARTIFACT_URL = `https://runtime.fivem.net/artifacts/fivem/build_server_windows/master/${BUILD_ID}-a654bcc2adfa27c4e020fc915a1a6343c3b4f921/server.zip`;
+const ARCHIVE_NAME = 'server.zip';
 
 /** CLI args & colors **/
 const ARGS = process.argv.slice(2);
@@ -81,13 +78,13 @@ function downloadFile(url, dest) {
     });
 }
 /**
- * Recursively find the FXServer root inside the proot tree.
+ * Recursively find the FXServer root inside the extracted tree.
  * @param {string} dir
  * @returns {string|null} path to directory containing FXServer
  */
 function findFXRoot(dir) {
-    if (existsSync(resolve(dir, 'opt/cfx-server/FXServer'))) {
-        return resolve(dir, 'opt/cfx-server');
+    if (existsSync(resolve(dir, 'FXServer.exe'))) {
+        return dir;
     }
     for (const name of readdirSync(dir)) {
         const full = resolve(dir, name);
@@ -97,6 +94,17 @@ function findFXRoot(dir) {
         }
     }
     return null;
+}
+
+function runCommand(cmd, args, options = {}) {
+    return new Promise((resolvePromise, rejectPromise) => {
+        const child = spawn(cmd, args, { stdio: 'inherit', ...options });
+        child.on('error', rejectPromise);
+        child.on('exit', code => {
+            if (code === 0) return resolvePromise();
+            rejectPromise(new Error(`${cmd} exited with code ${code}`));
+        });
+    });
 }
 
 /** ========== SETUP MODE ========== */
@@ -114,7 +122,7 @@ async function runSetup() {
     rmSync(EXTRACTED, { recursive:true, force:true });
     mkdirSync(EXTRACTED, { recursive:true });
 
-    const archive = resolve(BASE, 'fx.tar.xz');
+    const archive = resolve(BASE, ARCHIVE_NAME);
     await log(`↓ Downloading build ${BUILD_ID}…`, color.magenta);
     await downloadFile(ARTIFACT_URL, archive);
     await log(`✓ Downloaded to ${archive}`, color.green);
@@ -126,11 +134,7 @@ async function runSetup() {
 
     await log(`⇪ Extracting into ${relative(HOME, EXTRACTED)}…`, color.cyan);
     try {
-        await pipeline(
-            createReadStream(archive),
-            lzma.createDecompressor(),
-            tar.extract({ cwd: EXTRACTED })
-        );
+        await runCommand('unzip', ['-q', archive, '-d', EXTRACTED]);
     } catch (e) {
         await log(`❌ Extraction error: ${e.message}`, color.red);
         process.exit(1);
@@ -139,10 +143,10 @@ async function runSetup() {
     // locate FXServer subtree
     const fxRoot = findFXRoot(EXTRACTED);
     if (!fxRoot) {
-        await log(`❌ Could not locate opt/cfx-server in ${relative(HOME, EXTRACTED)}`, color.red);
+        await log(`❌ Could not locate FXServer.exe in ${relative(HOME, EXTRACTED)}`, color.red);
         process.exit(1);
     }
-    await log(`ℹ Found cfx folder at ${relative(HOME, fxRoot)}`, color.yellow);
+    await log(`ℹ Found FXServer root at ${relative(HOME, fxRoot)}`, color.yellow);
 
     // move its contents into BASE
     for (const entry of readdirSync(fxRoot)) {
@@ -230,7 +234,8 @@ async function runStart() {
     }
 
     await log(`[*] Final args: ${args.join(' ')}`, color.magenta);
-    const fx = spawn(FX_BIN, args, { stdio:'inherit' });
+    await log(`[*] Launch command: wine64 ${[FX_BIN, ...args].join(' ')}`, color.cyan);
+    const fx = spawn('wine64', [FX_BIN, ...args], { stdio:'inherit', cwd: BASE, env: process.env });
     fx.on('error', async e => { await log(`❌ Spawn error: ${e.message}`, color.red); process.exit(1); });
     fx.on('exit',  async c => { await log(`⚙ Exited ${c}`, c===0?color.green:color.red); process.exit(c); });
 }
