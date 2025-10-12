@@ -27,7 +27,27 @@ import { get } from 'https';
 const HOME      = '/home/container';
 const BASE      = resolve(HOME, 'opt/cfx-server');
 const EXTRACTED = resolve(BASE, 'extracted');
-const FX_BIN    = resolve(BASE, 'FXServer.exe');
+const WINEPREFIX = process.env.WINEPREFIX ||= resolve(HOME, 'wine');
+const WINEARCH   = process.env.WINEARCH  ||= 'win64';
+const WINE_DRIVE_C = resolve(WINEPREFIX, 'drive_c');
+const FX_BIN    = (() => {
+    const prefixCandidates = [
+        resolve(WINE_DRIVE_C, 'FXServer', 'FXServer.exe'),
+        resolve(WINE_DRIVE_C, 'FXServer.exe')
+    ];
+    for (const candidate of prefixCandidates) {
+        if (existsSync(candidate)) return candidate;
+    }
+    if (existsSync(WINE_DRIVE_C)) {
+        const prefixRoot = findFXRoot(WINE_DRIVE_C);
+        if (prefixRoot) return resolve(prefixRoot, 'FXServer.exe');
+    }
+    if (existsSync(EXTRACTED)) {
+        const extractedRoot = findFXRoot(EXTRACTED);
+        if (extractedRoot) return resolve(extractedRoot, 'FXServer.exe');
+    }
+    return resolve(BASE, 'FXServer.exe');
+})();
 const LOG_DIR   = resolve(BASE, 'logs');
 const LOG_FILE  = resolve(LOG_DIR, 'init.log');
 const TXADMIN_DIR    = process.env.TXADMIN_PROFILE_DIR ||= resolve(HOME, 'txData');
@@ -94,6 +114,12 @@ function findFXRoot(dir) {
         }
     }
     return null;
+}
+
+function toWindowsPath(p) {
+    if (!p.startsWith(WINE_DRIVE_C)) return p;
+    const relPath = relative(WINE_DRIVE_C, p).replace(/\\/g, '/');
+    return `C:${relPath ? '\\' + relPath.replace(/\//g, '\\') : ''}`;
 }
 
 function runCommand(cmd, args, options = {}) {
@@ -234,8 +260,10 @@ async function runStart() {
     }
 
     await log(`[*] Final args: ${args.join(' ')}`, color.magenta);
-    await log(`[*] Launch command: wine64 ${[FX_BIN, ...args].join(' ')}`, color.cyan);
-    const fx = spawn('wine64', [FX_BIN, ...args], { stdio:'inherit', cwd: BASE, env: process.env });
+    const wineCmd = process.env.WINE_BINARY || 'wine';
+    const runtimeEnv = { ...process.env, WINEPREFIX, WINEARCH };
+    await log(`[*] Launch command: ${wineCmd} ${[toWindowsPath(FX_BIN), ...args].join(' ')}`, color.cyan);
+    const fx = spawn(wineCmd, [FX_BIN, ...args], { stdio:'inherit', cwd: BASE, env: runtimeEnv });
     fx.on('error', async e => { await log(`❌ Spawn error: ${e.message}`, color.red); process.exit(1); });
     fx.on('exit',  async c => { await log(`⚙ Exited ${c}`, c===0?color.green:color.red); process.exit(c); });
 }
