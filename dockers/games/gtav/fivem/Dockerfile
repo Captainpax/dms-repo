@@ -1,5 +1,5 @@
-# 🧱 Use Pterodactyl's Debian yolk as base (Bookworm for supported apt sources)
-FROM ghcr.io/pterodactyl/yolks:debian:bookworm
+# 🧱 Use Pterodactyl's Debian Bookworm yolk as the base image
+FROM ghcr.io/pterodactyl/yolks/debian:bookworm
 
 # 👤 Become root for installation
 USER root
