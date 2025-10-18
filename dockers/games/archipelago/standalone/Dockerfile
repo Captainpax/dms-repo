@@ -25,16 +25,44 @@ RUN if [ -f requirements.txt ]; then \
       echo "⚠️  requirements.txt not found, skipping dependency installation"; \
     fi
 
-# 🛠️ Generate the StartAP bootstrap script and ensure permissions
-RUN printf '#!/bin/bash\nset -euo pipefail\ncd /home/container\nexec python3 ArchipelagoServer.py "$@"\n' > /home/container/StartAP \
-    && chmod +x /home/container/StartAP \
-    && chown -R 1000:1000 /home/container
+# 🛠️ Generate flexible Archipelago bootstrap scripts and ensure permissions
+RUN set -eux; \
+    printf '%s\n' \
+      '#!/bin/bash' \
+      'set -euo pipefail' \
+      '' \
+      'BASE_DIR="/home/container"' \
+      'SERVER_DIR="${BASE_DIR}/Archipelago"' \
+      '' \
+      'if [ ! -d "${SERVER_DIR}" ]; then' \
+      '  echo "❌ Expected Archipelago sources in ${SERVER_DIR}, but the directory is missing." >&2' \
+      '  echo "   Populate the image by copying an Archipelago/ tree into the build context." >&2' \
+      '  exit 1' \
+      'fi' \
+      '' \
+      'cd "${SERVER_DIR}"' \
+      '' \
+      'if [ -f "Archipelago.py" ]; then' \
+      '  exec python3 Archipelago.py "$@"' \
+      'elif [ -f "ArchipelagoServer.py" ]; then' \
+      '  exec python3 ArchipelagoServer.py "$@"' \
+      'elif python3 -c '\''import importlib.util, sys; sys.exit(0 if importlib.util.find_spec("Archipelago") else 1)'\'' >/dev/null 2>&1; then' \
+      '  exec python3 -m Archipelago "$@"' \
+      'else' \
+      '  echo "❌ Unable to locate an Archipelago server entrypoint." >&2' \
+      '  echo "   Checked for Archipelago.py, ArchipelagoServer.py, and importable module '\''Archipelago'\''." >&2' \
+      '  exit 1' \
+      'fi' \
+      > /home/container/StartArchipelago; \
+    chmod +x /home/container/StartArchipelago; \
+    ln -sf StartArchipelago /home/container/StartAP; \
+    chown -R 1000:1000 /home/container
 
 # 👤 Drop back to the container user expected by Pterodactyl
 USER 1000
 
 # 🚀 Default command to launch the Archipelago server
-CMD ["./StartAP"]
+CMD ["./StartArchipelago"]
 
 # 📡 Expose the Archipelago server port
 EXPOSE 3333

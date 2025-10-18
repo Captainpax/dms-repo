@@ -19,4 +19,4 @@ docker build -t dms/archipelago:standalone dockers/games/archipelago/standalone
 
 ## Runtime
 
-The container exposes port `3333` and starts the server through the generated `StartAP` script, which runs `python3 ArchipelagoServer.py`. Provide environment variables and mounted volumes as needed when running the container.
+The container exposes port `3333` and now starts the server through the generated `StartArchipelago` script (also symlinked to `StartAP` for backward compatibility). The wrapper automatically prefers `Archipelago.py`, falls back to legacy `ArchipelagoServer.py`, and finally tries `python3 -m Archipelago`, ensuring the launch command matches whichever entrypoint ships with the upstream tree. Provide environment variables and mounted volumes as needed when running the container.
