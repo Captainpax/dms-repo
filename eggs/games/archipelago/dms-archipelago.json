@@ -1,0 +1,85 @@
+{
+  "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY DARKMATTER SERVERS - ANTIMATTERZONE.NET",
+  "meta": {
+    "version": "PTDL_v2",
+    "update_url": null
+  },
+  "exported_at": null,
+  "name": "DMS Archipelago Multiworld Server",
+  "author": "captainpax@antimatterzone.net",
+  "description": "Deploys the official Archipelago multiworld server with automated repository updates and Python virtual environment setup.",
+  "features": [],
+  "docker_images": {
+    "Python 3.11": "ghcr.io/pterodactyl/yolks:python_3.11"
+  },
+  "file_denylist": [],
+  "startup": "bash /home/container/start.sh",
+  "config": {
+    "files": "{}",
+    "startup": "{\"done\": \"Serving on\"}",
+    "logs": "{}",
+    "stop": "^C",
+    "ports": {
+      "default": "{{SERVER_PORT}}"
+    }
+  },
+  "scripts": {
+    "installation": {
+      "script": "#!/bin/bash\n    set -e\n\n    cd /mnt/server\n\n    python3 -m venv .venv\n    source .venv/bin/activate\n\n    if [ -d Archipelago ]; then\n      cd Archipelago\n      git fetch --all --tags\n      git reset --hard origin/${ARCHIPELAGO_BRANCH}\n    else\n      git clone --branch ${ARCHIPELAGO_BRANCH} ${ARCHIPELAGO_REPOSITORY} Archipelago\n      cd Archipelago\n    fi\n\n    pip install --upgrade pip setuptools wheel\n    if [ -f requirements.txt ]; then\n      pip install -r requirements.txt\n    fi\n\n    cd /mnt/server\n    cat <<'SCRIPT' > start.sh\n    #!/bin/bash\n    cd /home/container/Archipelago\n    source /home/container/.venv/bin/activate\n    HOST=\"${SERVER_HOST}\"\n    PORT=\"${SERVER_PORT}\"\n    PASS=\"${SERVER_PASSWORD}\"\n    CMD=(python3 ArchipelagoServer.py --host \"${HOST}\" --port \"${PORT}\")\n    if [ -n \"${PASS}\" ]; then\n      CMD+=(--password \"${PASS}\")\n    fi\n    exec \"${CMD[@]}\"\n    SCRIPT\n    chmod +x start.sh",
+      "container": "ghcr.io/pterodactyl/yolks:python_3.11",
+      "entrypoint": "bash"
+    }
+  },
+  "variables": [
+    {
+      "name": "Archipelago Repository",
+      "description": "Git repository URL used to download the Archipelago server.",
+      "env_variable": "ARCHIPELAGO_REPOSITORY",
+      "default_value": "https://github.com/ArchipelagoMW/Archipelago.git",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string|url",
+      "field_type": "text"
+    },
+    {
+      "name": "Repository Branch",
+      "description": "Git branch or tag to checkout when installing or updating Archipelago.",
+      "env_variable": "ARCHIPELAGO_BRANCH",
+      "default_value": "main",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string|alpha_dash",
+      "field_type": "text"
+    },
+    {
+      "name": "Server Host",
+      "description": "Network interface the Archipelago server should bind to.",
+      "env_variable": "SERVER_HOST",
+      "default_value": "0.0.0.0",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string",
+      "field_type": "text"
+    },
+    {
+      "name": "Server Port",
+      "description": "Port Archipelago listens on (default 38281).",
+      "env_variable": "SERVER_PORT",
+      "default_value": "38281",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|integer|between:1024,65535",
+      "field_type": "text"
+    },
+    {
+      "name": "Server Password",
+      "description": "Optional password required for players to connect.",
+      "env_variable": "SERVER_PASSWORD",
+      "default_value": "",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string|max:128",
+      "field_type": "text"
+    }
+  ]
+}
