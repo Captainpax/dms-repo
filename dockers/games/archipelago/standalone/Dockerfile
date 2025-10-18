@@ -7,15 +7,13 @@ USER root
 # 📂 Ensure the working directory exists
 WORKDIR /home/container
 
-# 🛠️ Install utilities required to download and unpack upstream releases
+# 🛠️ Install utilities required to download and unpack upstream releases (Alpine base uses apk; adjust if the parent image changes)
 RUN set -eux; \
-    apt-get update; \
-    apt-get install -y --no-install-recommends \
+    apk add --no-cache \
       ca-certificates \
       curl \
       tar \
-      unzip; \
-    rm -rf /var/lib/apt/lists/*
+      unzip
 
 # 🌐 Configure source retrieval
 ARG ARCHIPELAGO_SOURCE_URL="https://cloud.antimatterzone.net/s/bNZ57tEMd5downP/download"
