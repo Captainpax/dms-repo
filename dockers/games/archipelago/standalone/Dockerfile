@@ -7,8 +7,16 @@ USER root
 # 📂 Ensure the working directory exists
 WORKDIR /home/container
 
-# 📁 Copy the Archipelago server files into place
-COPY Archipelago/ /home/container/
+# 📁 Copy the build context and stage Archipelago server files into place
+COPY . /tmp/build-context/
+
+# 🧹 Move the Archipelago tree if present, otherwise leave an empty workspace
+RUN if [ -d /tmp/build-context/Archipelago ]; then \
+      cp -a /tmp/build-context/Archipelago/. /home/container/; \
+    else \
+      echo "⚠️  Archipelago directory not found in build context; continuing with empty workspace"; \
+    fi \
+    && rm -rf /tmp/build-context
 
 # 📦 Install Python dependencies if a requirements file is present
 RUN if [ -f requirements.txt ]; then \
