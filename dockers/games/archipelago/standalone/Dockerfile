@@ -7,22 +7,66 @@ USER root
 # 📂 Ensure the working directory exists
 WORKDIR /home/container
 
-# 📁 Copy the build context and stage Archipelago server files into place
-COPY . /tmp/build-context/
+# 🛠️ Install utilities required to download and unpack upstream releases
+RUN set -eux; \
+    apt-get update; \
+    apt-get install -y --no-install-recommends \
+      ca-certificates \
+      curl \
+      tar \
+      unzip; \
+    rm -rf /var/lib/apt/lists/*
 
-# 🧹 Move the Archipelago tree if present, otherwise leave an empty workspace
-RUN if [ -d /tmp/build-context/Archipelago ]; then \
-      cp -a /tmp/build-context/Archipelago/. /home/container/; \
+# 🌐 Configure source retrieval
+ARG ARCHIPELAGO_SOURCE_URL="https://cloud.antimatterzone.net/s/bNZ57tEMd5downP/download"
+ENV ARCHIPELAGO_SOURCE_URL="${ARCHIPELAGO_SOURCE_URL}"
+
+# 📁 Optionally accept an overridden Archipelago tree from the build context
+COPY Archipelago/ /tmp/override/Archipelago/
+
+# 📦 Stage Archipelago server files via download or override
+RUN set -eux; \
+    DEST_DIR="/home/container/Archipelago"; \
+    mkdir -p "${DEST_DIR}"; \
+    if find /tmp/override/Archipelago -mindepth 1 -maxdepth 1 -not -name '.gitkeep' -print -quit | grep -q .; then \
+      echo "📁 Detected Archipelago override in build context; copying to container."; \
+      rm -rf "${DEST_DIR}"; \
+      mkdir -p "${DEST_DIR}"; \
+      cp -a /tmp/override/Archipelago/. "${DEST_DIR}/"; \
     else \
-      echo "⚠️  Archipelago directory not found in build context; continuing with empty workspace"; \
-    fi \
-    && rm -rf /tmp/build-context
+      echo "🌐 Downloading Archipelago sources from ${ARCHIPELAGO_SOURCE_URL}."; \
+      TMP_DIR="$(mktemp -d)"; \
+      ARCHIVE_PATH="${TMP_DIR}/archipelago.archive"; \
+      curl -fsSL "${ARCHIPELAGO_SOURCE_URL}" -o "${ARCHIVE_PATH}"; \
+      EXTRACT_DIR="${TMP_DIR}/extracted"; \
+      mkdir -p "${EXTRACT_DIR}"; \
+      if unzip -q "${ARCHIVE_PATH}" -d "${EXTRACT_DIR}"; then \
+        :; \
+      elif tar -xf "${ARCHIVE_PATH}" -C "${EXTRACT_DIR}"; then \
+        :; \
+      else \
+        echo "❌ Failed to extract the downloaded archive. Ensure the URL points to a ZIP/TAR file or provide a local override." >&2; \
+        exit 1; \
+      fi; \
+      SOURCE_ROOT="$(find "${EXTRACT_DIR}" -type f -name 'Archipelago.py' -printf '%h\n' | sort -u | head -n1)"; \
+      if [ -z "${SOURCE_ROOT}" ]; then \
+        SOURCE_ROOT="$(find "${EXTRACT_DIR}" -mindepth 1 -maxdepth 1 -type d | head -n1 || true)"; \
+      fi; \
+      if [ -z "${SOURCE_ROOT}" ]; then \
+        echo "❌ Unable to determine Archipelago root directory from downloaded archive." >&2; \
+        exit 1; \
+      fi; \
+      rm -rf "${DEST_DIR}"; \
+      mv "${SOURCE_ROOT}" "${DEST_DIR}"; \
+      rm -rf "${TMP_DIR}"; \
+    fi; \
+    rm -rf /tmp/override
 
 # 📦 Install Python dependencies if a requirements file is present
-RUN if [ -f requirements.txt ]; then \
-      python -m pip install --no-cache-dir -r requirements.txt; \
+RUN if [ -f /home/container/Archipelago/requirements.txt ]; then \
+      python -m pip install --no-cache-dir -r /home/container/Archipelago/requirements.txt; \
     else \
-      echo "⚠️  requirements.txt not found, skipping dependency installation"; \
+      echo "⚠️  requirements.txt not found in /home/container/Archipelago, skipping dependency installation"; \
     fi
 
 # 🛠️ Generate flexible Archipelago bootstrap scripts and ensure permissions
@@ -36,7 +80,8 @@ RUN set -eux; \
       '' \
       'if [ ! -d "${SERVER_DIR}" ]; then' \
       '  echo "❌ Expected Archipelago sources in ${SERVER_DIR}, but the directory is missing." >&2' \
-      '  echo "   Populate the image by copying an Archipelago/ tree into the build context." >&2' \
+      '  echo "   The image normally downloads them automatically during build." >&2' \
+      '  echo "   Rebuild with a reachable ARCHIPELAGO_SOURCE_URL or provide an Archipelago/ override." >&2' \
       '  exit 1' \
       'fi' \
       '' \
