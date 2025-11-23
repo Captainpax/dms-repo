@@ -6,6 +6,7 @@ configure, and document the Docker images and runtime environments that power th
 ## Repository Layout
 
 - `dockers/` — Service-specific Docker definitions, scripts, and resources.
+  - `dockers/games/` — Game server images (e.g., Rust, Archipelago, GTAV).
 - `eggs/` — Supplemental assets such as templates or shared build components.
   - [`eggs/games/archipelago/`](eggs/games/archipelago/README.md) — Guide for pairing the Archipelago egg with its Docker image.
 - `deploy.sh` — Entry point for deployment orchestration.

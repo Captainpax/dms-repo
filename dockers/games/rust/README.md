@@ -1,6 +1,6 @@
 # Rust Dedicated Server Docker Image
 
-This image installs SteamCMD, downloads the latest Rust Dedicated Server build, and can optionally layer in Oxide/uMod plugins. It exposes the default Rust ports and ships with a small start script that respects common server environment variables.
+This image installs SteamCMD, downloads the latest Rust Dedicated Server build, and can optionally layer in Oxide/uMod plugins. It exposes the default Rust ports and ships with a small start script that respects common server environment variables. The image now builds from the standard `debian:bookworm-slim` base to avoid pulling unavailable GHCR yolks while keeping parity with Pterodactyl expectations (including a `container` user with UID/GID 1000).
 
 ## Building
 
@@ -9,7 +9,7 @@ docker build \
   -t dms/rust:latest \
   --build-arg INCLUDE_OXIDE=true \
   --build-arg OXIDE_DOWNLOAD_URL=https://umod.org/games/rust/download \
-  dockers/rust
+  dockers/games/rust
 ```
 
 ### Build arguments
