@@ -1,6 +1,6 @@
 # Rust Dedicated Server Docker Image
 
-This image installs SteamCMD, downloads the latest Rust Dedicated Server build, and can optionally layer in Oxide/uMod plugins. It exposes the default Rust ports and ships with a small start script that respects common server environment variables. The image now builds from the standard `debian:bookworm-slim` base to avoid pulling unavailable GHCR yolks while keeping parity with Pterodactyl expectations (including a `container` user with UID/GID 1000). Additional 32-bit runtime libraries (e.g., `libc6-i386`, `lib32z1`, `libcurl4-gnutls-dev:i386`) are installed so SteamCMD can bootstrap without the `steamconsole.so` missing-library error and to satisfy Rust's bundled 32-bit dependencies.
+This image installs SteamCMD, downloads the latest Rust Dedicated Server build, and can optionally layer in Oxide/uMod plugins. It exposes the default Rust ports and ships with a small start script that respects common server environment variables. The image now builds from the standard `debian:bookworm-slim` base to avoid pulling unavailable GHCR yolks while keeping parity with Pterodactyl expectations (including a `container` user with UID/GID 1000). Additional 32-bit runtime libraries (e.g., `libc6-i386`, `lib32z1`, `libcurl4-gnutls-dev:i386`, `libcurl4-gnutls:i386`, `libgssapi-krb5-2:i386`, `libkrb5-3:i386`, `libncurses6:i386`, `libtinfo6:i386`) are installed so SteamCMD can bootstrap without the `steamconsole.so` missing-library error and to satisfy Rust's bundled 32-bit dependencies on Bookworm.
 
 ## Building
 
