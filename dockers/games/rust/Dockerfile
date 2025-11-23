@@ -37,10 +37,15 @@ RUN dpkg --add-architecture i386 && \
         ca-certificates \
         curl \
         libc6-i386 \
+        libcurl4-gnutls-dev:i386 \
+        libcurl4-gnutls:i386 \
         lib32gcc-s1 \
         lib32stdc++6 \
         lib32z1 \
-        libcurl4-gnutls-dev:i386 \
+        libgssapi-krb5-2:i386 \
+        libkrb5-3:i386 \
+        libncurses6:i386 \
+        libtinfo6:i386 \
         unzip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
