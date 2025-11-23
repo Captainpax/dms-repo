@@ -37,19 +37,23 @@ RUN dpkg --add-architecture i386 && \
         ca-certificates \
         curl \
         libc6-i386 \
+        libbz2-1.0:i386 \
         libcurl4-openssl-dev:i386 \
         libcurl4:i386 \
         lib32gcc-s1 \
         lib32stdc++6 \
         lib32z1 \
+        libnss3:i386 \
         libgssapi-krb5-2:i386 \
         libkrb5-3:i386 \
         libncurses6:i386 \
+        libssl3:i386 \
         libtinfo6:i386 \
         unzip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
 ENV STEAMCMDDIR=/home/steamcmd
+ENV HOME=$STEAMCMDDIR
 RUN mkdir -p "$STEAMCMDDIR" /home/container/server && \
     chown -R 1000:1000 /home/container "$STEAMCMDDIR"
 
@@ -59,8 +63,15 @@ WORKDIR /home/container
 RUN cd "$STEAMCMDDIR" && \
     curl -sSL https://steamcdn-a.akamaihd.net/client/installer/steamcmd_linux.tar.gz | tar -xz
 
+# Ensure SteamCMD can locate the 32-bit SDK runtime
+RUN mkdir -p "$HOME/.steam/sdk32" /root/.steam/sdk32 && \
+    ln -sf "$STEAMCMDDIR/linux32/steamclient.so" "$HOME/.steam/sdk32/steamclient.so" && \
+    ln -sf "$STEAMCMDDIR/linux32/steamclient.so" /root/.steam/sdk32/steamclient.so
+
 # Install Rust Dedicated Server
 RUN "$STEAMCMDDIR/steamcmd.sh" +login anonymous +force_install_dir /home/container/server +app_update "$RUST_APP_ID" validate +quit
+
+ENV HOME=/home/container
 
 # Optionally layer in Oxide/uMod
 RUN if [ "$INCLUDE_OXIDE" = "true" ]; then \
