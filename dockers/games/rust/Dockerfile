@@ -1,8 +1,12 @@
 # Rust Dedicated Server with optional Oxide/uMod layering
-# Base on Debian Bookworm yolk for compatibility with Pterodactyl-style environments
-FROM ghcr.io/pterodactyl/yolks:debian_bookworm
+# Base on Debian Bookworm to remain compatible with Pterodactyl-style environments
+FROM debian:bookworm-slim
 
 USER root
+
+# Create the non-root container user expected by most Pterodactyl eggs
+RUN groupadd -g 1000 container && \
+    useradd -m -u 1000 -g 1000 -d /home/container container
 
 # Build-time toggles
 ARG INCLUDE_OXIDE=true
@@ -65,7 +69,7 @@ COPY start.sh /home/container/start.sh
 RUN chmod +x /home/container/start.sh && \
     chown -R 1000:1000 /home/container
 
-USER 1000
+USER container
 
 VOLUME ["/home/container/server", "/home/container/server/server", "/home/container/server/logs"]
 
