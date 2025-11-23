@@ -37,8 +37,8 @@ RUN dpkg --add-architecture i386 && \
         ca-certificates \
         curl \
         libc6-i386 \
-        libcurl4-gnutls-dev:i386 \
-        libcurl4-gnutls:i386 \
+        libcurl4-openssl-dev:i386 \
+        libcurl4:i386 \
         lib32gcc-s1 \
         lib32stdc++6 \
         lib32z1 \
