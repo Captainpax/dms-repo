@@ -1,0 +1,160 @@
+{
+  "_comment": "DO NOT EDIT: FILE GENERATED AUTOMATICALLY BY DARKMATTER SERVERS - ANTIMATTERZONE.NET",
+  "meta": {
+    "version": "PTDL_v2",
+    "update_url": null
+  },
+  "exported_at": null,
+  "name": "DMS Rust Dedicated Server",
+  "author": "captainpax@antimatterzone.net",
+  "description": "SteamCMD-managed Rust Dedicated Server with optional Oxide/uMod support and configurable world parameters.",
+  "features": [],
+  "docker_images": {
+    "Rust": "captainpax/dms-rust"
+  },
+  "file_denylist": [],
+  "startup": "./RustDedicated -batchmode +server.port {{GAME_PORT}} +server.queryport {{QUERY_PORT}} +app.port {{RUSTPLUS_PORT}} +app.listenip 0.0.0.0 +rcon.ip 0.0.0.0 +rcon.port {{RCON_PORT}} +rcon.password \"{{RCON_PASSWORD}}\" +rcon.web 1 +server.hostname \"{{SERVER_NAME}}\" +server.identity \"dms_rust\" +server.seed {{WORLD_SEED}} +server.worldsize {{WORLD_SIZE}} +server.description \"{{SERVER_DESCRIPTION}}\" +server.maxplayers {{MAX_PLAYERS}} -logfile 2>&1",
+  "config": {
+    "files": "{}",
+    "startup": "{\"done\": \"Server startup complete\"}",
+    "logs": "{}",
+    "stop": "quit",
+    "ports": {
+      "default": "{{GAME_PORT}}",
+      "additional": [
+        "{{QUERY_PORT}}",
+        "{{RUSTPLUS_PORT}}",
+        "{{RCON_PORT}}"
+      ]
+    }
+  },
+  "scripts": {
+    "installation": {
+      "script": "#!/bin/bash\nset -e\n\ncd /mnt/server\n\n/usr/games/steamcmd +login anonymous +force_install_dir /mnt/server +app_update 258550 -beta ${RUST_BRANCH} validate +quit\n\nif [ \"${OXIDE_ENABLED}\" = \"1\" ]; then\n  echo \"[Rust] Installing Oxide/uMod...\"\n  OXIDE_URL=\"https://umod.org/games/rust/download\"\n  curl -sSL \"${OXIDE_URL}\" -o oxide.zip\n  unzip -o oxide.zip\n  rm -f oxide.zip\nfi\n",
+      "container": "captainpax/dms-rust",
+      "entrypoint": "bash"
+    }
+  },
+  "variables": [
+    {
+      "name": "Game Port",
+      "description": "Base port for Rust game traffic (default 28015).",
+      "env_variable": "GAME_PORT",
+      "default_value": "28015",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|integer|between:1024,65535",
+      "field_type": "text"
+    },
+    {
+      "name": "Query Port",
+      "description": "Port used for server queries (default 28016).",
+      "env_variable": "QUERY_PORT",
+      "default_value": "28016",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|integer|between:1024,65535",
+      "field_type": "text"
+    },
+    {
+      "name": "Rust+ App Port",
+      "description": "Port used by the Rust+ companion app websocket (default 28082).",
+      "env_variable": "RUSTPLUS_PORT",
+      "default_value": "28082",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|integer|between:1024,65535",
+      "field_type": "text"
+    },
+    {
+      "name": "RCON Port",
+      "description": "Port used for RCON connections (default 28017).",
+      "env_variable": "RCON_PORT",
+      "default_value": "28017",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|integer|between:1024,65535",
+      "field_type": "text"
+    },
+    {
+      "name": "RCON Password",
+      "description": "Password required for RCON access.",
+      "env_variable": "RCON_PASSWORD",
+      "default_value": "changeme123",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string|min:6|max:64",
+      "field_type": "text"
+    },
+    {
+      "name": "Server Name",
+      "description": "Public name displayed in the server list.",
+      "env_variable": "SERVER_NAME",
+      "default_value": "Darkmatter Rust Server",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string|max:100",
+      "field_type": "text"
+    },
+    {
+      "name": "Server Description",
+      "description": "Server description shown in the server list (supports basic formatting).",
+      "env_variable": "SERVER_DESCRIPTION",
+      "default_value": "Welcome to Darkmatter Rust!",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "nullable|string|max:512",
+      "field_type": "text"
+    },
+    {
+      "name": "World Seed",
+      "description": "Numeric world seed used when generating the map.",
+      "env_variable": "WORLD_SEED",
+      "default_value": "12345",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|integer|min:1",
+      "field_type": "text"
+    },
+    {
+      "name": "World Size",
+      "description": "Map size in meters (typically between 1000 and 6000).",
+      "env_variable": "WORLD_SIZE",
+      "default_value": "3500",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|integer|between:1000,6000",
+      "field_type": "text"
+    },
+    {
+      "name": "Max Players",
+      "description": "Maximum number of concurrent players allowed.",
+      "env_variable": "MAX_PLAYERS",
+      "default_value": "50",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|integer|between:1,500",
+      "field_type": "text"
+    },
+    {
+      "name": "Update Branch",
+      "description": "Steam branch used for updates (e.g., public, staging).",
+      "env_variable": "RUST_BRANCH",
+      "default_value": "public",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|string|alpha_dash",
+      "field_type": "text"
+    },
+    {
+      "name": "Install Oxide/uMod",
+      "description": "Install Oxide/uMod after updates (1 = yes, 0 = no).",
+      "env_variable": "OXIDE_ENABLED",
+      "default_value": "0",
+      "user_viewable": true,
+      "user_editable": true,
+      "rules": "required|boolean",
+      "field_type": "text"
+    }
+  ]
+}
