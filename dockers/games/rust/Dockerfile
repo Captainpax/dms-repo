@@ -36,8 +36,11 @@ RUN dpkg --add-architecture i386 && \
     apt-get install -y --no-install-recommends \
         ca-certificates \
         curl \
+        libc6-i386 \
         lib32gcc-s1 \
         lib32stdc++6 \
+        lib32z1 \
+        libcurl4-gnutls-dev:i386 \
         unzip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
