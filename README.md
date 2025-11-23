@@ -9,6 +9,7 @@ configure, and document the Docker images and runtime environments that power th
 - `eggs/` — Supplemental assets such as templates or shared build components.
   - [`eggs/games/archipelago/`](eggs/games/archipelago/README.md) — Guide for pairing the Archipelago egg with its Docker image.
 - `deploy.sh` — Entry point for deployment orchestration.
+- `upload-docker.bat` — Windows helper script that logs into Docker Hub (if needed) and pushes a selected image.
 
 ## Contributing
 
