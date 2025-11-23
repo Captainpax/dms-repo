@@ -48,7 +48,9 @@ RUN dpkg --add-architecture i386 && \
         libkrb5-3:i386 \
         libncurses6:i386 \
         libssl3:i386 \
+        libtinfo5:i386 \
         libtinfo6:i386 \
+        libsdl2-2.0-0:i386 \
         unzip \
     && apt-get clean && rm -rf /var/lib/apt/lists/*
 
